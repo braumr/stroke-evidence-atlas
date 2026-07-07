@@ -75,15 +75,18 @@ def _text(element: ET.Element | None) -> str:
     return clean_text("".join(element.itertext()))
 
 
-def _abstract(article: ET.Element) -> str:
+def _abstract_parts(article: ET.Element) -> tuple[str, str]:
     parts = []
+    conclusion_parts = []
     for node in article.findall(".//Abstract/AbstractText"):
         label = node.attrib.get("Label")
         text = _text(node)
         if not text:
             continue
         parts.append(f"{label}: {text}" if label else text)
-    return clean_text(" ".join(parts))
+        if label and label.strip().lower() in {"conclusion", "conclusions"}:
+            conclusion_parts.append(text)
+    return clean_text(" ".join(parts)), clean_text(" ".join(conclusion_parts))
 
 
 def _authors(article: ET.Element) -> str:
@@ -142,11 +145,13 @@ def parse_pubmed_xml(xml_text: str, query_source: str) -> list[dict[str, Any]]:
         if not pmid:
             continue
         year, pub_date = _publication_date(article)
+        abstract, abstract_conclusion = _abstract_parts(article)
         papers.append(
             {
                 "pmid": pmid,
                 "title": _text(article.find(".//ArticleTitle")),
-                "abstract": _abstract(article),
+                "abstract": abstract,
+                "abstract_conclusion_text": abstract_conclusion or "not reported in abstract",
                 "journal": _text(article.find(".//Journal/Title")),
                 "publication_year": year,
                 "publication_date": pub_date,
@@ -186,10 +191,10 @@ def store_paper(paper: dict[str, Any]) -> bool:
             """
             INSERT OR IGNORE INTO papers (
                 pmid, title, abstract, journal, publication_year, publication_date,
-                authors, mesh_terms, doi, pubmed_url, source, query_source,
+                abstract_conclusion_text, authors, mesh_terms, doi, pubmed_url, source, query_source,
                 created_at, updated_at
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 paper["pmid"],
@@ -198,6 +203,7 @@ def store_paper(paper: dict[str, Any]) -> bool:
                 paper["journal"],
                 paper["publication_year"],
                 paper["publication_date"],
+                paper.get("abstract_conclusion_text"),
                 paper["authors"],
                 paper["mesh_terms"],
                 paper["doi"],

@@ -15,9 +15,35 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.db import get_connection, init_db
+from src.utils import normalize_missing_label
+
+
+REVIEW_OR_BACKGROUND_TYPES = {
+    "meta_analysis",
+    "systematic_review",
+    "narrative_review",
+    "mechanistic_study",
+    "diagnostic_biomarker",
+    "epidemiology",
+    "protocol",
+}
 
 
 st.set_page_config(page_title="Intervention Explorer", layout="wide")
+st.markdown(
+    """
+    <style>
+    a[data-testid="stSidebarNavLink"] span[label="app"] p {
+        font-size: 0;
+    }
+    a[data-testid="stSidebarNavLink"] span[label="app"] p::after {
+        content: "home";
+        font-size: 1rem;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 st.title("Intervention Explorer")
 
 
@@ -45,16 +71,16 @@ def load_data() -> dict[str, pd.DataFrame]:
 
 def parse_list(value: str | None) -> str:
     if value is None or pd.isna(value):
-        return ""
+        return "not reported in abstract"
     if not isinstance(value, str):
         return str(value)
     try:
         parsed = json.loads(value)
         if isinstance(parsed, list):
-            return "; ".join(str(item) for item in parsed)
+            return "; ".join(str(normalize_missing_label(item)) for item in parsed)
     except json.JSONDecodeError:
         pass
-    return str(value)
+    return str(normalize_missing_label(value))
 
 
 def display_value(value: object, default: str = "unknown") -> object:
@@ -62,15 +88,60 @@ def display_value(value: object, default: str = "unknown") -> object:
 
     if value is None or pd.isna(value):
         return default
-    if isinstance(value, str) and not value.strip():
+    normalized = normalize_missing_label(value)
+    if isinstance(normalized, str) and not normalized.strip():
         return default
-    return value
+    return normalized
 
 
 def display_text(value: object, default: str = "unknown") -> str:
     """Return a string safe for Streamlit dataframe serialization."""
 
     return str(display_value(value, default))
+
+
+def detail_default(row: pd.Series, field: str) -> str:
+    """Return the display fallback for legacy missing values in detail fields."""
+
+    study_type = str(row.get("study_type") or "").lower()
+    if field in {"dosage_intensity", "frequency", "duration"} and study_type in REVIEW_OR_BACKGROUND_TYPES:
+        return "not applicable"
+    if field == "comparator" and study_type in {
+        "mechanistic_study",
+        "diagnostic_biomarker",
+        "epidemiology",
+        "narrative_review",
+        "protocol",
+    }:
+        return "not applicable"
+    if field in {"adverse_events", "safety_notes"} and study_type in {
+        "narrative_review",
+        "mechanistic_study",
+        "diagnostic_biomarker",
+        "epidemiology",
+    }:
+        return "not applicable"
+    return "not reported in abstract"
+
+
+def detail_value(row: pd.Series, field: str) -> str:
+    """Display a scalar detail using field-aware missing-value labels."""
+
+    default = detail_default(row, field)
+    value = display_value(row.get(field), default)
+    if value == "unknown" and default != "unknown":
+        return default
+    return str(value)
+
+
+def detail_list(row: pd.Series, field: str) -> str:
+    """Display a list detail using field-aware missing-value labels."""
+
+    value = parse_list(row.get(field))
+    default = detail_default(row, field)
+    if value == "unknown" and default != "unknown":
+        return default
+    return value or default
 
 
 data = load_data()
@@ -92,14 +163,19 @@ summary = summaries[summaries[intervention_col] == intervention].iloc[0]
 supporting = studies[studies[study_intervention_col] == intervention].copy()
 
 st.subheader(summary[intervention_col])
-metric_cols = st.columns(6)
-metric_cols[0].metric("Evidence tier", summary["evidence_tier"])
-metric_cols[1].metric("Paper count", int(summary["paper_count"]))
-metric_cols[2].metric("Human studies", int(summary["human_study_count"]))
-metric_cols[3].metric("RCTs", int(summary["rct_count"]))
+tier_col, paper_col, human_col, rct_col, review_col, score_col = st.columns([1.8, 1, 1, 1, 1.4, 1.2])
+tier_col.markdown("**Evidence tier**")
+tier_col.markdown(
+    f"<div style='display:inline-block; padding:0.35rem 0.65rem; border-radius:0.45rem; "
+    f"background-color:#eef6f4; color:#173f3a; font-weight:600;'>{display_value(summary['evidence_tier'])}</div>",
+    unsafe_allow_html=True,
+)
+paper_col.metric("Paper count", int(summary["paper_count"]))
+human_col.metric("Human studies", int(summary["human_study_count"]))
+rct_col.metric("RCTs", int(summary["rct_count"]))
 review_total = int(summary["systematic_review_count"]) + int(summary["meta_analysis_count"])
-metric_cols[4].metric("Systematic review/meta-analysis", review_total)
-metric_cols[5].metric("Average overall score", round(float(summary["avg_overall_score"]), 2))
+review_col.metric("Systematic review/meta-analysis", review_total)
+score_col.metric("Average overall score", round(float(summary["avg_overall_score"]), 2))
 
 score_df = pd.DataFrame(
     {
@@ -161,7 +237,7 @@ display_columns = {
     "title": "unknown",
     "year": "unknown",
     "study type": "unknown",
-    "sample size": "unknown",
+    "sample size": "not reported in abstract",
     "stroke type": "unknown",
     "phase": "unknown",
     "outcome_measures": "unknown",
@@ -195,12 +271,12 @@ st.dataframe(
 with st.expander("Study protocol, outcomes, limitations, safety, and applicability details"):
     for _, row in supporting.iterrows():
         st.markdown(f"**{row['pmid']} - {row['title']}**")
-        st.write(f"Dosage/intensity: {display_value(row['dosage_intensity'])}")
-        st.write(f"Frequency: {display_value(row['frequency'])}")
-        st.write(f"Duration: {display_value(row['duration'])}")
-        st.write(f"Outcomes: {parse_list(row['outcomes']) or 'unknown'}")
-        st.write(f"Limitations: {parse_list(row['limitations']) or 'unknown'}")
-        st.write(f"Adverse events: {display_value(row['adverse_events'])}")
-        st.write(f"Safety notes: {display_value(row['safety_notes'])}")
-        st.write(f"Applicability notes: {display_value(row['applicability_notes'])}")
+        st.write(f"Dosage/intensity: {detail_value(row, 'dosage_intensity')}")
+        st.write(f"Frequency: {detail_value(row, 'frequency')}")
+        st.write(f"Duration: {detail_value(row, 'duration')}")
+        st.write(f"Outcomes: {detail_list(row, 'outcomes')}")
+        st.write(f"Limitations: {detail_list(row, 'limitations')}")
+        st.write(f"Adverse events: {detail_value(row, 'adverse_events')}")
+        st.write(f"Safety notes: {detail_value(row, 'safety_notes')}")
+        st.write(f"Applicability notes: {detail_value(row, 'applicability_notes')}")
         st.divider()

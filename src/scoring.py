@@ -241,13 +241,26 @@ def score_extractions() -> int:
 
     init_db()
     with get_connection() as conn:
-        rows = [dict(row) for row in conn.execute("SELECT * FROM study_extractions").fetchall()]
+        rows = [
+            dict(row)
+            for row in conn.execute(
+                """
+                SELECT e.*, p.title, p.abstract
+                FROM study_extractions e
+                LEFT JOIN papers p ON e.pmid = p.pmid
+                """
+            ).fetchall()
+        ]
         conn.execute("DELETE FROM scores")
         for row in rows:
             family = intervention_family(
                 row.get("intervention_raw"),
                 row.get("intervention_canonical"),
                 row.get("intervention_category"),
+                " ".join(
+                    clean_text(row.get(field))
+                    for field in ["title", "abstract", "results_summary", "mechanistic_rationale"]
+                ),
             )
             conn.execute(
                 "UPDATE study_extractions SET intervention_family = ? WHERE id = ?",

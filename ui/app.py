@@ -15,6 +15,20 @@ from src.config import DB_PATH
 
 
 st.set_page_config(page_title="Stroke Evidence Atlas", layout="wide")
+st.markdown(
+    """
+    <style>
+    a[data-testid="stSidebarNavLink"] span[label="app"] p {
+        font-size: 0;
+    }
+    a[data-testid="stSidebarNavLink"] span[label="app"] p::after {
+        content: "home";
+        font-size: 1rem;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
 ASSET_DIR = ROOT / "ui" / "assets"
 BRAIN_IMAGE = ASSET_DIR / "neuroplasticity_brain.jpg"

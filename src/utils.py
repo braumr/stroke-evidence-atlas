@@ -26,6 +26,41 @@ def clean_text(value: str | None) -> str:
     return " ".join(value.split())
 
 
+MISSING_VALUE_MAP = {
+    "": "not reported in abstract",
+    "unknown": "unknown",
+    "n/a": "not applicable",
+    "na": "not applicable",
+    "not applicable": "not applicable",
+    "not_applicable": "not applicable",
+    "not reported": "not reported in abstract",
+    "not reported in abstract": "not reported in abstract",
+}
+
+
+def normalize_missing_label(value: object, empty_default: str = "not reported in abstract") -> object:
+    """Normalize common missing-value labels without changing meaningful content."""
+
+    if value is None:
+        return empty_default
+    if not isinstance(value, str):
+        return value
+    cleaned = clean_text(value)
+    if not cleaned:
+        return empty_default
+    normalized = MISSING_VALUE_MAP.get(cleaned.lower())
+    return normalized if normalized is not None else cleaned
+
+
+def normalize_missing_list(values: list[str], empty_default: str = "not reported in abstract") -> list[str]:
+    """Normalize missing-value labels inside extracted list fields."""
+
+    if not values:
+        return [empty_default]
+    cleaned_values = [normalize_missing_label(value, empty_default) for value in values]
+    return [str(value) for value in cleaned_values if str(value).strip()] or [empty_default]
+
+
 def parse_int(value: object) -> int | None:
     """Parse an integer if possible, otherwise return None."""
 

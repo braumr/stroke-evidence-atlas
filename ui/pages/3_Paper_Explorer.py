@@ -14,9 +14,24 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.db import get_connection, init_db
+from src.utils import normalize_missing_label
 
 
 st.set_page_config(page_title="Paper Explorer", layout="wide")
+st.markdown(
+    """
+    <style>
+    a[data-testid="stSidebarNavLink"] span[label="app"] p {
+        font-size: 0;
+    }
+    a[data-testid="stSidebarNavLink"] span[label="app"] p::after {
+        content: "home";
+        font-size: 1rem;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 st.title("Paper Explorer")
 
 
@@ -27,14 +42,15 @@ def load_data() -> pd.DataFrame:
         return pd.read_sql_query(
             """
             SELECT
-                p.pmid, p.title, p.abstract, p.journal, p.publication_year, p.pubmed_url,
+                p.pmid, p.title, p.abstract, p.abstract_conclusion_text,
+                p.journal, p.publication_year, p.pubmed_url,
                 COALESCE(es.status, 'pending') AS extraction_status,
                 es.attempts, es.last_error, es.extracted_at,
                 e.study_type, e.intervention_canonical, e.intervention_family, e.intervention_raw,
                 e.intervention_category, e.condition_category, e.stroke_type,
                 e.sample_size, e.stroke_phase, e.time_since_stroke,
                 e.dosage_intensity, e.frequency, e.duration, e.comparator,
-                e.setting, e.outcome_measures, e.outcomes, e.results_summary,
+                e.setting, e.outcome_measures, e.outcomes, e.results_summary, e.conclusion_text,
                 e.effect_direction, e.limitations, e.adverse_events,
                 e.safety_notes, e.applicability_notes, e.mechanistic_rationale,
                 e.neuroplasticity_mechanisms, e.confidence_notes,
@@ -54,16 +70,16 @@ def load_data() -> pd.DataFrame:
 
 def parse_list(value: str | None) -> str:
     if value is None or pd.isna(value):
-        return ""
+        return "not reported in abstract"
     if not isinstance(value, str):
         return str(value)
     try:
         parsed = json.loads(value)
         if isinstance(parsed, list):
-            return "; ".join(str(item) for item in parsed)
+            return "; ".join(str(normalize_missing_label(item)) for item in parsed)
     except json.JSONDecodeError:
         pass
-    return str(value)
+    return str(normalize_missing_label(value))
 
 
 def is_missing(value: object) -> bool:
@@ -82,9 +98,10 @@ def display_value(value: object, default: str = "unknown") -> object:
 
     if is_missing(value):
         return default
-    if isinstance(value, str) and not value.strip():
+    normalized = normalize_missing_label(value)
+    if isinstance(normalized, str) and not normalized.strip():
         return default
-    return value
+    return normalized
 
 
 def display_text(value: object, default: str = "unknown") -> str:
@@ -113,7 +130,7 @@ def clean_table(df: pd.DataFrame) -> pd.DataFrame:
         "study type": "not extracted",
         "intervention family": "not extracted",
         "intervention_canonical": "not extracted",
-        "sample size": "unknown",
+        "sample size": "not reported in abstract",
         "effect direction": "not extracted",
         "extraction_status": "pending",
         "PubMed URL": "",
@@ -215,6 +232,12 @@ for _, row in filtered.head(50).iterrows():
         st.write(f"Extraction status: {status}")
         st.markdown("**Abstract**")
         st.write(row["abstract"] or "No abstract stored.")
+        conclusion = display_value(
+            row.get("abstract_conclusion_text"),
+            display_value(row.get("conclusion_text"), "not reported in abstract"),
+        )
+        st.markdown("**Conclusion from abstract**")
+        st.write(conclusion)
         if status != "extracted":
             if status == "failed":
                 st.error(f"Extraction failed after {display_value(row.get('attempts'), 0)} attempts.")
@@ -233,7 +256,7 @@ for _, row in filtered.head(50).iterrows():
                 "intervention_category": display_value(row.get("intervention_category")),
                 "condition_category": display_value(row.get("condition_category")),
                 "stroke_type": display_value(row.get("stroke_type")),
-                "sample_size": display_value(row.get("sample_size")),
+                "sample_size": display_value(row.get("sample_size"), "not reported in abstract"),
                 "stroke_phase": display_value(row.get("stroke_phase")),
                 "time_since_stroke": display_value(row.get("time_since_stroke")),
                 "dosage_intensity": display_value(row.get("dosage_intensity")),
@@ -244,6 +267,7 @@ for _, row in filtered.head(50).iterrows():
                 "outcome_measures": parse_list(row.get("outcome_measures")),
                 "outcomes": parse_list(row.get("outcomes")),
                 "results_summary": display_value(row.get("results_summary")),
+                "conclusion_text": display_value(row.get("conclusion_text"), "not reported in abstract"),
                 "effect_direction": display_value(row.get("effect_direction")),
                 "mechanistic_rationale": display_value(row.get("mechanistic_rationale")),
                 "neuroplasticity_mechanisms": parse_list(row.get("neuroplasticity_mechanisms")),

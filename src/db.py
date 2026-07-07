@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import sqlite3
+import re
 from pathlib import Path
 
 from .config import DB_PATH, ensure_directories
@@ -33,6 +34,7 @@ def init_db(reset: bool = False) -> None:
                 pmid TEXT PRIMARY KEY,
                 title TEXT,
                 abstract TEXT,
+                abstract_conclusion_text TEXT,
                 journal TEXT,
                 publication_year INTEGER,
                 publication_date TEXT,
@@ -78,6 +80,7 @@ def init_db(reset: bool = False) -> None:
                 outcome_measures TEXT,
                 outcomes TEXT,
                 results_summary TEXT,
+                conclusion_text TEXT,
                 effect_direction TEXT,
                 limitations TEXT,
                 adverse_events TEXT,
@@ -156,7 +159,11 @@ def init_db(reset: bool = False) -> None:
             CREATE INDEX IF NOT EXISTS idx_scores_intervention ON scores(intervention_canonical);
             """
         )
+        _ensure_column(conn, "papers", "abstract_conclusion_text", "TEXT")
+        _backfill_abstract_conclusions(conn)
         _ensure_column(conn, "study_extractions", "intervention_family", "TEXT")
+        _ensure_column(conn, "study_extractions", "conclusion_text", "TEXT")
+        _backfill_missing_value_labels(conn)
         _ensure_column(conn, "scores", "intervention_family", "TEXT")
         _ensure_column(conn, "intervention_summaries", "intervention_family", "TEXT")
         conn.executescript(
@@ -173,6 +180,70 @@ def _ensure_column(conn: sqlite3.Connection, table: str, column: str, definition
     columns = {row["name"] for row in conn.execute(f"PRAGMA table_info({table})")}
     if column not in columns:
         conn.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
+
+
+def _extract_conclusion_from_abstract(abstract: str | None) -> str | None:
+    """Extract a labeled conclusion section from stored PubMed abstract text."""
+
+    if not abstract:
+        return None
+    match = re.search(
+        r"\bCONCLUSIONS?\s*:\s*(.+?)(?=\s+[A-Z][A-Z /-]{2,}\s*:|$)",
+        abstract,
+        flags=re.IGNORECASE,
+    )
+    if not match:
+        return None
+    conclusion = " ".join(match.group(1).split())
+    return conclusion or None
+
+
+def _backfill_abstract_conclusions(conn: sqlite3.Connection) -> None:
+    """Populate parsed conclusion text for existing structured abstracts."""
+
+    rows = conn.execute(
+        """
+        SELECT pmid, abstract
+        FROM papers
+        WHERE abstract_conclusion_text IS NULL
+            AND abstract IS NOT NULL
+            AND (
+                abstract LIKE '%CONCLUSION:%'
+                OR abstract LIKE '%CONCLUSIONS:%'
+                OR abstract LIKE '%Conclusion:%'
+                OR abstract LIKE '%Conclusions:%'
+            )
+        """
+    ).fetchall()
+    for row in rows:
+        conclusion = _extract_conclusion_from_abstract(row["abstract"])
+        if conclusion:
+            conn.execute(
+                "UPDATE papers SET abstract_conclusion_text = ? WHERE pmid = ?",
+                (conclusion, row["pmid"]),
+            )
+
+
+def _backfill_missing_value_labels(conn: sqlite3.Connection) -> None:
+    """Set explicit labels for old blank conclusion fields without changing content."""
+
+    conn.execute(
+        """
+        UPDATE papers
+        SET abstract_conclusion_text = 'not reported in abstract'
+        WHERE abstract_conclusion_text IS NULL
+            OR TRIM(abstract_conclusion_text) = ''
+        """
+    )
+    conn.execute(
+        """
+        UPDATE study_extractions
+        SET conclusion_text = 'not reported in abstract'
+        WHERE conclusion_text IS NULL
+            OR TRIM(conclusion_text) = ''
+            OR LOWER(TRIM(conclusion_text)) IN ('unknown', 'n/a', 'na')
+        """
+    )
 
 
 def start_pipeline_run(command: str, notes: str = "") -> int:

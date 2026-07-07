@@ -17,6 +17,20 @@ from src.db import get_connection, init_db
 
 
 st.set_page_config(page_title="Overview Dashboard", layout="wide")
+st.markdown(
+    """
+    <style>
+    a[data-testid="stSidebarNavLink"] span[label="app"] p {
+        font-size: 0;
+    }
+    a[data-testid="stSidebarNavLink"] span[label="app"] p::after {
+        content: "home";
+        font-size: 1rem;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 st.title("Overview Dashboard")
 
 
