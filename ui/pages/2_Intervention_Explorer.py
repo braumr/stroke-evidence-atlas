@@ -1,0 +1,206 @@
+"""Intervention explorer page."""
+
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+import pandas as pd
+import plotly.express as px
+import streamlit as st
+
+ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from src.db import get_connection, init_db
+
+
+st.set_page_config(page_title="Intervention Explorer", layout="wide")
+st.title("Intervention Explorer")
+
+
+@st.cache_data(ttl=30)
+def load_data() -> dict[str, pd.DataFrame]:
+    init_db()
+    with get_connection() as conn:
+        return {
+            "summaries": pd.read_sql_query("SELECT * FROM intervention_summaries", conn),
+            "studies": pd.read_sql_query(
+                """
+                SELECT
+                    e.*, p.title, p.publication_year, p.pubmed_url,
+                    s.neuroplasticity_potential, s.clinical_evidence_strength,
+                    s.safety_score, s.practicality_score, s.overall_score, s.scoring_notes
+                FROM study_extractions e
+                JOIN papers p ON e.pmid = p.pmid
+                LEFT JOIN scores s ON e.pmid = s.pmid
+                    AND e.intervention_canonical = s.intervention_canonical
+                """,
+                conn,
+            ),
+        }
+
+
+def parse_list(value: str | None) -> str:
+    if value is None or pd.isna(value):
+        return ""
+    if not isinstance(value, str):
+        return str(value)
+    try:
+        parsed = json.loads(value)
+        if isinstance(parsed, list):
+            return "; ".join(str(item) for item in parsed)
+    except json.JSONDecodeError:
+        pass
+    return str(value)
+
+
+def display_value(value: object, default: str = "unknown") -> object:
+    """Display missing pandas/SQLite values as plain uncertainty text."""
+
+    if value is None or pd.isna(value):
+        return default
+    if isinstance(value, str) and not value.strip():
+        return default
+    return value
+
+
+def display_text(value: object, default: str = "unknown") -> str:
+    """Return a string safe for Streamlit dataframe serialization."""
+
+    return str(display_value(value, default))
+
+
+data = load_data()
+summaries = data["summaries"]
+studies = data["studies"]
+
+if summaries.empty:
+    st.info("No intervention summaries yet. Run `python main.py score` after extraction.")
+    st.stop()
+
+intervention_col = "intervention_family" if "intervention_family" in summaries.columns else "intervention_canonical"
+study_intervention_col = "intervention_family" if "intervention_family" in studies.columns else "intervention_canonical"
+
+intervention = st.selectbox(
+    "Intervention family",
+    sorted(summaries[intervention_col].dropna().unique()),
+)
+summary = summaries[summaries[intervention_col] == intervention].iloc[0]
+supporting = studies[studies[study_intervention_col] == intervention].copy()
+
+st.subheader(summary[intervention_col])
+metric_cols = st.columns(6)
+metric_cols[0].metric("Evidence tier", summary["evidence_tier"])
+metric_cols[1].metric("Paper count", int(summary["paper_count"]))
+metric_cols[2].metric("Human studies", int(summary["human_study_count"]))
+metric_cols[3].metric("RCTs", int(summary["rct_count"]))
+review_total = int(summary["systematic_review_count"]) + int(summary["meta_analysis_count"])
+metric_cols[4].metric("Systematic review/meta-analysis", review_total)
+metric_cols[5].metric("Average overall score", round(float(summary["avg_overall_score"]), 2))
+
+score_df = pd.DataFrame(
+    {
+        "component": [
+            "Neuroplasticity potential",
+            "Clinical evidence strength",
+            "Safety",
+            "Practicality",
+            "Overall",
+        ],
+        "score": [
+            summary["avg_neuroplasticity_potential"],
+            summary["avg_clinical_evidence_strength"],
+            summary["avg_safety_score"],
+            summary["avg_practicality_score"],
+            summary["avg_overall_score"],
+        ],
+    }
+)
+st.plotly_chart(px.bar(score_df, x="component", y="score", range_y=[0, 100]), width="stretch")
+
+detail_cols = st.columns(2)
+detail_cols[0].markdown("**Intervention summary**")
+detail_cols[0].write(f"Category: {display_value(summary['intervention_category'])}")
+if "intervention_canonical" in supporting:
+    canonical_names = sorted(
+        {
+            str(value)
+            for value in supporting["intervention_canonical"].dropna().unique()
+            if str(value).strip() and str(value).lower() != "unknown"
+        }
+    )
+    detail_cols[0].write(f"Paper-level extracted names: {'; '.join(canonical_names) or 'unknown'}")
+detail_cols[0].write(f"Common outcome measures: {display_value(summary['common_outcome_measures'])}")
+detail_cols[0].write(f"Treatment protocols: {display_value(summary['treatment_protocols'])}")
+detail_cols[1].markdown("**Uncertainty and safety**")
+detail_cols[1].write(f"Key limitations: {display_value(summary['key_limitations'])}")
+detail_cols[1].write(f"Safety summary: {display_value(summary['safety_summary'])}")
+
+if supporting.empty:
+    st.info("No supporting studies found for this intervention.")
+    st.stop()
+
+supporting["outcome_measures"] = supporting["outcome_measures"].map(parse_list)
+supporting["PubMed URL"] = supporting["pubmed_url"]
+table = supporting.rename(
+    columns={
+        "pmid": "PMID",
+        "publication_year": "year",
+        "study_type": "study type",
+        "sample_size": "sample size",
+        "stroke_type": "stroke type",
+        "stroke_phase": "phase",
+        "effect_direction": "effect direction",
+    }
+)
+display_columns = {
+    "PMID": "unknown",
+    "title": "unknown",
+    "year": "unknown",
+    "study type": "unknown",
+    "sample size": "unknown",
+    "stroke type": "unknown",
+    "phase": "unknown",
+    "outcome_measures": "unknown",
+    "effect direction": "unknown",
+    "PubMed URL": "",
+}
+for column, default in display_columns.items():
+    if column in table:
+        table[column] = table[column].apply(lambda value, fallback=default: display_text(value, fallback))
+st.subheader("Supporting studies")
+st.dataframe(
+    table[
+        [
+            "PMID",
+            "title",
+            "year",
+            "study type",
+            "sample size",
+            "stroke type",
+            "phase",
+            "outcome_measures",
+            "effect direction",
+            "PubMed URL",
+        ]
+    ],
+    width="stretch",
+    hide_index=True,
+    column_config={"PubMed URL": st.column_config.LinkColumn("PubMed URL")},
+)
+
+with st.expander("Study protocol, outcomes, limitations, safety, and applicability details"):
+    for _, row in supporting.iterrows():
+        st.markdown(f"**{row['pmid']} - {row['title']}**")
+        st.write(f"Dosage/intensity: {display_value(row['dosage_intensity'])}")
+        st.write(f"Frequency: {display_value(row['frequency'])}")
+        st.write(f"Duration: {display_value(row['duration'])}")
+        st.write(f"Outcomes: {parse_list(row['outcomes']) or 'unknown'}")
+        st.write(f"Limitations: {parse_list(row['limitations']) or 'unknown'}")
+        st.write(f"Adverse events: {display_value(row['adverse_events'])}")
+        st.write(f"Safety notes: {display_value(row['safety_notes'])}")
+        st.write(f"Applicability notes: {display_value(row['applicability_notes'])}")
+        st.divider()

@@ -1,0 +1,1 @@
+"""Stroke Evidence Atlas package."""

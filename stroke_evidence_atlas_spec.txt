@@ -1,0 +1,821 @@
+You are building a complete local Python project inside the current empty directory.
+Project name:
+Stroke Evidence Atlas
+Purpose:
+Build Version 1 of a local research synthesis engine for stroke rehabilitation, brain injury recovery, and neuroplasticity evidence.
+This project should retrieve approximately 2,000 PubMed papers, extract structured rehabilitation evidence using GPT-4o mini, store everything locally in SQLite, score interventions using a transparent configurable framework, and provide a simple Streamlit multipage dashboard for exploration.
+This is Version 1.
+Do not overengineer it.
+Prioritize:
+	•	scientific usefulness
+	•	clarity
+	•	reliability
+	•	low cost
+	•	maintainability
+	•	resumability
+	•	readable modular code
+Avoid:
+	•	unnecessary frameworks
+	•	premature optimization
+	•	complex abstractions
+	•	knowledge graphs
+	•	vector databases
+	•	conversational agents
+	•	Markdown report generation
+	•	multi-source literature collection in V1
+The code should be modular enough that future collectors and features can be added later, but Version 1 should only implement what is required.
+Important clinical caution:
+This system summarizes research literature. It must not present itself as medical advice, a treatment plan, or a replacement for clinicians. It may summarize evidence, compare interventions, show uncertainty, and identify research gaps. It must distinguish clinical evidence from mechanistic, animal, weak, or emerging evidence.
+============================================================ VERSION 1 SCOPE
+Implemented in Version 1:
+	1	PubMed paper collection only
+	2	SQLite database
+	3	GPT-4o mini abstract extraction
+	4	Local JSON validation
+	5	Repair prompt only when JSON validation fails
+	6	Intervention normalization using a configurable synonym dictionary
+	7	Transparent configurable scoring
+	8	CSV exports
+	9	Streamlit multipage UI with 3 pages:
+	◦	Overview Dashboard
+	◦	Intervention Explorer
+	◦	Paper Explorer
+Not implemented in Version 1:
+	•	Semantic Scholar
+	•	Crossref
+	•	ClinicalTrials.gov
+	•	vector search
+	•	knowledge graph
+	•	chatbot interface
+	•	trend dashboards
+	•	AI caregiver assistant
+	•	Markdown report generation
+	•	full-text PDF parsing
+However, design the code so future collectors can be added without major refactoring.
+For example, use this collector structure:
+src/ collectors/ init.py pubmed.py
+Future collectors may eventually be added as:
+src/ collectors/ semantic_scholar.py crossref.py clinicaltrials.py
+Do not implement those future collectors now.
+============================================================ PROJECT STRUCTURE
+Create the following structure:
+. ├── main.py ├── README.md ├── requirements.txt ├── .gitignore │ ├── data/ │ ├── stroke_evidence.db │ ├── exports/ │ └── logs/ │ ├── src/ │ ├── init.py │ ├── config.py │ ├── db.py │ ├── search_strategy.py │ ├── llm_client.py │ ├── extractor.py │ ├── scoring.py │ ├── normalization.py │ ├── aggregator.py │ ├── exports.py │ ├── utils.py │ └── collectors/ │ ├── init.py │ └── pubmed.py │ └── ui/ ├── app.py └── pages/ ├── 1_Overview_Dashboard.py ├── 2_Intervention_Explorer.py └── 3_Paper_Explorer.py
+============================================================ TECHNICAL REQUIREMENTS
+Use Python.
+Use SQLite as the primary datastore.
+Do not use JSONL as the primary datastore.
+Use PubMed E-utilities for literature collection.
+Do not require a PubMed API key.
+Use GPT-4o mini through the OpenAI API.
+Read the OpenAI key from:
+OPENAI_API_KEY
+Do not hardcode API keys.
+Support optional .env loading for local testing, but .env must be included in .gitignore.
+Default LLM model:
+gpt-4o-mini
+Allow override using:
+OPENAI_MODEL
+Expected commands:
+python main.py init-db python main.py collect python main.py extract python main.py score python main.py export python main.py all
+Optional arguments:
+--max-papers --limit --force --reset --query-domain --model --dry-run
+Examples:
+python main.py all --max-papers 2000 python main.py collect --query-domain motor python main.py extract --limit 50 python main.py score python main.py export
+Launch UI:
+streamlit run ui/app.py
+============================================================ DATABASE DESIGN
+Use SQLite.
+Create tables for:
+	1	papers
+Purpose: Store raw PubMed paper metadata and abstracts.
+Fields:
+	•	pmid TEXT PRIMARY KEY
+	•	title TEXT
+	•	abstract TEXT
+	•	journal TEXT
+	•	publication_year INTEGER
+	•	publication_date TEXT
+	•	authors TEXT
+	•	mesh_terms TEXT
+	•	doi TEXT
+	•	pubmed_url TEXT
+	•	source TEXT
+	•	query_source TEXT
+	•	created_at TEXT
+	•	updated_at TEXT
+source should be “pubmed” for Version 1.
+	2	extraction_status
+Purpose: Track extraction progress and allow resume after interruption.
+Fields:
+	•	pmid TEXT PRIMARY KEY
+	•	status TEXT
+Allowed status values:
+	•	pending
+	•	extracted
+	•	failed
+	•	skipped_no_abstract
+Additional fields:
+	•	attempts INTEGER
+	•	last_error TEXT
+	•	extracted_at TEXT
+	•	updated_at TEXT
+	3	study_extractions
+Purpose: Store structured LLM extraction output.
+Fields:
+	•	id INTEGER PRIMARY KEY AUTOINCREMENT
+	•	pmid TEXT
+	•	study_type TEXT
+	•	intervention_raw TEXT
+	•	intervention_canonical TEXT
+	•	intervention_category TEXT
+	•	condition_category TEXT
+	•	stroke_type TEXT
+	•	participant_characteristics TEXT
+	•	sample_size INTEGER
+	•	time_since_stroke TEXT
+	•	stroke_phase TEXT
+	•	dosage_intensity TEXT
+	•	frequency TEXT
+	•	duration TEXT
+	•	comparator TEXT
+	•	setting TEXT
+	•	outcome_measures TEXT
+	•	outcomes TEXT
+	•	results_summary TEXT
+	•	effect_direction TEXT
+	•	limitations TEXT
+	•	adverse_events TEXT
+	•	safety_notes TEXT
+	•	applicability_notes TEXT
+	•	mechanistic_rationale TEXT
+	•	neuroplasticity_mechanisms TEXT
+	•	confidence_notes TEXT
+	•	provenance_json TEXT
+	•	raw_llm_json TEXT
+	•	created_at TEXT
+	4	scores
+Purpose: Store transparent scoring at the paper/intervention level.
+Fields:
+	•	id INTEGER PRIMARY KEY AUTOINCREMENT
+	•	pmid TEXT
+	•	intervention_canonical TEXT
+	•	intervention_category TEXT
+	•	neuroplasticity_potential REAL
+	•	clinical_evidence_strength REAL
+	•	safety_score REAL
+	•	practicality_score REAL
+	•	overall_score REAL
+	•	study_quality_tier TEXT
+	•	scoring_notes TEXT
+	•	created_at TEXT
+	5	intervention_summaries
+Purpose: Store aggregated intervention-level rankings.
+Fields:
+	•	intervention_canonical TEXT PRIMARY KEY
+	•	intervention_category TEXT
+	•	paper_count INTEGER
+	•	human_study_count INTEGER
+	•	rct_count INTEGER
+	•	systematic_review_count INTEGER
+	•	meta_analysis_count INTEGER
+	•	animal_study_count INTEGER
+	•	avg_neuroplasticity_potential REAL
+	•	avg_clinical_evidence_strength REAL
+	•	avg_safety_score REAL
+	•	avg_practicality_score REAL
+	•	avg_overall_score REAL
+	•	evidence_tier TEXT
+	•	common_outcome_measures TEXT
+	•	treatment_protocols TEXT
+	•	key_limitations TEXT
+	•	safety_summary TEXT
+	•	updated_at TEXT
+	6	query_log
+Purpose: Track PubMed searches performed.
+Fields:
+	•	id INTEGER PRIMARY KEY AUTOINCREMENT
+	•	query_domain TEXT
+	•	query_name TEXT
+	•	query_text TEXT
+	•	result_count INTEGER
+	•	run_at TEXT
+	7	pipeline_runs
+Purpose: Track runs and checkpoints.
+Fields:
+	•	id INTEGER PRIMARY KEY AUTOINCREMENT
+	•	command TEXT
+	•	started_at TEXT
+	•	finished_at TEXT
+	•	status TEXT
+	•	notes TEXT
+============================================================ CHECKPOINTING AND RESUME
+Checkpoint after every successfully processed paper.
+Collection:
+	•	Deduplicate only by exact PMID.
+	•	Do not remove papers because they study the same intervention.
+	•	Multiple papers on the same intervention are expected and desired.
+	•	Store papers as they are collected.
+	•	Insert or ignore existing PMIDs.
+	•	Create or update extraction_status for each paper.
+Extraction:
+	•	Before extracting, check extraction_status.
+	•	Skip already extracted papers unless --force is used.
+	•	Skip papers without abstracts and mark skipped_no_abstract.
+	•	If extraction succeeds, write to study_extractions immediately.
+	•	Then update extraction_status to extracted.
+	•	If extraction fails, update attempts and last_error.
+	•	A crash must not require restarting from the beginning.
+Scoring:
+	•	Scoring should be rerunnable without recollecting papers or re-extracting abstracts.
+	•	Aggregation should be rerunnable.
+============================================================ LITERATURE SOURCE: PUBMED ONLY
+Version 1 implements PubMed only.
+Use NCBI E-utilities:
+	•	esearch for PMIDs
+	•	efetch or equivalent for title, abstract, journal, authors, date, MeSH terms, DOI
+Do not require a PubMed API key.
+Support an optional NCBI_API_KEY environment variable.
+If no NCBI_API_KEY is present:
+	•	use conservative request pacing
+	•	no more than approximately 3 requests per second
+If NCBI_API_KEY is present:
+	•	allow up to approximately 10 requests per second
+Implement retries for temporary network/API failures.
+Do not fabricate PMIDs, titles, abstracts, DOIs, or PubMed links.
+PubMed URL format:
+https://pubmed.ncbi.nlm.nih.gov/{pmid}/
+============================================================ SEARCH STRATEGY
+Do not use simplistic keyword-only searches.
+Construct proper PubMed queries using:
+	•	Boolean logic
+	•	OR groups
+	•	AND groups
+	•	MeSH terms where appropriate
+	•	Title/abstract searches where appropriate
+The goal is broad rehabilitation and neuroplasticity coverage, not only traditional stroke rehabilitation papers.
+Target approximately 2,000 unique retrieved papers after exact PMID deduplication.
+Make max papers configurable in src/config.py.
+Default:
+MAX_PAPERS = 2000
+The search strategy should be organized by query domains.
+Create src/search_strategy.py.
+Each query domain should include:
+	•	domain key
+	•	domain name
+	•	query text
+	•	intended topic coverage
+Use broad but structured PubMed queries.
+Include at minimum these domains:
+	1	Core stroke rehabilitation
+Topics:
+	•	ischemic stroke
+	•	hemorrhagic stroke
+	•	intracerebral hemorrhage
+	•	stroke rehabilitation
+	•	neurorehabilitation
+	•	neuroplasticity
+Example style:
+( "Stroke"[Mesh] OR stroke[Title/Abstract] OR ischemic stroke[Title/Abstract] OR haemorrhagic stroke[Title/Abstract] OR hemorrhagic stroke[Title/Abstract] OR intracerebral hemorrhage[Title/Abstract] OR intracerebral haemorrhage[Title/Abstract] ) AND ( "Rehabilitation"[Mesh] OR rehabilitation[Title/Abstract] OR neurorehabilitation[Title/Abstract] OR recovery[Title/Abstract] OR neuroplasticity[Title/Abstract] OR plasticity[Title/Abstract] )
+	2	Motor recovery
+Topics:
+	•	motor learning
+	•	task-specific training
+	•	repetitive task practice
+	•	gait training
+	•	balance training
+	•	upper limb rehabilitation
+	•	lower limb rehabilitation
+	•	physical therapy
+	•	occupational therapy
+	3	Constraint-induced movement therapy and task practice
+Topics:
+	•	CIMT
+	•	constraint-induced movement therapy
+	•	modified CIMT
+	•	forced use therapy
+	•	repetitive task practice
+	4	Mirror therapy, motor imagery, and action observation
+Topics:
+	•	mirror therapy
+	•	motor imagery
+	•	action observation therapy
+	•	mental practice
+	•	sensorimotor imagery
+	5	Robotics and exoskeletons
+Topics:
+	•	robotic therapy
+	•	robot-assisted therapy
+	•	exoskeleton
+	•	gait robot
+	•	upper limb robot
+	6	Virtual reality and exergaming
+Topics:
+	•	virtual reality
+	•	VR rehabilitation
+	•	exergaming
+	•	serious games
+	•	augmented reality
+	7	Electrical stimulation and neuromodulation
+Topics:
+	•	functional electrical stimulation
+	•	FES
+	•	neuromuscular electrical stimulation
+	•	NMES
+	•	transcranial magnetic stimulation
+	•	TMS
+	•	repetitive TMS
+	•	rTMS
+	•	transcranial direct current stimulation
+	•	tDCS
+	8	Exercise and conditioning
+Topics:
+	•	aerobic exercise
+	•	resistance exercise
+	•	resistance training
+	•	strength training
+	•	treadmill training
+	•	high-intensity interval training
+	•	HIIT
+	•	cardiorespiratory fitness
+	9	Speech, aphasia, cognition, and neglect
+Topics:
+	•	speech therapy
+	•	aphasia therapy
+	•	language rehabilitation
+	•	cognitive rehabilitation
+	•	memory rehabilitation
+	•	attention training
+	•	executive function
+	•	neglect rehabilitation
+	10	Mind-body and behavioral interventions
+Topics:
+	•	yoga
+	•	tai chi
+	•	meditation
+	•	mindfulness
+	•	music therapy
+	•	dance therapy
+	•	depression
+	•	motivation
+	11	Sleep, circadian rhythm, nutrition, and systemic factors
+Topics:
+	•	sleep
+	•	sleep apnea
+	•	circadian rhythm
+	•	nutrition
+	•	protein intake
+	•	vitamin D
+	•	omega-3
+	•	creatine
+	•	inflammation
+	•	gut microbiome
+	•	blood pressure
+	12	Caregiver and home rehabilitation
+Topics:
+	•	caregiver training
+	•	home-based rehabilitation
+	•	telerehabilitation
+	•	community rehabilitation
+	•	outpatient rehabilitation
+	•	intensive rehabilitation
+Each query should include a stroke/acquired brain injury concept AND a domain-specific rehab/recovery concept.
+The system should log every query in query_log.
+============================================================ LLM EXTRACTION
+Use GPT-4o mini.
+Create src/llm_client.py.
+Requirements:
+	•	Initialize the OpenAI client using OPENAI_API_KEY.
+	•	Show a clear error if OPENAI_API_KEY is missing.
+	•	Do not expose API keys in logs.
+	•	Use retry with exponential backoff for temporary failures.
+	•	Keep cost low.
+	•	Do not perform multiple LLM passes on every paper.
+Extraction process:
+	1	Extract once.
+	2	Validate JSON locally.
+	3	If JSON validates, save immediately.
+	4	If JSON fails validation, run one repair prompt for that paper only.
+	5	If repair fails, mark paper as failed.
+Use strict JSON output.
+Do not infer details not present in the abstract.
+If not stated, use:
+	•	unknown
+	•	null
+	•	empty list
+Do not treat animal or mechanistic evidence as human clinical proof.
+Do not force an abstract into a rehab intervention if it is actually about diagnosis, epidemiology, biomarkers, or protocol design.
+============================================================ EXTRACTION SCHEMA
+The LLM should return JSON matching this schema:
+{ "study_type": "meta_analysis | systematic_review | randomized_controlled_trial | cohort_study | case_control_study | case_series | case_report | animal_study | mechanistic_study | feasibility_study | pilot_study | narrative_review | protocol | diagnostic_biomarker | epidemiology | qualitative | mixed_methods | unknown",
+"intervention": "specific intervention name or unknown",
+"intervention_category": "motor_rehab | speech_language | cognitive_rehab | neuromodulation | robotics | virtual_reality | electrical_stimulation | exercise | mind_body | nutrition_sleep_systemic | caregiver_home | pharmacologic | diagnostic_biomarker | other | unknown",
+"condition_category": "ischemic_stroke | hemorrhagic_stroke | intracerebral_hemorrhage | subarachnoid_hemorrhage | traumatic_brain_injury | acquired_brain_injury | mixed_stroke | mixed_neurological | healthy_controls | not_applicable | unknown",
+"stroke_type": "ischemic | hemorrhagic | intracerebral_hemorrhage | subarachnoid_hemorrhage | mixed | not_stroke | unknown",
+"participant_characteristics": "age, severity, impairment type, inclusion details if available",
+"sample_size": integer or null,
+"time_since_stroke": "acute/subacute/chronic timing or exact timing if available",
+"stroke_phase": "acute | subacute | chronic | mixed | unknown",
+"dosage_intensity": "dose or intensity if stated",
+"frequency": "frequency if stated",
+"duration": "intervention duration if stated",
+"comparator": "usual care | sham | active control | waitlist | none | unknown",
+"setting": "inpatient | outpatient | home | community | laboratory | mixed | unknown",
+"outcome_measures": ["Fugl-Meyer Assessment", "Berg Balance Scale", "6MWT", "10MWT", "mRS", "FIM", "ARAT", "NIHSS", "MoCA", "aphasia measure", "quality of life", "other"],
+"outcomes": ["short list of outcomes studied"],
+"results_summary": "concise summary of reported results",
+"effect_direction": "positive | negative | mixed | no_effect | unclear",
+"limitations": ["limitations mentioned or inferable only if explicitly stated"],
+"adverse_events": "reported adverse events or unknown",
+"safety_notes": "safety concerns, contraindications, tolerability, or unknown",
+"applicability_notes": "which patients/settings this evidence may apply to, based only on abstract",
+"mechanistic_rationale": "rehabilitation/neuroplasticity rationale stated or implied by abstract; use unknown if not present",
+"neuroplasticity_mechanisms": ["use_dependent_plasticity", "motor_learning", "cortical_reorganization", "interhemispheric_balance", "sensorimotor_integration", "BDNF_or_neurotrophic_signaling", "cardiovascular_fitness", "sleep_memory_consolidation", "inflammation_modulation", "attention_salience_motivation", "unknown"],
+"confidence_notes": "brief explanation of extraction confidence",
+"provenance": { "sample_size": { "value": integer or null, "supporting_sentence": "exact sentence or unknown" }, "intervention": { "value": "string", "supporting_sentence": "exact sentence or unknown" }, "outcome_measures": { "value": ["list"], "supporting_sentence": "exact sentence or unknown" }, "results": { "value": "string", "supporting_sentence": "exact sentence or unknown" }, "adverse_events": { "value": "string", "supporting_sentence": "exact sentence or unknown" } } }
+Provenance requirement:
+Every extracted field should include supporting evidence from the abstract whenever practical.
+At minimum, provenance must be included for:
+	•	sample_size
+	•	intervention
+	•	outcome_measures
+	•	results
+	•	adverse_events
+The provenance is for auditing and confidence. It does not need to be displayed in every UI table, but it should be stored in provenance_json.
+============================================================ INTERVENTION NORMALIZATION
+Do not rely exclusively on the LLM for intervention normalization.
+Use a hybrid approach:
+	1	LLM extracts the raw intervention name.
+	2	Python normalizes it using a configurable synonym dictionary.
+	3	Unknown interventions remain unchanged.
+Create src/normalization.py.
+Include a small configurable dictionary.
+Examples:
+	•	CIMT
+	•	constraint-induced movement therapy
+	•	constraint induced movement therapy
+	•	modified CIMT
+	•	mCIMT
+Map appropriately to canonical names such as:
+Constraint-Induced Movement Therapy
+Other examples:
+	•	FES
+	•	functional electrical stimulation
+Canonical:
+Functional Electrical Stimulation
+	•	NMES
+	•	neuromuscular electrical stimulation
+Canonical:
+Neuromuscular Electrical Stimulation
+	•	tDCS
+	•	transcranial direct current stimulation
+Canonical:
+Transcranial Direct Current Stimulation
+	•	rTMS
+	•	repetitive transcranial magnetic stimulation
+	•	TMS
+Canonical names should be consistent, but do not over-normalize if the intervention is meaningfully different.
+	•	virtual reality
+	•	VR rehabilitation
+Canonical:
+Virtual Reality Rehabilitation
+	•	mirror therapy
+Canonical:
+Mirror Therapy
+	•	motor imagery
+	•	mental practice
+Canonical:
+Motor Imagery / Mental Practice
+	•	robot-assisted therapy
+	•	robotic therapy
+Canonical:
+Robot-Assisted Rehabilitation
+	•	aerobic exercise
+	•	aerobic training
+Canonical:
+Aerobic Exercise
+	•	resistance exercise
+	•	resistance training
+	•	strength training
+Canonical:
+Resistance Training
+	•	yoga
+Canonical:
+Yoga
+	•	tai chi
+	•	tai chi chuan
+Canonical:
+Tai Chi
+If no match is found, return the cleaned raw intervention name.
+Do not force unknown interventions into incorrect categories.
+============================================================ SCORING
+Create src/scoring.py.
+Keep scoring transparent and configurable.
+Do not create opaque hardcoded scoring logic.
+Use components:
+	1	Neuroplasticity Potential
+Meaning: How strongly the intervention appears to engage plausible recovery mechanisms.
+Consider:
+	•	repetition
+	•	intensity
+	•	task specificity
+	•	salience/motivation
+	•	motor learning
+	•	sensory feedback
+	•	cortical reorganization
+	•	interhemispheric balance
+	•	cardiovascular fitness
+	•	sleep consolidation
+	•	inflammation modulation
+	2	Clinical Evidence Strength
+Meaning: Strength of human clinical evidence.
+Consider study type:
+	•	Meta-analysis
+	•	Systematic Review
+	•	Randomized Controlled Trial
+	•	Cohort Study
+	•	Case Series
+	•	Case Report
+	•	Animal Study
+	•	Narrative Review
+Suggested direction:
+	•	meta-analysis/systematic review of human clinical studies: high
+	•	RCT: high
+	•	controlled cohort: moderate
+	•	pilot/feasibility: low to moderate
+	•	case series/case report: low
+	•	animal/mechanistic only: low clinical evidence
+	•	narrative review: moderate or low depending on content
+	•	protocol only: very low
+	3	Safety
+Meaning: How safe/tolerable the intervention appears based on reported adverse events and general intervention type.
+If safety is not reported, use a cautious middle score and note uncertainty.
+	4	Practicality
+Meaning: How feasible the intervention may be in real-world rehab/home/outpatient settings.
+Consider:
+	•	equipment burden
+	•	specialist supervision
+	•	cost
+	•	training requirements
+	•	home feasibility
+	•	caregiver burden
+Overall score:
+Use configurable weights in src/config.py.
+Default weights:
+	•	neuroplasticity_potential: 0.40
+	•	clinical_evidence_strength: 0.35
+	•	safety_score: 0.15
+	•	practicality_score: 0.10
+Neuroplasticity should remain the dominant weighting, but all weights must be configurable.
+Store all component scores and scoring notes.
+Evidence tiers:
+Assign intervention-level evidence tiers during aggregation:
+	•	Strong clinical evidence
+	•	Moderate clinical evidence
+	•	Emerging evidence
+	•	Mechanistic/preclinical only
+	•	Insufficient evidence
+	•	Conflicting evidence
+Do not present the score as proof.
+UI should show that scoring is a research synthesis aid, not medical truth.
+============================================================ STUDY QUALITY
+The system must identify and display study type whenever possible.
+Study type examples:
+	•	Meta-analysis
+	•	Systematic Review
+	•	Randomized Controlled Trial
+	•	Cohort Study
+	•	Case Series
+	•	Case Report
+	•	Animal Study
+	•	Narrative Review
+	•	Protocol
+	•	Unknown
+The UI must show study type because evidence quality varies significantly even within PubMed.
+============================================================ AGGREGATION
+Create src/aggregator.py.
+Group studies by intervention_canonical.
+For each intervention, compute:
+	•	paper_count
+	•	human_study_count
+	•	rct_count
+	•	systematic_review_count
+	•	meta_analysis_count
+	•	animal_study_count
+	•	avg_neuroplasticity_potential
+	•	avg_clinical_evidence_strength
+	•	avg_safety_score
+	•	avg_practicality_score
+	•	avg_overall_score
+	•	evidence_tier
+	•	common_outcome_measures
+	•	treatment_protocols
+	•	key_limitations
+	•	safety_summary
+Aggregation must be rerunnable.
+Do not rerun LLM extraction during aggregation.
+============================================================ CSV EXPORT
+Create src/exports.py.
+Export CSV files to:
+data/exports/
+Include:
+	•	papers.csv
+	•	extractions.csv
+	•	interventions.csv
+	•	scores.csv
+No Markdown report generation is needed.
+============================================================ STREAMLIT UI
+Keep the UI simple and useful.
+Build a multipage Streamlit app with exactly these pages for Version 1:
+	1	Overview Dashboard
+	2	Intervention Explorer
+	3	Paper Explorer
+Use SQLite directly.
+Do not require rerunning the pipeline to use the UI.
+All PubMed links must be clickable.
+Show clinical caution clearly but do not make the UI cluttered.
+
+Page 1: Overview Dashboard
+Purpose: Answer what the evidence atlas has found overall.
+Display:
+KPI cards:
+	•	total papers collected
+	•	papers extracted
+	•	interventions identified
+	•	RCT count
+	•	systematic review/meta-analysis count
+Main table:
+Ranked interventions with columns:
+	•	intervention
+	•	intervention category
+	•	evidence tier
+	•	paper count
+	•	average overall score
+	•	neuroplasticity potential
+	•	clinical evidence strength
+	•	safety
+	•	practicality
+Filters:
+	•	intervention category
+	•	evidence tier
+	•	stroke type
+	•	study type
+	•	stroke phase
+Charts:
+	•	overall score by intervention
+	•	intervention category distribution
+	•	evidence tier distribution
+
+Page 2: Intervention Explorer
+Purpose: Allow detailed review of one intervention.
+Display:
+Selectbox:
+	•	intervention_canonical
+Intervention summary:
+	•	intervention name
+	•	category
+	•	evidence tier
+	•	paper count
+	•	human study count
+	•	RCT count
+	•	systematic review/meta-analysis count
+	•	average overall score
+	•	score component breakdown
+Show:
+	•	intervention summary
+	•	scores
+	•	supporting studies
+	•	treatment protocols when available
+	•	dosage/intensity/frequency/duration when available
+	•	outcome measures
+	•	limitations
+	•	adverse events/safety notes
+	•	applicability notes
+Supporting studies table:
+Columns:
+	•	PMID
+	•	title
+	•	year
+	•	study type
+	•	sample size
+	•	stroke type
+	•	phase
+	•	outcome measures
+	•	effect direction
+	•	PubMed URL
+PubMed URLs must be clickable.
+
+Page 3: Paper Explorer
+Purpose: Allow searching and auditing individual papers.
+Display:
+Search and filters:
+	•	keyword search
+	•	year
+	•	study type
+	•	intervention
+	•	stroke type
+	•	phase
+	•	effect direction
+Paper table:
+Columns:
+	•	PMID
+	•	title
+	•	journal
+	•	year
+	•	study type
+	•	intervention_canonical
+	•	sample size
+	•	effect direction
+	•	PubMed URL
+Expandable paper details:
+	•	abstract
+	•	extracted structured fields
+	•	provenance/supporting sentences
+	•	scores
+	•	limitations
+	•	adverse events
+PubMed URLs must be clickable.
+============================================================ README REQUIREMENTS
+Create a detailed README.md explaining:
+	1	What the project does
+	2	What it does not do
+	3	Version 1 scope
+	4	Install instructions
+	5	API key setup
+	6	How to run collection
+	7	How to run extraction
+	8	How to run scoring
+	9	How to run all steps
+	10	How to launch Streamlit
+	11	How resume/checkpointing works
+	12	How scoring works
+	13	How intervention normalization works
+	14	How to export CSVs
+	15	Limitations and medical caution
+	16	Future expansion ideas that are not implemented in V1
+Include setup:
+python -m venv .venv
+Mac/Linux:
+source .venv/bin/activate
+Windows:
+.venv\Scripts\activate
+Install:
+pip install -r requirements.txt
+Set OpenAI key:
+Mac/Linux:
+export OPENAI_API_KEY="your_key_here"
+Windows PowerShell:
+setx OPENAI_API_KEY "your_key_here"
+Run small test:
+python main.py collect --max-papers 25 python main.py extract --limit 5 python main.py score python main.py export
+Run full pipeline:
+python main.py all --max-papers 2000
+Launch UI:
+streamlit run ui/app.py
+============================================================ REQUIREMENTS.TXT
+Include:
+openai requests pandas streamlit plotly python-dotenv tqdm pydantic tenacity
+Use only standard Python libraries otherwise when reasonable.
+============================================================ CODING STANDARDS
+Write clean, readable, modular code.
+Use:
+	•	docstrings
+	•	type hints where reasonable
+	•	pathlib
+	•	logging
+	•	parameterized SQL queries
+	•	small focused functions
+	•	defensive error handling
+	•	ISO timestamps
+	•	idempotent database initialization
+Avoid:
+	•	giant scripts
+	•	unnecessary classes
+	•	hidden global state
+	•	hardcoded secrets
+	•	silent failures
+	•	complex framework patterns
+============================================================ SAFETY AND QUALITY RULES
+Do not fabricate citations.
+Do not fabricate PubMed IDs.
+Do not fabricate study details.
+Do not infer details not present in the abstract.
+If the abstract does not state something, store unknown/null.
+Separate evidence from interpretation.
+Preserve uncertainty.
+Do not present scores as medical truth.
+Do not present animal/mechanistic evidence as clinical proof.
+Do not turn the output into patient-specific medical advice.
+Make scoring weights configurable.
+Make extraction rerunnable only when explicitly forced.
+Make scoring rerunnable without LLM calls.
+Make aggregation rerunnable without LLM calls.
+Make UI usable without rerunning the pipeline.
+============================================================ DELIVERABLE
+Generate the complete working project in the current directory.
+After generating files, provide:
+	1	Exact install commands
+	2	Exact API key setup commands
+	3	Exact command to run a small test
+	4	Exact command to run the full pipeline
+	5	Exact command to launch Streamlit
+Build Version 1 only.

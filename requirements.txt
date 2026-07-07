@@ -1,0 +1,9 @@
+openai
+requests
+pandas
+streamlit
+plotly
+python-dotenv
+tqdm
+pydantic
+tenacity
