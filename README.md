@@ -1,236 +1,184 @@
 # Stroke Evidence Atlas
 
-Stroke Evidence Atlas is a local research synthesis engine for stroke rehabilitation, brain injury recovery, and neuroplasticity evidence. Version 1 collects PubMed abstracts, extracts structured rehabilitation evidence with GPT-4o mini, stores results in SQLite, scores interventions with a transparent configurable framework, exports CSVs, and provides a simple Streamlit dashboard.
+AI-assisted evidence mapping for stroke recovery, neurorehabilitation, and neuroplasticity research.
 
-This project summarizes research literature only. It is not medical advice, a treatment plan, or a replacement for clinicians.
+Stroke Evidence Atlas is a local research synthesis dashboard that collects PubMed literature, extracts structured study information from abstracts, groups papers into recovery and intervention families, scores evidence signals, and presents the results in an interactive Streamlit app. It is designed for research exploration and evidence mapping, not medical advice.
 
-## What It Does
+## Why This Project Exists
 
-- Collects PubMed papers using NCBI E-utilities.
-- Stores paper metadata, abstracts, extraction status, structured extractions, scores, and intervention summaries in SQLite.
-- Extracts structured evidence from abstracts using the OpenAI API.
-- Validates JSON locally and runs one repair prompt only when validation fails.
-- Normalizes intervention names with a configurable Python synonym dictionary.
-- Scores interventions using configurable, transparent component weights.
-- Aggregates intervention-level summaries.
-- Exports CSV files.
-- Provides a multipage Streamlit dashboard.
+Stroke recovery research is spread across many domains: physical rehabilitation, occupational therapy, speech/language therapy, cognitive rehabilitation, robotics, electrical stimulation, noninvasive brain stimulation, exercise, sleep, nutrition, mood, caregiver training, neuroplasticity mechanisms, and biomarkers.
 
-## What It Does Not Do
+A normal PubMed search returns papers, but it does not organize them into a usable recovery map. Stroke Evidence Atlas turns scattered abstracts into a structured, searchable evidence landscape.
 
-Version 1 does not implement Semantic Scholar, Crossref, ClinicalTrials.gov, vector search, a knowledge graph, a chatbot, trend dashboards, caregiver AI assistance, Markdown report generation, full-text PDF parsing, or patient-specific treatment planning.
+## What the Application Does
 
-## Version 1 Scope
+- Collects PubMed papers using structured search queries
+- Stores raw paper metadata and abstracts in SQLite
+- Uses GPT-4o mini to extract structured evidence from abstracts
+- Normalizes intervention and recovery-domain names
+- Groups papers into evidence families
+- Scores evidence using transparent components
+- Displays intervention summaries, supporting studies, and paper-level details
+- Links every paper back to PubMed
 
-Implemented:
+## System Workflow
 
-- PubMed collection only
-- SQLite database
-- GPT-4o mini abstract extraction
-- Local JSON validation
-- Repair prompt only when JSON validation fails
-- Intervention normalization
-- Transparent scoring
-- CSV exports
-- Streamlit pages for overview, interventions, and papers
+```text
+PubMed Search Queries
+        ↓
+Paper Collection
+        ↓
+SQLite Database
+        ↓
+LLM Abstract Extraction
+        ↓
+Intervention / Recovery Family Normalization
+        ↓
+Evidence Scoring
+        ↓
+Intervention Aggregation
+        ↓
+Streamlit Evidence Dashboard
+```
 
-Future collectors can be added under `src/collectors/`, but only PubMed is implemented in V1.
+PubMed collection gathers paper metadata and abstracts, then stores them locally. The extraction layer sends title and abstract text to the LLM and validates structured JSON output before saving it.
 
-## Install
+Normalization groups similar paper-level labels into broader recovery families. Scoring and aggregation then summarize evidence strength, neuroplasticity relevance, safety, practicality, and supporting papers for dashboard review.
+
+## Architecture Overview
+
+```text
+stroke-evidence-atlas/
+├── main.py
+├── src/
+│   ├── collectors/
+│   ├── extractor.py
+│   ├── scoring.py
+│   ├── aggregator.py
+│   ├── normalization.py
+│   └── db.py
+├── ui/
+│   ├── app.py
+│   └── pages/
+└── data/
+    └── stroke_evidence.db
+```
+
+`main.py` controls the pipeline commands. `src/collectors/pubmed.py` handles PubMed collection, `extractor.py` manages LLM extraction, `normalization.py` standardizes intervention and recovery-family names, `scoring.py` creates evidence scores, and `aggregator.py` builds intervention-level summaries. The `ui/` folder contains the Streamlit dashboard, while SQLite is the local source of truth.
+
+## Database Design
+
+The app uses SQLite as its primary datastore.
+
+- `papers`: raw PubMed metadata, abstracts, journal information, and links
+- `extraction_status`: processing state for each paper, including extracted, pending, failed, or skipped
+- `study_extractions`: structured fields extracted from each abstract
+- `scores`: paper-level evidence scores and scoring notes
+- `intervention_summaries`: aggregated family-level evidence summaries
+- `query_log`: search query metadata and collection history
+
+Database screenshots from DBeaver can be added here.
+
+## Database Screenshots
+
+_Add DBeaver schema screenshots here._
+
+## LLM Extraction Logic
+
+The system sends PubMed title and abstract text to GPT-4o mini and asks for structured JSON. It extracts fields such as study type, intervention or recovery family, stroke type, sample size, timing after stroke, dosage or intensity when available, outcome measures, results summary, limitations, adverse events, safety notes, and neuroplasticity mechanisms.
+
+The system uses abstracts only. It does not read PDFs or full-text articles, and it is instructed not to invent details that are not present in the abstract. Missing fields may be marked as `not reported in abstract`, `not applicable`, or `unknown`.
+
+## Evidence Scoring and Intervention Aggregation
+
+Scores are exploratory research signals, not medical truth scores. Each paper receives component scores for:
+
+- Neuroplasticity Potential
+- Clinical Evidence Strength
+- Safety
+- Practicality
+
+Paper-level extractions are grouped into intervention or recovery families such as Constraint-Induced Movement Therapy, Vagus Nerve Stimulation, Robotics / Assistive Technology, Exercise / Physical Conditioning, Sleep / Circadian Recovery, Nutrition / Metabolic Support, Cognitive Rehabilitation, and Speech / Language / Aphasia Rehabilitation.
+
+The dashboard then shows paper counts, study types, evidence tiers, scores, protocols, outcomes, limitations, and supporting PubMed studies.
+
+## Streamlit Dashboard
+
+The app has three main views:
+
+**Home / Overview**
+- Shows high-level paper, extraction, intervention-family, RCT, and review counts
+- Ranks intervention families by average overall score
+- Provides filters for evidence category, tier, stroke type, study type, and phase
+
+**Intervention Explorer**
+- Lets users select an intervention or recovery family
+- Shows paper counts, human studies, RCTs, review counts, and score components
+- Lists supporting studies, extracted protocols, outcomes, limitations, and safety details
+
+**Paper Explorer**
+- Provides paper-level audit views for individual PubMed records
+- Shows abstracts, conclusions when available, structured extracted fields, provenance, and scores
+- Links each record back to PubMed
+
+## Example Use Case
+
+A user interested in Vagus Nerve Stimulation can select that family in the Intervention Explorer and review paper count, human studies, RCT count, systematic review/meta-analysis count, average evidence scores, extracted paper-level names, common outcome measures, treatment protocols when reported, safety notes, and supporting PubMed papers.
+
+## Screenshots
+
+### Overview Dashboard
+
+_Add screenshot here._
+
+### Intervention Explorer
+
+_Add screenshot here._
+
+### Paper Explorer
+
+_Add screenshot here._
+
+## How to Run Locally
+
+GPT extraction requires an OpenAI API key.
 
 ```bash
 python -m venv .venv
-```
-
-Mac/Linux:
-
-```bash
 source .venv/bin/activate
-```
-
-Windows:
-
-```powershell
-.venv\Scripts\activate
-```
-
-Install dependencies:
-
-```bash
 pip install -r requirements.txt
-```
-
-## API Key Setup
-
-OpenAI extraction requires `OPENAI_API_KEY`. Do not hardcode keys in the project.
-
-Mac/Linux:
-
-```bash
 export OPENAI_API_KEY="your_key_here"
-```
-
-Verify this terminal can see the key without printing it:
-
-```bash
-python -c "import os; print('OPENAI_API_KEY visible:', bool(os.getenv('OPENAI_API_KEY')))"
-```
-
-Windows PowerShell:
-
-```powershell
-setx OPENAI_API_KEY "your_key_here"
-```
-
-Optional local `.env` files are supported and ignored by git:
-
-```bash
-OPENAI_API_KEY=your_key_here
-OPENAI_MODEL=gpt-4o-mini
-NCBI_API_KEY=optional_ncbi_key
-```
-
-## Commands
-
-Initialize the database:
-
-```bash
-python main.py init-db
-```
-
-Reset the database:
-
-```bash
-python main.py init-db --reset
-```
-
-Collect PubMed papers:
-
-```bash
 python main.py collect --max-papers 2000
-```
-
-Collect one query domain:
-
-```bash
-python main.py collect --query-domain motor
-```
-
-Extract structured evidence:
-
-```bash
-python main.py extract --limit 50
-```
-
-Force re-extraction:
-
-```bash
-python main.py extract --limit 50 --force
-```
-
-Score and aggregate:
-
-```bash
+python main.py extract
 python main.py score
-```
-
-Export CSVs:
-
-```bash
-python main.py export
-```
-
-Run all steps:
-
-```bash
-python main.py all --max-papers 2000
-```
-
-Launch Streamlit:
-
-```bash
 streamlit run ui/app.py
 ```
 
-## Small Test
+On Windows:
 
-```bash
-python main.py init-db
-python main.py collect --max-papers 25
-python main.py extract --limit 5
-python main.py score
-python main.py export
+```powershell
+.venv\Scripts\activate
+setx OPENAI_API_KEY "your_key_here"
 ```
 
-## Full Pipeline
-
-```bash
-python main.py all --max-papers 2000
-```
-
-## Resume and Checkpointing
-
-Collection inserts papers as they are fetched and deduplicates only by exact PMID. Existing PMIDs are ignored rather than deleted. Each collected paper receives an `extraction_status` row.
-
-Extraction checks `extraction_status` before processing. Already extracted papers are skipped unless `--force` is used. Papers without abstracts are marked `skipped_no_abstract`. Successful extractions are written immediately before status is updated to `extracted`. Failures increment attempts and store the last error. A crash does not require restarting from the beginning.
-
-Scoring and aggregation are rerunnable without recollecting papers or rerunning LLM extraction.
-
-## Scoring
-
-Scores are research synthesis aids, not proof. Component scores use a 0-100 scale:
-
-- `neuroplasticity_potential`: plausible recovery mechanism engagement
-- `clinical_evidence_strength`: human clinical evidence strength
-- `safety_score`: safety/tolerability signal and uncertainty
-- `practicality_score`: real-world feasibility
-
-Default weights in `src/config.py`:
-
-- neuroplasticity potential: 0.40
-- clinical evidence strength: 0.35
-- safety: 0.15
-- practicality: 0.10
-
-Intervention-level evidence tiers are assigned during aggregation and distinguish strong, moderate, emerging, conflicting, insufficient, and mechanistic/preclinical evidence.
-
-## Intervention Normalization and Families
-
-The LLM extracts a raw intervention name. Python then normalizes that name with `src/normalization.py`. Examples include CIMT to `Constraint-Induced Movement Therapy`, FES to `Functional Electrical Stimulation`, tDCS to `Transcranial Direct Current Stimulation`, and VR rehabilitation to `Virtual Reality Rehabilitation`.
-
-Unknown or unmatched interventions remain as cleaned raw names. The system avoids forcing interventions into incorrect categories.
-
-The dashboard also derives a broader `intervention_family` for user-facing browsing. This keeps paper-level extracted names available for audit while grouping similar papers into clearer families such as `Brain-Computer Interface Rehabilitation`, `Speech and Language Therapy`, or `Exercise and Fitness Training`. Papers without a specific extractable intervention are grouped into `Unspecified / not intervention-specific` rather than treated as a real intervention.
-
-## CSV Exports
-
-CSV files are written to `data/exports/`:
-
-- `papers.csv`
-- `extractions.csv`
-- `interventions.csv`
-- `scores.csv`
-
-Run:
+CSV exports can be generated with:
 
 ```bash
 python main.py export
 ```
 
-## Limitations and Clinical Caution
+## Limitations
 
-The atlas depends on PubMed abstracts and structured extraction from those abstracts. It does not read full-text PDFs in Version 1. Abstracts may omit details about dosage, adverse events, patient characteristics, or results. LLM extraction may be imperfect, so provenance and paper-level audit views are included.
+Stroke Evidence Atlas uses abstract-only extraction, so it can miss details found in full papers. LLM extraction may make mistakes, which is why PubMed links and paper-level audit views are included for verification.
 
-Do not use this project to generate patient-specific medical advice. It may summarize evidence, compare interventions, show uncertainty, and identify research gaps. It must distinguish clinical evidence from mechanistic, animal, weak, or emerging evidence.
+Scores are exploratory evidence signals, not clinical recommendations. The app does not provide medical advice, and the search strategy, normalization dictionary, and extraction rules can be improved over time.
 
-## Future Expansion Ideas Not Implemented in V1
+## Tech Stack
 
-- Semantic Scholar collector
-- Crossref collector
-- ClinicalTrials.gov collector
-- Full-text PDF parsing
-- Trend dashboards
-- Vector search
-- Knowledge graph
-- Report generation
-- Patient/caregiver assistant
+- Python
+- SQLite
+- PubMed E-utilities
+- OpenAI GPT-4o mini
+- Streamlit
+- pandas
+- Plotly
