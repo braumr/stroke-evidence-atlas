@@ -8,7 +8,7 @@ from typing import Any
 from .aggregator import aggregate_interventions
 from .config import SCORING_WEIGHTS
 from .db import get_connection, init_db
-from .normalization import intervention_family
+from .normalization import intervention_family, recovery_group
 from .utils import clean_text, setup_logging, utc_now
 
 LOGGER = setup_logging(__name__)
@@ -36,21 +36,17 @@ STUDY_TYPE_SCORES = {
 }
 
 CATEGORY_PRACTICALITY = {
-    "caregiver_home": 82,
-    "mind_body": 78,
-    "exercise": 72,
-    "motor_rehab": 68,
-    "speech_language": 62,
-    "cognitive_rehab": 60,
-    "electrical_stimulation": 48,
-    "virtual_reality": 45,
-    "neuromodulation": 38,
-    "robotics": 32,
-    "nutrition_sleep_systemic": 65,
-    "pharmacologic": 45,
-    "diagnostic_biomarker": 25,
-    "other": 45,
-    "unknown": 40,
+    "Family and Home Support": 82,
+    "Lifestyle and Daily Health": 76,
+    "Physical Rehabilitation": 70,
+    "Cognition and Communication": 62,
+    "Rehabilitation Technology": 42,
+    "Brain and Nerve Stimulation": 40,
+    "Medical and Biological Recovery": 42,
+    "Testing and Prediction": 30,
+    "Recovery Science": 25,
+    "General Rehabilitation": 58,
+    "Other": 40,
 }
 
 
@@ -168,10 +164,10 @@ def score_safety(row: dict[str, Any]) -> tuple[float, list[str]]:
     if any(term in text for term in ["serious adverse", "adverse event", "dropout", "pain", "seizure"]):
         score -= 18
         notes.append("abstract mentions adverse events or tolerability concerns")
-    if category in {"neuromodulation", "electrical_stimulation", "pharmacologic"}:
+    if category in {"Brain and Nerve Stimulation", "Medical and Biological Recovery"}:
         score -= 5
         notes.append("requires contraindication/screening awareness")
-    if category in {"mind_body", "caregiver_home", "exercise"}:
+    if category in {"Lifestyle and Daily Health", "Family and Home Support", "Physical Rehabilitation"}:
         score += 5
         notes.append("generally practical safety profile, still patient-specific")
 
@@ -253,20 +249,29 @@ def score_extractions() -> int:
         ]
         conn.execute("DELETE FROM scores")
         for row in rows:
+            evidence_text = " ".join(
+                clean_text(row.get(field))
+                for field in ["title", "abstract", "results_summary", "mechanistic_rationale"]
+            )
             family = intervention_family(
                 row.get("intervention_raw"),
                 row.get("intervention_canonical"),
                 row.get("intervention_category"),
-                " ".join(
-                    clean_text(row.get(field))
-                    for field in ["title", "abstract", "results_summary", "mechanistic_rationale"]
-                ),
+                evidence_text,
+            )
+            group = recovery_group(
+                row.get("intervention_raw"),
+                row.get("intervention_canonical"),
+                family,
+                row.get("intervention_category"),
+                evidence_text,
             )
             conn.execute(
-                "UPDATE study_extractions SET intervention_family = ? WHERE id = ?",
-                (family, row["id"]),
+                "UPDATE study_extractions SET intervention_family = ?, intervention_category = ? WHERE id = ?",
+                (family, group, row["id"]),
             )
             row["intervention_family"] = family
+            row["intervention_category"] = group
             scored = score_row(row)
             conn.execute(
                 """

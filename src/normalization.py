@@ -102,6 +102,261 @@ NON_SPECIFIC_VALUES = {
     "none",
 }
 
+RECOVERY_GROUPS = (
+    "Physical Rehabilitation",
+    "Cognition and Communication",
+    "Rehabilitation Technology",
+    "Brain and Nerve Stimulation",
+    "Lifestyle and Daily Health",
+    "Medical and Biological Recovery",
+    "Family and Home Support",
+    "Testing and Prediction",
+    "Recovery Science",
+    "General Rehabilitation",
+    "Other",
+)
+
+RECOVERY_GROUP_ALIASES = {
+    "motor_rehab": "Physical Rehabilitation",
+    "speech_language": "Cognition and Communication",
+    "cognitive_rehab": "Cognition and Communication",
+    "neuromodulation": "Brain and Nerve Stimulation",
+    "robotics": "Rehabilitation Technology",
+    "virtual_reality": "Rehabilitation Technology",
+    "electrical_stimulation": "Brain and Nerve Stimulation",
+    "exercise": "Physical Rehabilitation",
+    "mind_body": "Lifestyle and Daily Health",
+    "nutrition_sleep_systemic": "Lifestyle and Daily Health",
+    "caregiver_home": "Family and Home Support",
+    "home_rehab": "Family and Home Support",
+    "pharmacologic": "Medical and Biological Recovery",
+    "diagnostic_biomarker": "Testing and Prediction",
+    "assessment_outcome_measurement": "Testing and Prediction",
+    "assessment outcome measurement": "Testing and Prediction",
+    "general_neuroplasticity": "Recovery Science",
+    "general neuroplasticity": "Recovery Science",
+    "general_neurorehabilitation": "General Rehabilitation",
+    "general neurorehabilitation": "General Rehabilitation",
+    "environmental_enrichment": "Lifestyle and Daily Health",
+    "inflammation_immune_biological repair": "Medical and Biological Recovery",
+    "inflammation immune biological repair": "Medical and Biological Recovery",
+    "vascular_cardiometabolic_management": "Medical and Biological Recovery",
+    "vascular cardiometabolic management": "Medical and Biological Recovery",
+    "not_applicable": "Other",
+    "not applicable": "Other",
+    "unknown": "Other",
+    "other": "Other",
+}
+
+RECOVERY_GROUP_KEYWORDS = [
+    (
+        "Brain and Nerve Stimulation",
+        [
+            "electroacupuncture",
+            "functional electrical stimulation",
+            "neuromuscular electrical stimulation",
+            "electrical stimulation",
+            "electric stimulation",
+            "peroneal nerve stimulation",
+            "vagus nerve stimulation",
+            "vns",
+            "tdcs",
+            "rtms",
+            "tms",
+            "transcranial magnetic stimulation",
+            "transcranial direct current stimulation",
+            "noninvasive brain stimulation",
+            "noninvasive cortical stimulation",
+            "neuromodulation",
+        ],
+    ),
+    (
+        "Rehabilitation Technology",
+        [
+            "robot",
+            "robotic",
+            "exoskeleton",
+            "assistive technology",
+            "conversational agent",
+            "conversational agents",
+            "virtual reality",
+            "mixed reality",
+            "digital rehabilitation",
+            "exergaming",
+            "serious game",
+            "brain computer interface",
+            "brain computer",
+            "bci",
+        ],
+    ),
+    (
+        "Cognition and Communication",
+        [
+            "aphasia",
+            "speech",
+            "language",
+            "dysarthria",
+            "cognitive",
+            "memory",
+            "attention",
+            "executive function",
+            "neuropsychological",
+            "neglect",
+            "perceptual",
+        ],
+    ),
+    (
+        "Family and Home Support",
+        [
+            "caregiver",
+            "family",
+            "home based",
+            "home rehabilitation",
+            "home program",
+            "community rehabilitation",
+            "telerehabilitation",
+            "remote therapy",
+        ],
+    ),
+    (
+        "Lifestyle and Daily Health",
+        [
+            "sleep",
+            "sleep apnea",
+            "circadian",
+            "fatigue",
+            "nutrition",
+            "protein",
+            "vitamin",
+            "omega 3",
+            "omega",
+            "creatine",
+            "malnutrition",
+            "mindfulness",
+            "meditation",
+            "yoga",
+            "tai chi",
+            "mood",
+            "motivation",
+            "depression",
+            "engagement",
+            "daily activity",
+            "participation",
+            "environmental enrichment",
+            "enriched environment",
+        ],
+    ),
+    (
+        "Medical and Biological Recovery",
+        [
+            "pharmac",
+            "drug",
+            "medicine",
+            "molecular",
+            "cellular",
+            "bdnf",
+            "synaptogenesis",
+            "axon",
+            "neurogenesis",
+            "inflammation",
+            "neuroinflammation",
+            "immune",
+            "microglia",
+            "cytokine",
+            "metabolic",
+            "blood pressure",
+            "vascular risk",
+            "cardiometabolic",
+            "diabetes",
+            "lipid",
+            "surgical",
+            "surgery",
+            "neurotomy",
+            "shunt",
+            "ventricular shunt",
+        ],
+    ),
+    (
+        "Testing and Prediction",
+        [
+            "biomarker",
+            "diagnostic",
+            "assessment",
+            "outcome measurement",
+            "outcome scale",
+            "measurement",
+            "prediction",
+            "predictive",
+            "prognostic",
+            "imaging marker",
+            "reliability",
+        ],
+    ),
+    (
+        "Recovery Science",
+        [
+            "neuroplasticity",
+            "plasticity",
+            "mechanism",
+            "neural recovery",
+            "cortical reorganization",
+            "animal model",
+            "preclinical",
+        ],
+    ),
+    (
+        "Physical Rehabilitation",
+        [
+            "constraint",
+            "cimt",
+            "forced use",
+            "mirror therapy",
+            "motor imagery",
+            "mental practice",
+            "gait",
+            "walking",
+            "stepping",
+            "balance",
+            "locomotor",
+            "upper limb",
+            "arm",
+            "hand",
+            "exercise",
+            "aerobic",
+            "resistance",
+            "strength",
+            "fitness",
+            "treadmill",
+            "task specific",
+            "task oriented",
+            "motor rehabilitation",
+            "physiotherapy",
+            "stretch",
+            "stretching",
+        ],
+    ),
+    (
+        "General Rehabilitation",
+        [
+            "neurorehabilitation",
+            "rehabilitation program",
+            "multidisciplinary rehabilitation",
+            "complex rehabilitation",
+            "comprehensive rehabilitation",
+            "medical rehabilitation",
+            "rehabilitation measures",
+            "rehabilitation process",
+            "rehabilitation techniques",
+            "inpatient rehabilitation",
+            "stroke unit",
+            "neurointensive care",
+            "stroke rehabilitation",
+            "general recovery",
+            "multimodal",
+        ],
+    ),
+]
+
 
 def _normalize_key(value: str) -> str:
     cleaned = clean_text(value).lower()
@@ -135,6 +390,43 @@ def normalize_intervention(raw_intervention: str | None) -> str:
             return canonical
 
     return cleaned
+
+
+def recovery_group(
+    raw_intervention: str | None = None,
+    canonical_intervention: str | None = None,
+    intervention_family_value: str | None = None,
+    intervention_category: str | None = None,
+    evidence_text: str | None = None,
+) -> str:
+    """Return the broad user-facing Recovery Group for a paper or subgroup."""
+
+    raw = _clean_readable(raw_intervention or "")
+    canonical = _clean_readable(canonical_intervention or "")
+    family = _clean_readable(intervention_family_value or "")
+    category = _clean_readable(intervention_category or "")
+    evidence = _clean_readable(evidence_text or "")
+    combined = _normalize_key(" ".join(part for part in [raw, canonical, family, category, evidence] if part))
+    category_key = _normalize_key(category)
+
+    if category in RECOVERY_GROUPS and category != "Other":
+        return category
+
+    alias = RECOVERY_GROUP_ALIASES.get(category_key)
+    if alias and alias != "Other":
+        return alias
+
+    if not combined or combined in NON_SPECIFIC_VALUES:
+        return "Other"
+
+    for group, keywords in RECOVERY_GROUP_KEYWORDS:
+        if any(keyword in combined for keyword in keywords):
+            return group
+
+    if alias:
+        return alias
+
+    return "Other"
 
 
 def intervention_family(

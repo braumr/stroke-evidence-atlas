@@ -58,14 +58,14 @@ with overview_col:
     st.subheader("What It Does")
     st.write(
         "Collects PubMed papers, extracts structured study details from abstracts, "
-        "normalizes interventions into broader families, and stores everything locally in SQLite."
+        "normalizes recovery evidence into broader groups and subgroups, and stores everything locally in SQLite."
     )
 
 with scoring_col:
     st.subheader("Scoring Method")
     st.write(
         "Overall score = 0.40 neuroplasticity potential + 0.35 clinical evidence strength "
-        "+ 0.15 safety + 0.10 practicality. Intervention-family summaries average paper-level scores."
+        "+ 0.15 safety + 0.10 practicality. Recovery subgroup summaries average paper-level scores."
     )
 
 st.caption(

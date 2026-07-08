@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 from .db import get_connection, init_db
 from .llm_client import LLMClient
-from .normalization import intervention_family, normalize_intervention
+from .normalization import intervention_family, normalize_intervention, recovery_group
 from .utils import clean_text, normalize_missing_label, normalize_missing_list, parse_int, setup_logging, utc_now
 
 LOGGER = setup_logging(__name__)
@@ -113,7 +113,7 @@ EXTRACTION_PROMPT = """Extract JSON matching this schema exactly:
 {
   "study_type": "meta_analysis | systematic_review | randomized_controlled_trial | cohort_study | case_control_study | case_series | case_report | animal_study | mechanistic_study | feasibility_study | pilot_study | narrative_review | protocol | diagnostic_biomarker | epidemiology | qualitative | mixed_methods | unknown",
   "intervention": "specific intervention name or unknown",
-  "intervention_category": "motor_rehab | speech_language | cognitive_rehab | neuromodulation | robotics | virtual_reality | electrical_stimulation | exercise | mind_body | nutrition_sleep_systemic | caregiver_home | pharmacologic | diagnostic_biomarker | other | unknown",
+  "intervention_category": "best broad Recovery Group: Physical Rehabilitation | Cognition and Communication | Rehabilitation Technology | Brain and Nerve Stimulation | Lifestyle and Daily Health | Medical and Biological Recovery | Family and Home Support | Testing and Prediction | Recovery Science | General Rehabilitation | Other",
   "condition_category": "ischemic_stroke | hemorrhagic_stroke | intracerebral_hemorrhage | subarachnoid_hemorrhage | traumatic_brain_injury | acquired_brain_injury | mixed_stroke | mixed_neurological | healthy_controls | not_applicable | unknown",
   "stroke_type": "ischemic | hemorrhagic | intracerebral_hemorrhage | subarachnoid_hemorrhage | mixed | not_stroke | unknown",
   "participant_characteristics": "age, severity, impairment type, inclusion details if available, or not reported in abstract",
@@ -257,6 +257,13 @@ def _save_extraction(
 ) -> None:
     canonical = normalize_intervention(extraction.intervention)
     family = intervention_family(extraction.intervention, canonical, extraction.intervention_category, evidence_text)
+    group = recovery_group(
+        extraction.intervention,
+        canonical,
+        family,
+        extraction.intervention_category,
+        evidence_text,
+    )
     now = utc_now()
     with get_connection() as conn:
         if force:
@@ -281,7 +288,7 @@ def _save_extraction(
                 clean_text(extraction.intervention),
                 canonical,
                 family,
-                extraction.intervention_category,
+                group,
                 extraction.condition_category,
                 extraction.stroke_type,
                 extraction.participant_characteristics,

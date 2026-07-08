@@ -14,6 +14,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.db import get_connection, init_db
+from src.normalization import RECOVERY_GROUPS
 
 
 st.set_page_config(page_title="Overview Dashboard", layout="wide")
@@ -72,7 +73,7 @@ review_count = (
 kpi_cols = st.columns(5)
 kpi_cols[0].metric("Total papers collected", total_papers)
 kpi_cols[1].metric("Papers extracted", papers_extracted)
-kpi_cols[2].metric("Interventions identified", interventions)
+kpi_cols[2].metric("Recovery subgroups identified", interventions)
 kpi_cols[3].metric("RCT count", rct_count)
 kpi_cols[4].metric("Systematic review/meta-analysis count", review_count)
 
@@ -82,8 +83,12 @@ filtered_extractions = extractions.copy()
 with st.sidebar:
     st.header("Filters")
     if not summaries.empty:
-        categories = sorted(summaries["intervention_category"].dropna().unique())
-        selected_categories = st.multiselect("Intervention category", categories)
+        category_order = {category: index for index, category in enumerate(RECOVERY_GROUPS)}
+        categories = sorted(
+            summaries["intervention_category"].dropna().unique(),
+            key=lambda value: (category_order.get(str(value), len(category_order)), str(value)),
+        )
+        selected_categories = st.multiselect("Recovery group", categories)
         tiers = sorted(summaries["evidence_tier"].dropna().unique())
         selected_tiers = st.multiselect("Evidence tier", tiers)
         if selected_categories:
@@ -108,13 +113,14 @@ with st.sidebar:
             filtered_summaries = filtered_summaries[filtered_summaries[intervention_col].isin(allowed)]
 
 if filtered_summaries.empty:
-    st.info("No intervention summaries match the selected filters.")
+    st.info("No recovery summaries match the selected filters.")
     st.stop()
 
 ranked = filtered_summaries.sort_values("avg_overall_score", ascending=False)
 display = ranked.rename(
     columns={
-        intervention_col: "intervention family",
+        intervention_col: "recovery subgroup",
+        "intervention_category": "recovery group",
         "avg_overall_score": "average overall score",
         "avg_neuroplasticity_potential": "neuroplasticity potential",
         "avg_clinical_evidence_strength": "clinical evidence strength",
@@ -122,12 +128,12 @@ display = ranked.rename(
         "avg_practicality_score": "practicality",
     }
 )
-st.subheader("Ranked interventions")
+st.subheader("Ranked recovery subgroups")
 st.dataframe(
     display[
         [
-            "intervention family",
-            "intervention_category",
+            "recovery subgroup",
+            "recovery group",
             "evidence_tier",
             "paper_count",
             "average overall score",
@@ -149,12 +155,17 @@ chart_cols[0].plotly_chart(
         x="avg_overall_score",
         y=intervention_col,
         orientation="h",
-        labels={"avg_overall_score": "Overall score", intervention_col: "Intervention family"},
+        labels={"avg_overall_score": "Overall score", intervention_col: "Recovery subgroup"},
     ),
     width="stretch",
 )
 chart_cols[1].plotly_chart(
-    px.histogram(ranked, x="intervention_category", title="Intervention category distribution"),
+    px.histogram(
+        ranked,
+        x="intervention_category",
+        title="Recovery group distribution",
+        labels={"intervention_category": "Recovery group"},
+    ),
     width="stretch",
 )
 chart_cols[2].plotly_chart(

@@ -1,4 +1,4 @@
-"""Intervention explorer page."""
+"""Recovery explorer page."""
 
 from __future__ import annotations
 
@@ -29,7 +29,7 @@ REVIEW_OR_BACKGROUND_TYPES = {
 }
 
 
-st.set_page_config(page_title="Intervention Explorer", layout="wide")
+st.set_page_config(page_title="Recovery Explorer", layout="wide")
 st.markdown(
     """
     <style>
@@ -44,7 +44,7 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-st.title("Intervention Explorer")
+st.title("Recovery Explorer")
 
 
 @st.cache_data(ttl=30)
@@ -149,14 +149,14 @@ summaries = data["summaries"]
 studies = data["studies"]
 
 if summaries.empty:
-    st.info("No intervention summaries yet. Run `python main.py score` after extraction.")
+    st.info("No recovery summaries yet. Run `python main.py score` after extraction.")
     st.stop()
 
 intervention_col = "intervention_family" if "intervention_family" in summaries.columns else "intervention_canonical"
 study_intervention_col = "intervention_family" if "intervention_family" in studies.columns else "intervention_canonical"
 
 intervention = st.selectbox(
-    "Intervention family",
+    "Recovery subgroup",
     sorted(summaries[intervention_col].dropna().unique()),
 )
 summary = summaries[summaries[intervention_col] == intervention].iloc[0]
@@ -198,8 +198,8 @@ score_df = pd.DataFrame(
 st.plotly_chart(px.bar(score_df, x="component", y="score", range_y=[0, 100]), width="stretch")
 
 detail_cols = st.columns(2)
-detail_cols[0].markdown("**Intervention summary**")
-detail_cols[0].write(f"Category: {display_value(summary['intervention_category'])}")
+detail_cols[0].markdown("**Recovery subgroup summary**")
+detail_cols[0].write(f"Recovery group: {display_value(summary['intervention_category'])}")
 if "intervention_canonical" in supporting:
     canonical_names = sorted(
         {
@@ -208,15 +208,15 @@ if "intervention_canonical" in supporting:
             if str(value).strip() and str(value).lower() != "unknown"
         }
     )
-    detail_cols[0].write(f"Paper-level extracted names: {'; '.join(canonical_names) or 'unknown'}")
+    detail_cols[0].write(f"Paper-level extracted labels: {'; '.join(canonical_names) or 'unknown'}")
 detail_cols[0].write(f"Common outcome measures: {display_value(summary['common_outcome_measures'])}")
-detail_cols[0].write(f"Treatment protocols: {display_value(summary['treatment_protocols'])}")
+detail_cols[0].write(f"Reported protocols: {display_value(summary['treatment_protocols'])}")
 detail_cols[1].markdown("**Uncertainty and safety**")
 detail_cols[1].write(f"Key limitations: {display_value(summary['key_limitations'])}")
 detail_cols[1].write(f"Safety summary: {display_value(summary['safety_summary'])}")
 
 if supporting.empty:
-    st.info("No supporting studies found for this intervention.")
+    st.info("No supporting studies found for this recovery subgroup.")
     st.stop()
 
 supporting["outcome_measures"] = supporting["outcome_measures"].map(parse_list)
