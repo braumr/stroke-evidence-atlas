@@ -8,6 +8,7 @@ from statistics import mean
 from typing import Any
 
 from .db import get_connection, init_db
+from .normalization import recovery_group
 from .utils import clean_text, utc_now
 
 
@@ -95,6 +96,10 @@ def aggregate_interventions() -> int:
             limitations: list[str] = []
             safety_notes: list[str] = []
             categories = [row["intervention_category"] for row in group if row["intervention_category"]]
+            summary_category = recovery_group(
+                intervention_family_value=family,
+                intervention_category=Counter(categories).most_common(1)[0][0] if categories else None,
+            )
             for row in group:
                 outcome_measures.extend(_json_list(row.get("outcome_measures")))
                 limitations.extend(_json_list(row.get("limitations")))
@@ -127,7 +132,7 @@ def aggregate_interventions() -> int:
                 (
                     family,
                     family,
-                    Counter(categories).most_common(1)[0][0] if categories else "unknown",
+                    summary_category,
                     len(group),
                     human_count,
                     study_types.count("randomized_controlled_trial"),

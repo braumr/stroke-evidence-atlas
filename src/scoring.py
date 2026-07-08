@@ -189,7 +189,7 @@ def score_practicality(row: dict[str, Any]) -> tuple[float, list[str]]:
     if any(term in intervention for term in ["robot", "exoskeleton", "virtual reality", "transcranial"]):
         score -= 8
         notes.append("equipment or specialist supervision likely needed")
-    if "caregiver" in intervention or category == "caregiver_home":
+    if "caregiver" in intervention or category == "Family and Home Support":
         score += 8
         notes.append("home/caregiver delivery may improve reach")
 

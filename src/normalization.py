@@ -97,9 +97,94 @@ FAMILY_KEYWORDS = [
 
 NON_SPECIFIC_VALUES = {
     "unknown",
+    "not reported in abstract",
     "not applicable",
     "not_applicable",
     "none",
+}
+
+SUBGROUP_ALIASES = {
+    "citicoline": "Citicoline",
+    "ceraxon": "Citicoline",
+    "ceraxon citicoline": "Citicoline",
+    "cerebrolysin": "Cerebrolysin",
+    "mexidol": "Mexidol",
+    "cytoflavin": "Cytoflavin",
+    "edonerpic maleate": "Edonerpic Maleate",
+    "virtual reality rehabilitation": "Virtual Reality / Digital Rehabilitation",
+    "robot assisted rehabilitation": "Robotics / Assistive Technology",
+    "robot assisted therapy": "Robotics / Assistive Technology",
+    "robotic therapy": "Robotics / Assistive Technology",
+    "functional electrical stimulation": "Functional Electrical Stimulation",
+    "neuromuscular electrical stimulation": "Neuromuscular Electrical Stimulation",
+    "transcranial direct current stimulation": "Noninvasive Brain Stimulation",
+    "repetitive transcranial magnetic stimulation": "Noninvasive Brain Stimulation",
+    "transcranial magnetic stimulation": "Noninvasive Brain Stimulation",
+    "non invasive brain stimulation": "Noninvasive Brain Stimulation",
+    "noninvasive brain stimulation": "Noninvasive Brain Stimulation",
+    "vagus nerve stimulation": "Vagus Nerve Stimulation",
+    "vagus nerve stimulation paired with rehabilitation": "Vagus Nerve Stimulation",
+    "electroacupuncture": "Electroacupuncture",
+    "acupuncture": "Electroacupuncture",
+    "constraint induced movement therapy": "Constraint-Induced Movement Therapy",
+    "ci therapy": "Constraint-Induced Movement Therapy",
+    "mirror therapy": "Mirror Therapy",
+    "motor imagery mental practice": "Motor Imagery / Mental Practice",
+    "motor imagery": "Motor Imagery / Mental Practice",
+    "mental practice": "Motor Imagery / Mental Practice",
+    "aerobic exercise": "Exercise / Physical Conditioning",
+    "aerobic training": "Exercise / Physical Conditioning",
+    "exercise training": "Exercise / Physical Conditioning",
+    "resistance training": "Exercise / Physical Conditioning",
+    "strength training": "Exercise / Physical Conditioning",
+    "cognitive rehabilitation": "Cognitive Rehabilitation",
+    "neuropsychological rehabilitation": "Cognitive Rehabilitation",
+    "speech language aphasia rehabilitation": "Speech / Language / Aphasia Rehabilitation",
+    "aphasia rehabilitation": "Speech / Language / Aphasia Rehabilitation",
+    "goal attainment scaling": "Assessment / Outcome Measurement",
+}
+
+SUBGROUP_RECOVERY_GROUPS = {
+    "Citicoline": "Medical and Biological Recovery",
+    "Cerebrolysin": "Medical and Biological Recovery",
+    "Mexidol": "Medical and Biological Recovery",
+    "Cytoflavin": "Medical and Biological Recovery",
+    "Edonerpic Maleate": "Medical and Biological Recovery",
+    "Pharmacologic / Molecular Recovery": "Medical and Biological Recovery",
+    "Inflammation / Immune / Biological Repair": "Medical and Biological Recovery",
+    "Vascular Risk / Cardiometabolic Management": "Medical and Biological Recovery",
+    "Constraint-Induced Movement Therapy": "Physical Rehabilitation",
+    "Mirror Therapy": "Physical Rehabilitation",
+    "Motor Imagery / Mental Practice": "Physical Rehabilitation",
+    "Exercise / Physical Conditioning": "Physical Rehabilitation",
+    "Gait / Balance Rehabilitation": "Physical Rehabilitation",
+    "Upper-Limb Rehabilitation": "Physical Rehabilitation",
+    "Functional Electrical Stimulation": "Brain and Nerve Stimulation",
+    "Neuromuscular Electrical Stimulation": "Brain and Nerve Stimulation",
+    "Electrical Stimulation": "Brain and Nerve Stimulation",
+    "Noninvasive Brain Stimulation": "Brain and Nerve Stimulation",
+    "Vagus Nerve Stimulation": "Brain and Nerve Stimulation",
+    "Electroacupuncture": "Brain and Nerve Stimulation",
+    "Virtual Reality / Digital Rehabilitation": "Rehabilitation Technology",
+    "Robotics / Assistive Technology": "Rehabilitation Technology",
+    "Brain-Computer Interface Rehabilitation": "Rehabilitation Technology",
+    "Speech / Language / Aphasia Rehabilitation": "Cognition and Communication",
+    "Cognitive Rehabilitation": "Cognition and Communication",
+    "Neglect / Perceptual Rehabilitation": "Cognition and Communication",
+    "Caregiver / Family Training": "Family and Home Support",
+    "Home / Community / Telerehabilitation": "Family and Home Support",
+    "Assessment / Outcome Measurement": "Testing and Prediction",
+    "Diagnostic / Biomarker": "Testing and Prediction",
+    "Sleep / Circadian Recovery": "Lifestyle and Daily Health",
+    "Nutrition / Metabolic Support": "Lifestyle and Daily Health",
+    "Depression / Mood / Motivation": "Lifestyle and Daily Health",
+    "Mind-Body / Behavioral Rehabilitation": "Lifestyle and Daily Health",
+    "Music / Art / Enriched Activity Therapy": "Lifestyle and Daily Health",
+    "Environmental Enrichment": "Lifestyle and Daily Health",
+    "General Neuroplasticity / Mechanisms": "Recovery Science",
+    "General Neurorehabilitation": "General Rehabilitation",
+    "Multiple / broad rehabilitation approaches": "General Rehabilitation",
+    "Unspecified / not intervention-specific": "Other",
 }
 
 RECOVERY_GROUPS = (
@@ -372,6 +457,43 @@ def _clean_readable(value: str) -> str:
     return re.sub(r"\s+", " ", cleaned).strip()
 
 
+def _is_specific_label(value: str) -> bool:
+    key = _normalize_key(value)
+    return bool(key and key not in NON_SPECIFIC_VALUES)
+
+
+def _alias_subgroup(value: str) -> str | None:
+    key = _normalize_key(value)
+    if not key:
+        return None
+    exact = SUBGROUP_ALIASES.get(key)
+    if exact:
+        return exact
+    for alias, subgroup in SUBGROUP_ALIASES.items():
+        if re.search(rf"\b{re.escape(alias)}\b", key):
+            return subgroup
+    return None
+
+
+def _keyword_family(value: str) -> str | None:
+    key = _normalize_key(value)
+    if not key:
+        return None
+    for family, keywords in FAMILY_KEYWORDS:
+        if any(keyword in key for keyword in keywords):
+            return family
+    return None
+
+
+def _group_for_subgroup(value: str) -> str | None:
+    subgroup = _alias_subgroup(value) or _clean_readable(value)
+    key = _normalize_key(subgroup)
+    for known_subgroup, group in SUBGROUP_RECOVERY_GROUPS.items():
+        if key == _normalize_key(known_subgroup):
+            return group
+    return None
+
+
 def normalize_intervention(raw_intervention: str | None) -> str:
     """Return a canonical intervention name without over-normalizing."""
 
@@ -406,27 +528,42 @@ def recovery_group(
     family = _clean_readable(intervention_family_value or "")
     category = _clean_readable(intervention_category or "")
     evidence = _clean_readable(evidence_text or "")
-    combined = _normalize_key(" ".join(part for part in [raw, canonical, family, category, evidence] if part))
+    label_text = " ".join(part for part in [raw, canonical, family] if _is_specific_label(part))
+    combined = _normalize_key(" ".join(part for part in [label_text, category, evidence] if part))
     category_key = _normalize_key(category)
 
-    if category in RECOVERY_GROUPS and category != "Other":
-        return category
+    label_group = _group_for_subgroup(label_text) or _group_from_text(label_text)
+    if label_group:
+        return label_group
 
     alias = RECOVERY_GROUP_ALIASES.get(category_key)
     if alias and alias != "Other":
         return alias
 
+    if category in RECOVERY_GROUPS and category != "Other":
+        return category
+
     if not combined or combined in NON_SPECIFIC_VALUES:
         return "Other"
 
-    for group, keywords in RECOVERY_GROUP_KEYWORDS:
-        if any(keyword in combined for keyword in keywords):
-            return group
+    evidence_group = _group_from_text(evidence)
+    if evidence_group:
+        return evidence_group
 
     if alias:
         return alias
 
     return "Other"
+
+
+def _group_from_text(value: str) -> str | None:
+    key = _normalize_key(value)
+    if not key:
+        return None
+    for group, keywords in RECOVERY_GROUP_KEYWORDS:
+        if any(keyword in key for keyword in keywords):
+            return group
+    return None
 
 
 def intervention_family(
@@ -442,25 +579,38 @@ def intervention_family(
     category = _clean_readable(intervention_category or "")
     evidence = _clean_readable(evidence_text or "")
     if (
-        (not raw or raw.lower() in NON_SPECIFIC_VALUES)
-        and (not canonical or canonical.lower() in NON_SPECIFIC_VALUES)
-        and (not category or category.lower() in NON_SPECIFIC_VALUES)
+        not _is_specific_label(raw)
+        and not _is_specific_label(canonical)
+        and not _is_specific_label(category)
         and not evidence
     ):
         return "Unspecified / not intervention-specific"
 
-    combined = _normalize_key(" ".join(part for part in [raw, canonical, category, evidence] if part))
+    label_parts = [part for part in [canonical, raw] if _is_specific_label(part)]
+    label_text = " ".join(label_parts)
+    combined = _normalize_key(" ".join(part for part in [label_text, category, evidence] if part))
 
     if not combined or combined in NON_SPECIFIC_VALUES:
         return "Unspecified / not intervention-specific"
 
-    comma_count = raw.count(",") + raw.count(";")
-    if comma_count >= 2 and not any(term in combined for term in ["brain computer", "bci", "virtual reality"]):
-        return "Multiple / broad rehabilitation approaches"
-
-    for family, keywords in FAMILY_KEYWORDS:
-        if any(keyword in combined for keyword in keywords):
+    if label_text:
+        for part in label_parts:
+            alias = _alias_subgroup(part)
+            if alias:
+                return alias
+            family = _keyword_family(part)
+            if family:
+                return family
+        alias = _alias_subgroup(label_text)
+        if alias:
+            return alias
+        family = _keyword_family(label_text)
+        if family:
             return family
+        comma_count = raw.count(",") + raw.count(";")
+        if comma_count >= 2 and not any(term in combined for term in ["brain computer", "bci", "virtual reality"]):
+            return "Multiple / broad rehabilitation approaches"
+        return canonical or raw
 
     category_map = {
         "motor_rehab": "Motor Rehabilitation",
@@ -480,4 +630,8 @@ def intervention_family(
     if category in category_map:
         return category_map[category]
 
-    return canonical or raw or "Unspecified / not intervention-specific"
+    family = _keyword_family(evidence)
+    if family:
+        return family
+
+    return "Unspecified / not intervention-specific"
