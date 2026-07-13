@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib
 import json
 import sys
 from pathlib import Path
@@ -14,7 +15,24 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.db import get_connection, init_db
-from src.utils import normalize_missing_label
+import src.filter_labels as filter_labels
+from src.utils import (
+    normalize_missing_label,
+)
+
+filter_labels = importlib.reload(filter_labels)
+EFFECT_DIRECTION_FILTER_OPTIONS = filter_labels.EFFECT_DIRECTION_FILTER_OPTIONS
+STROKE_PHASE_FILTER_OPTIONS = filter_labels.STROKE_PHASE_FILTER_OPTIONS
+STROKE_TYPE_FILTER_OPTIONS = filter_labels.STROKE_TYPE_FILTER_OPTIONS
+effect_direction_matches_filter = filter_labels.effect_direction_matches_filter
+normalize_effect_direction_label = filter_labels.normalize_effect_direction_label
+normalize_stroke_phase_label = filter_labels.normalize_stroke_phase_label
+normalize_stroke_type_label = filter_labels.normalize_stroke_type_label
+normalize_study_type_label = filter_labels.normalize_study_type_label
+stroke_phase_matches_filter = filter_labels.stroke_phase_matches_filter
+stroke_type_matches_filter = filter_labels.stroke_type_matches_filter
+study_type_filter_options = filter_labels.study_type_filter_options
+study_type_matches_filter = filter_labels.study_type_matches_filter
 
 
 st.set_page_config(page_title="Paper Explorer", layout="wide")
@@ -152,18 +170,15 @@ with st.sidebar:
     keyword = st.text_input("Keyword search")
     years = sorted([int(year) for year in filtered["publication_year"].dropna().unique()])
     selected_years = st.multiselect("Year", years)
-    study_types = sorted(filtered["study_type"].dropna().unique())
+    study_types = study_type_filter_options(filtered["study_type"].dropna().unique())
     intervention_filter_col = "intervention_family" if "intervention_family" in filtered.columns else "intervention_canonical"
     interventions = sorted(filtered[intervention_filter_col].dropna().unique())
-    stroke_types = sorted(filtered["stroke_type"].dropna().unique())
-    phases = sorted(filtered["stroke_phase"].dropna().unique())
-    effects = sorted(filtered["effect_direction"].dropna().unique())
     statuses = sorted(filtered["extraction_status"].dropna().unique())
     selected_study = st.multiselect("Study type", study_types)
     selected_intervention = st.multiselect("Recovery subgroup", interventions)
-    selected_stroke = st.multiselect("Stroke type", stroke_types)
-    selected_phase = st.multiselect("Phase", phases)
-    selected_effect = st.multiselect("Effect direction", effects)
+    selected_stroke = st.multiselect("Stroke type", STROKE_TYPE_FILTER_OPTIONS)
+    selected_phase = st.multiselect("Phase", STROKE_PHASE_FILTER_OPTIONS)
+    selected_effect = st.multiselect("Effect direction", EFFECT_DIRECTION_FILTER_OPTIONS)
     selected_status = st.multiselect("Extraction status", statuses)
 
 if keyword:
@@ -176,15 +191,25 @@ if keyword:
 if selected_years:
     filtered = filtered[filtered["publication_year"].isin(selected_years)]
 if selected_study:
-    filtered = filtered[filtered["study_type"].isin(selected_study)]
+    filtered = filtered[
+        filtered["study_type"].apply(lambda value: study_type_matches_filter(value, selected_study))
+    ]
 if selected_intervention:
     filtered = filtered[filtered[intervention_filter_col].isin(selected_intervention)]
 if selected_stroke:
-    filtered = filtered[filtered["stroke_type"].isin(selected_stroke)]
+    filtered = filtered[
+        filtered["stroke_type"].apply(lambda value: stroke_type_matches_filter(value, selected_stroke))
+    ]
 if selected_phase:
-    filtered = filtered[filtered["stroke_phase"].isin(selected_phase)]
+    filtered = filtered[
+        filtered["stroke_phase"].apply(lambda value: stroke_phase_matches_filter(value, selected_phase))
+    ]
 if selected_effect:
-    filtered = filtered[filtered["effect_direction"].isin(selected_effect)]
+    filtered = filtered[
+        filtered["effect_direction"].apply(
+            lambda value: effect_direction_matches_filter(value, selected_effect)
+        )
+    ]
 if selected_status:
     filtered = filtered[filtered["extraction_status"].isin(selected_status)]
 
@@ -202,6 +227,12 @@ table = table.rename(
         "effect_direction": "effect direction",
     }
 )
+if "effect direction" in table:
+    table["effect direction"] = table["effect direction"].apply(normalize_effect_direction_label)
+if "stroke_phase" in table:
+    table["stroke_phase"] = table["stroke_phase"].apply(normalize_stroke_phase_label)
+if "study type" in table:
+    table["study type"] = table["study type"].apply(normalize_study_type_label)
 table = clean_table(table)
 st.dataframe(
     table[
@@ -249,15 +280,15 @@ for _, row in filtered.head(50).iterrows():
         st.markdown("**Extracted structured fields**")
         st.json(
             {
-                "study_type": display_value(row.get("study_type")),
+                "study_type": normalize_study_type_label(row.get("study_type")),
                 "extracted_label": display_value(row.get("intervention_raw")),
                 "recovery_subgroup": display_value(row.get("intervention_family")),
                 "paper_level_label": display_value(row.get("intervention_canonical")),
                 "recovery_group": display_value(row.get("intervention_category")),
                 "condition_category": display_value(row.get("condition_category")),
-                "stroke_type": display_value(row.get("stroke_type")),
+                "stroke_type": normalize_stroke_type_label(row.get("stroke_type")),
                 "sample_size": display_value(row.get("sample_size"), "not reported in abstract"),
-                "stroke_phase": display_value(row.get("stroke_phase")),
+                "stroke_phase": normalize_stroke_phase_label(row.get("stroke_phase")),
                 "time_since_stroke": display_value(row.get("time_since_stroke")),
                 "dosage_intensity": display_value(row.get("dosage_intensity")),
                 "frequency": display_value(row.get("frequency")),
@@ -268,7 +299,7 @@ for _, row in filtered.head(50).iterrows():
                 "outcomes": parse_list(row.get("outcomes")),
                 "results_summary": display_value(row.get("results_summary")),
                 "conclusion_text": display_value(row.get("conclusion_text"), "not reported in abstract"),
-                "effect_direction": display_value(row.get("effect_direction")),
+                "effect_direction": normalize_effect_direction_label(row.get("effect_direction")),
                 "mechanistic_rationale": display_value(row.get("mechanistic_rationale")),
                 "neuroplasticity_mechanisms": parse_list(row.get("neuroplasticity_mechanisms")),
                 "confidence_notes": display_value(row.get("confidence_notes")),

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import html
+import importlib
 import json
 import sys
 from pathlib import Path
@@ -15,7 +17,14 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.db import get_connection, init_db
+import src.filter_labels as filter_labels
 from src.utils import normalize_missing_label
+
+filter_labels = importlib.reload(filter_labels)
+normalize_effect_direction_label = filter_labels.normalize_effect_direction_label
+normalize_stroke_phase_label = filter_labels.normalize_stroke_phase_label
+normalize_stroke_type_label = filter_labels.normalize_stroke_type_label
+normalize_study_type_label = filter_labels.normalize_study_type_label
 
 
 REVIEW_OR_BACKGROUND_TYPES = {
@@ -40,11 +49,43 @@ st.markdown(
         content: "home";
         font-size: 1rem;
     }
+    .recovery-kpi {
+        padding: 0.1rem 0 0.55rem 0;
+    }
+    .recovery-kpi-label {
+        min-height: 2.25rem;
+        font-size: 0.84rem;
+        font-weight: 650;
+        line-height: 1.18;
+        opacity: 0.72;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+    .recovery-kpi-value {
+        margin-top: 0.35rem;
+        font-size: 1.45rem;
+        font-weight: 400;
+        line-height: 1.15;
+    }
     </style>
     """,
     unsafe_allow_html=True,
 )
 st.title("Recovery Explorer")
+
+
+def render_kpi(column: object, label: str, value: object) -> None:
+    """Render a compact KPI block with labels that can wrap."""
+
+    column.markdown(
+        f"""
+        <div class="recovery-kpi">
+            <div class="recovery-kpi-label">{html.escape(label)}</div>
+            <div class="recovery-kpi-value">{html.escape(str(value))}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 @st.cache_data(ttl=30)
@@ -170,12 +211,12 @@ tier_col.markdown(
     f"background-color:#eef6f4; color:#173f3a; font-weight:600;'>{display_value(summary['evidence_tier'])}</div>",
     unsafe_allow_html=True,
 )
-paper_col.metric("Paper count", int(summary["paper_count"]))
-human_col.metric("Human studies", int(summary["human_study_count"]))
-rct_col.metric("RCTs", int(summary["rct_count"]))
+render_kpi(paper_col, "Paper count", int(summary["paper_count"]))
+render_kpi(human_col, "Human studies", int(summary["human_study_count"]))
+render_kpi(rct_col, "RCTs", int(summary["rct_count"]))
 review_total = int(summary["systematic_review_count"]) + int(summary["meta_analysis_count"])
-review_col.metric("Systematic review/meta-analysis", review_total)
-score_col.metric("Average overall score", round(float(summary["avg_overall_score"]), 2))
+render_kpi(review_col, "Systematic review/meta-analysis", review_total)
+render_kpi(score_col, "Average overall score", round(float(summary["avg_overall_score"]), 2))
 
 score_df = pd.DataFrame(
     {
@@ -244,6 +285,14 @@ display_columns = {
     "effect direction": "unknown",
     "PubMed URL": "",
 }
+if "stroke type" in table:
+    table["stroke type"] = table["stroke type"].apply(normalize_stroke_type_label)
+if "phase" in table:
+    table["phase"] = table["phase"].apply(normalize_stroke_phase_label)
+if "effect direction" in table:
+    table["effect direction"] = table["effect direction"].apply(normalize_effect_direction_label)
+if "study type" in table:
+    table["study type"] = table["study type"].apply(normalize_study_type_label)
 for column, default in display_columns.items():
     if column in table:
         table[column] = table[column].apply(lambda value, fallback=default: display_text(value, fallback))

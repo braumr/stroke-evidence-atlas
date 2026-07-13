@@ -37,7 +37,6 @@ MISSING_VALUE_MAP = {
     "not reported in abstract": "not reported in abstract",
 }
 
-
 def normalize_missing_label(value: object, empty_default: str = "not reported in abstract") -> object:
     """Normalize common missing-value labels without changing meaningful content."""
 

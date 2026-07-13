@@ -25,49 +25,74 @@ st.markdown(
         content: "home";
         font-size: 1rem;
     }
+    .home-summary h3 {
+        font-size: 1.08rem;
+        font-weight: 700;
+        line-height: 1.25;
+        margin-bottom: 0.45rem;
+    }
+    .home-summary p {
+        font-size: 0.94rem;
+        line-height: 1.55;
+        color: inherit;
+        opacity: 0.72;
+        margin-bottom: 0;
+    }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
 ASSET_DIR = ROOT / "ui" / "assets"
-BRAIN_IMAGE = ASSET_DIR / "neuroplasticity_brain.jpg"
+BRAIN_IMAGE = ASSET_DIR / "neuroplasticity_brain.png"
 
 
 hero_text, hero_image = st.columns([0.95, 1.35], vertical_alignment="center")
 with hero_text:
-    st.title("Stroke Evidence Atlas")
+    st.title("Stroke Recovery Atlas")
     st.write(
-        "A local evidence atlas for exploring PubMed literature on stroke rehabilitation, "
-        "brain injury recovery, and neuroplasticity."
+        "Explore aggregated research evidence across stroke recovery, rehabilitation, and neuroplasticity."
     )
-    if DB_PATH.exists():
-        st.caption(f"Database: {DB_PATH}")
-    else:
+    if not DB_PATH.exists():
         st.info("No database found yet. Run `python main.py init-db` and then collect/extract/score data.")
 
 with hero_image:
     if BRAIN_IMAGE.exists():
-        st.image(str(BRAIN_IMAGE), width="stretch")
+        st.image(str(BRAIN_IMAGE), width=680)
 
 st.divider()
 
-overview_col, scoring_col = st.columns(2)
+overview_col, scoring_col, audit_col = st.columns(3)
 
 with overview_col:
-    st.subheader("What It Does")
-    st.write(
-        "Collects PubMed papers, extracts structured study details from abstracts, "
-        "normalizes recovery evidence into broader groups and subgroups, and stores everything locally in SQLite."
+    st.markdown(
+        """
+        <div class="home-summary">
+            <h3>Browse Recovery Areas</h3>
+            <p>Explore recovery groups and subgroups created from AI-assisted extraction of PubMed research across areas such as physical rehabilitation, cognition, communication, technology, nerve/brain stimulation, lifestyle, biology, family support, and recovery science.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
 with scoring_col:
-    st.subheader("Scoring Method")
-    st.write(
-        "Overall score = 0.40 neuroplasticity potential + 0.35 clinical evidence strength "
-        "+ 0.15 safety + 0.10 practicality. Recovery subgroup summaries average paper-level scores."
+    st.markdown(
+        """
+        <div class="home-summary">
+            <h3>Compare Evidence Signals</h3>
+            <p>Sort recovery subgroups by overall evidence signal, neuroplasticity rationale, clinical evidence, safety, and practicality.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
-st.caption(
-    "Higher scores mean stronger signals in the collected abstracts, not a final ranking of what treatment is best."
-)
+with audit_col:
+    st.markdown(
+        """
+        <div class="home-summary">
+            <h3>Audit the Sources</h3>
+            <p>Review abstracts, extracted study details, supporting sentences, and direct PubMed links before interpreting results.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
