@@ -46,7 +46,7 @@ st.markdown(
         font-size: 0;
     }
     a[data-testid="stSidebarNavLink"] span[label="app"] p::after {
-        content: "home";
+        content: "Home";
         font-size: 1rem;
     }
     .recovery-kpi {

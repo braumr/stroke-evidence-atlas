@@ -43,7 +43,7 @@ st.markdown(
         font-size: 0;
     }
     a[data-testid="stSidebarNavLink"] span[label="app"] p::after {
-        content: "home";
+        content: "Home";
         font-size: 1rem;
     }
     </style>
@@ -241,11 +241,8 @@ st.dataframe(
             "title",
             "journal",
             "year",
-            "extraction_status",
             "study type",
             "recovery subgroup",
-            "paper-level label",
-            "sample size",
             "effect direction",
             "PubMed URL",
         ]
@@ -256,7 +253,19 @@ st.dataframe(
 )
 
 st.subheader("Paper details")
-for _, row in filtered.head(50).iterrows():
+detail_limit_label = st.selectbox(
+    "Detailed records to load",
+    ["First 50", "First 100", "First 250", "All filtered papers"],
+    index=0,
+)
+detail_limit = {
+    "First 50": 50,
+    "First 100": 100,
+    "First 250": 250,
+    "All filtered papers": None,
+}[detail_limit_label]
+detail_rows = filtered if detail_limit is None else filtered.head(detail_limit)
+for _, row in detail_rows.iterrows():
     with st.expander(f"{row['pmid']} - {row['title']}"):
         st.markdown(f"[Open in PubMed]({row['pubmed_url']})")
         status = display_value(row.get("extraction_status"), "pending")

@@ -3,8 +3,19 @@
 from __future__ import annotations
 
 import re
+import csv
+from pathlib import Path
 
 from .utils import clean_text
+
+
+TAXONOMY_MAPPING_PATH = (
+    Path(__file__).resolve().parents[1]
+    / "data"
+    / "exports"
+    / "taxonomy_audit"
+    / "proposed_subgroup_mapping_revised_final.csv"
+)
 
 
 SYNONYM_MAP = {
@@ -174,6 +185,94 @@ SUBGROUP_ALIASES = {
     "skull reconstruction": "Cranioplasty / Cranial Reconstruction",
     "titanium mesh": "Cranioplasty / Cranial Reconstruction",
     "customized 3d titanium mesh plates": "Cranioplasty / Cranial Reconstruction",
+    "electrostimulation": "Electrical Stimulation",
+    "transcutaneous electrical nerve stimulation": "Electrical Stimulation",
+    "tens": "Electrical Stimulation",
+    "peripheral nerve stimulation": "Electrical Stimulation",
+    "functional electrostimulation and bfb stabilometric postural control": "Electrical Stimulation",
+    "continuous theta burst stimulation": "Noninvasive Brain Stimulation",
+    "continuous theta burst stimulation ctbs": "Noninvasive Brain Stimulation",
+    "intermittent theta burst stimulation": "Noninvasive Brain Stimulation",
+    "intermittent theta burst stimulation itbs": "Noninvasive Brain Stimulation",
+    "intermittent theta burst stimulation itbs combined with routine rehabilitation": "Noninvasive Brain Stimulation",
+    "intermittent theta burst stimulation combined with task oriented training": "Noninvasive Brain Stimulation",
+    "transcranial alternating current stimulation": "Noninvasive Brain Stimulation",
+    "tacs": "Noninvasive Brain Stimulation",
+    "hd transcranial burst electrostimulation": "Noninvasive Brain Stimulation",
+    "attention process training": "Cognitive Rehabilitation",
+    "attention rehabilitation": "Cognitive Rehabilitation",
+    "cognitive strategy training": "Cognitive Rehabilitation",
+    "computer based cognitive retraining": "Cognitive Rehabilitation",
+    "cbcr": "Cognitive Rehabilitation",
+    "metacognitive contextual approach": "Cognitive Rehabilitation",
+    "communication partner training": "Speech / Language / Aphasia Rehabilitation",
+    "lee silverman voice treatment": "Speech / Language / Aphasia Rehabilitation",
+    "lsvt": "Speech / Language / Aphasia Rehabilitation",
+    "multi dimensional voice program": "Speech / Language / Aphasia Rehabilitation",
+    "mdvp": "Speech / Language / Aphasia Rehabilitation",
+    "intensive cognitive communication rehabilitation": "Speech / Language / Aphasia Rehabilitation",
+    "iccr": "Speech / Language / Aphasia Rehabilitation",
+    "community based rehabilitation": "Home / Community / Telerehabilitation",
+    "home care activity desk training": "Home / Community / Telerehabilitation",
+    "hcad training": "Home / Community / Telerehabilitation",
+    "home programs for rehabilitation": "Home / Community / Telerehabilitation",
+    "home based therapy programme": "Home / Community / Telerehabilitation",
+    "videoconferencing for community based rehabilitation": "Home / Community / Telerehabilitation",
+    "animal assisted therapy": "Animal Assisted Therapy",
+    "animal assisted therapy aat": "Animal Assisted Therapy",
+    "ayurvedic rehabilitative treatment": "Ayurvedic Rehabilitative Treatment",
+    "ayurvedic rehabilitative treatment art": "Ayurvedic Rehabilitative Treatment",
+    "rehabilitation gaming system": "Rehabilitation Gaming System (RGS)",
+    "rehabilitation gaming system rgs": "Rehabilitation Gaming System (RGS)",
+    "tissue plasminogen activator": "Tissue Plasminogen Activator",
+    "tissue plasminogen activator rtpa": "Tissue Plasminogen Activator",
+    "vocational intervention program": "Vocational Intervention Program (VIP)",
+    "vocational intervention program vip": "Vocational Intervention Program (VIP)",
+    "vocational intervention program vip 2 0": "Vocational Intervention Program (VIP)",
+    "inpatient rehabilitation": "Inpatient Rehabilitation",
+    "inpatient rehabilitation intervention": "Inpatient Rehabilitation",
+    "inpatient rehabilitation treatment": "Inpatient Rehabilitation",
+    "botulinum toxin": "Botulinum Toxin",
+    "botulinum toxin a and rehabilitation": "Botulinum Toxin",
+    "botulinum toxin intervention": "Botulinum Toxin",
+    "botulinum toxin treatment": "Botulinum Toxin",
+    "amphetamine": "Amphetamine",
+    "amphetamine treatment combined with rehabilitation": "Amphetamine",
+    "early rehabilitation and nursing intervention": "Early Rehabilitation and Nursing Intervention (ERNI)",
+    "early rehabilitation and nursing intervention erni": "Early Rehabilitation and Nursing Intervention (ERNI)",
+    "early rehabilitation nursing": "Early Rehabilitation and Nursing Intervention (ERNI)",
+    "early physical rehabilitation": "Early Physical Rehabilitation",
+    "early physical rehabilitation therapy": "Early Physical Rehabilitation",
+    "intrathecal baclofen": "Intrathecal Baclofen",
+    "intrathecal baclofen therapy": "Intrathecal Baclofen",
+    "p a c e a physical activity centred education programme": "Physical Activity Centred Education Programme (PACE)",
+    "physical activity centred education programme": "Physical Activity Centred Education Programme (PACE)",
+    "on road driving remediation": "On-Road Driving Remediation",
+    "on road driving remediation program": "On-Road Driving Remediation",
+    "oculomotor therapy": "Neglect / Perceptual Rehabilitation",
+    "oculomotor training": "Neglect / Perceptual Rehabilitation",
+    "oculomotor training omt": "Neglect / Perceptual Rehabilitation",
+    "oculomotor based vision therapy vision rehabilitation": "Neglect / Perceptual Rehabilitation",
+    "reading related oculomotor rehabilitation": "Neglect / Perceptual Rehabilitation",
+    "versional oculomotor training": "Neglect / Perceptual Rehabilitation",
+    "cognitive and vocational rehabilitation": "Vocational Rehabilitation",
+    "early vocational rehabilitation protocol": "Vocational Rehabilitation",
+    "social support and vocational rehabilitation": "Vocational Rehabilitation",
+    "vocational rehabilitation": "Vocational Rehabilitation",
+    "vocational rehabilitation framework": "Vocational Rehabilitation",
+    "vocational rehabilitation intervention": "Vocational Rehabilitation",
+    "vocational rehabilitation services": "Vocational Rehabilitation",
+    "intensive rehabilitation": "Intensive Rehabilitation",
+    "intensive rehabilitation therapy": "Intensive Rehabilitation",
+    "intensive rehabilitation treatments": "Intensive Rehabilitation",
+    "bimanual rehabilitation": "Bimanual Training",
+    "bimanual training": "Bimanual Training",
+    "multidisciplinary interventions": "Multidisciplinary Rehabilitation",
+    "multidisciplinary treatment": "Multidisciplinary Rehabilitation",
+    "active rehabilitation training": "General Neurorehabilitation",
+    "active rehabilitation treatment": "General Neurorehabilitation",
+    "physical rehabilitation": "General Physical Rehabilitation",
+    "physical rehabilitation interventions": "General Physical Rehabilitation",
 }
 
 SUBGROUP_RECOVERY_GROUPS = {
@@ -213,10 +312,28 @@ SUBGROUP_RECOVERY_GROUPS = {
     "Depression / Mood / Motivation": "Lifestyle and Daily Health",
     "Mind-Body / Behavioral Rehabilitation": "Lifestyle and Daily Health",
     "Music / Art / Enriched Activity Therapy": "Lifestyle and Daily Health",
+    "Animal Assisted Therapy": "Lifestyle and Daily Health",
     "Environmental Enrichment": "Lifestyle and Daily Health",
     "General Neuroplasticity / Mechanisms": "Recovery Science",
     "General Neurorehabilitation": "General Rehabilitation",
     "Multiple / broad rehabilitation approaches": "General Rehabilitation",
+    "Vocational Rehabilitation": "Family and Home Support",
+    "Ayurvedic Rehabilitative Treatment": "Medical and Biological Recovery",
+    "Rehabilitation Gaming System (RGS)": "Rehabilitation Technology",
+    "Tissue Plasminogen Activator": "Medical and Biological Recovery",
+    "Vocational Intervention Program (VIP)": "Family and Home Support",
+    "Inpatient Rehabilitation": "General Rehabilitation",
+    "Botulinum Toxin": "Medical and Biological Recovery",
+    "Amphetamine": "Medical and Biological Recovery",
+    "Early Rehabilitation and Nursing Intervention (ERNI)": "General Rehabilitation",
+    "Early Physical Rehabilitation": "Physical Rehabilitation",
+    "Intrathecal Baclofen": "Medical and Biological Recovery",
+    "Physical Activity Centred Education Programme (PACE)": "Physical Rehabilitation",
+    "On-Road Driving Remediation": "Testing and Prediction",
+    "Intensive Rehabilitation": "General Rehabilitation",
+    "Bimanual Training": "Physical Rehabilitation",
+    "Multidisciplinary Rehabilitation": "General Rehabilitation",
+    "General Physical Rehabilitation": "Physical Rehabilitation",
     "Unspecified / not intervention-specific": "Other",
 }
 
@@ -495,6 +612,36 @@ def _clean_readable(value: str) -> str:
     return re.sub(r"\s+", " ", cleaned).strip()
 
 
+def _load_taxonomy_mapping() -> tuple[dict[str, str], dict[str, str]]:
+    """Load the approved recovery subgroup taxonomy mapping, when available."""
+
+    subgroup_map: dict[str, str] = {}
+    subgroup_group_map: dict[str, str] = {}
+    if not TAXONOMY_MAPPING_PATH.exists():
+        return subgroup_map, subgroup_group_map
+
+    with TAXONOMY_MAPPING_PATH.open(newline="") as file_obj:
+        for row in csv.DictReader(file_obj):
+            source_subgroup = _clean_readable(row.get("recovery_subgroup", ""))
+            proposed_subgroup = _clean_readable(row.get("proposed_subgroup", ""))
+            proposed_group = _clean_readable(row.get("proposed_group", ""))
+            if not source_subgroup or not proposed_subgroup or not proposed_group:
+                continue
+
+            subgroup_map[_normalize_key(source_subgroup)] = proposed_subgroup
+            subgroup_group_map[_normalize_key(proposed_subgroup)] = proposed_group
+
+    return subgroup_map, subgroup_group_map
+
+
+TAXONOMY_SUBGROUP_MAP, TAXONOMY_SUBGROUP_GROUPS = _load_taxonomy_mapping()
+
+
+def _taxonomy_subgroup(value: str) -> str:
+    readable = _clean_readable(value)
+    return TAXONOMY_SUBGROUP_MAP.get(_normalize_key(readable), readable)
+
+
 def _is_specific_label(value: str) -> bool:
     key = _normalize_key(value)
     return bool(key and key not in NON_SPECIFIC_VALUES)
@@ -524,8 +671,23 @@ def _keyword_family(value: str) -> str | None:
 
 
 def _group_for_subgroup(value: str) -> str | None:
-    subgroup = _alias_subgroup(value) or _clean_readable(value)
+    subgroup = _clean_readable(value)
     key = _normalize_key(subgroup)
+    if key in TAXONOMY_SUBGROUP_GROUPS:
+        return TAXONOMY_SUBGROUP_GROUPS[key]
+
+    subgroup = _taxonomy_subgroup(subgroup)
+    key = _normalize_key(subgroup)
+    taxonomy_group = TAXONOMY_SUBGROUP_GROUPS.get(key)
+    if taxonomy_group:
+        return taxonomy_group
+
+    subgroup = _taxonomy_subgroup(_alias_subgroup(value) or subgroup)
+    key = _normalize_key(subgroup)
+    taxonomy_group = TAXONOMY_SUBGROUP_GROUPS.get(key)
+    if taxonomy_group:
+        return taxonomy_group
+
     for known_subgroup, group in SUBGROUP_RECOVERY_GROUPS.items():
         if key == _normalize_key(known_subgroup):
             return group
@@ -570,7 +732,12 @@ def recovery_group(
     combined = _normalize_key(" ".join(part for part in [label_text, category, evidence] if part))
     category_key = _normalize_key(category)
 
-    label_group = _group_for_subgroup(label_text) or _group_from_text(label_text)
+    for part in [family, canonical, raw]:
+        label_group = _group_for_subgroup(part)
+        if label_group:
+            return label_group
+
+    label_group = _group_from_text(label_text)
     if label_group:
         return label_group
 
@@ -635,20 +802,20 @@ def intervention_family(
         for part in label_parts:
             alias = _alias_subgroup(part)
             if alias:
-                return alias
+                return _taxonomy_subgroup(alias)
             family = _keyword_family(part)
             if family:
-                return family
+                return _taxonomy_subgroup(family)
         alias = _alias_subgroup(label_text)
         if alias:
-            return alias
+            return _taxonomy_subgroup(alias)
         family = _keyword_family(label_text)
         if family:
-            return family
+            return _taxonomy_subgroup(family)
         comma_count = raw.count(",") + raw.count(";")
         if comma_count >= 2 and not any(term in combined for term in ["brain computer", "bci", "virtual reality"]):
-            return "Multiple / broad rehabilitation approaches"
-        return canonical or raw
+            return _taxonomy_subgroup("Multiple / broad rehabilitation approaches")
+        return _taxonomy_subgroup(canonical or raw)
 
     category_map = {
         "motor_rehab": "Motor Rehabilitation",
@@ -666,10 +833,10 @@ def intervention_family(
         "diagnostic_biomarker": "Diagnostic / Biomarker",
     }
     if category in category_map:
-        return category_map[category]
+        return _taxonomy_subgroup(category_map[category])
 
     family = _keyword_family(evidence)
     if family:
-        return family
+        return _taxonomy_subgroup(family)
 
     return "Unspecified / not intervention-specific"

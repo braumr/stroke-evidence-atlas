@@ -1,0 +1,511 @@
+recovery_subgroup,recovery_group,paper_count,avg_overall_score,evidence_tier,proposed_subgroup,proposed_group,action,reason,group_changed,subgroup_changed
+4-wk rehabilitation,Cognition and Communication,1,52.5,Emerging evidence,General Neurorehabilitation,General Rehabilitation,merge_and_move,Duration is not a recovery subgroup; consolidate into general neurorehabilitation.,True,True
+50% to 100% alcohol neurolysis of the sciatic nerve,Brain and Nerve Stimulation,1,35.65,Emerging evidence,Peripheral Nerve Neurolysis,Medical and Biological Recovery,move_and_rename,"Chemical neurolysis is a medical procedure, not stimulation.",True,True
+8-week positive psychotherapy group,Lifestyle and Daily Health,1,42.7,Emerging evidence,8-week positive psychotherapy group,Lifestyle and Daily Health,keep,,False,False
+AAV-mediated circFOXP1 overexpression,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,AAV-mediated circFOXP1 overexpression,Medical and Biological Recovery,keep,,False,False
+Accelerated Skill Acquisition Program,Cognition and Communication,1,42.8,Emerging evidence,Accelerated Skill Acquisition Program,Cognition and Communication,keep,,False,False
+active ankle dorsiflexion and the Mingazzini manoeuvre,Testing and Prediction,1,49.3,Emerging evidence,active ankle dorsiflexion and the Mingazzini manoeuvre,Testing and Prediction,keep,,False,False
+active neuromuscular stimulation and coupled bilateral coordination training,Recovery Science,1,40.3,Emerging evidence,active neuromuscular stimulation and coupled bilateral coordination training,Recovery Science,keep,,False,False
+active rehabilitation technologies,Cognition and Communication,1,42.0,Emerging evidence,active rehabilitation technologies,Cognition and Communication,keep,,False,False
+acute neurointensive care and rehabilitation in a stroke unit,General Rehabilitation,1,44.0,Emerging evidence,acute neurointensive care and rehabilitation in a stroke unit,General Rehabilitation,keep,,False,False
+adalimumab,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,adalimumab,Medical and Biological Recovery,keep,,False,False
+adipose-tissue-derived mesenchymal stem cells (ADMSCs) and rehabilitation,Lifestyle and Daily Health,1,44.5,Mechanistic/preclinical only,adipose-tissue-derived mesenchymal stem cells (ADMSCs) and rehabilitation,Lifestyle and Daily Health,keep,,False,False
+adjustable ankle-foot orthosis,Physical Rehabilitation,1,57.65,Moderate clinical evidence,adjustable ankle-foot orthosis,Physical Rehabilitation,keep,,False,False
+admission screening protocol including quantitative D-dimer assay and duplex ultrasonography,Testing and Prediction,1,49.3,Emerging evidence,admission screening protocol including quantitative D-dimer assay and duplex ultrasonography,Testing and Prediction,keep,,False,False
+adoptive transfer of anti-inflammatory macrophages,Medical and Biological Recovery,1,32.0,Mechanistic/preclinical only,adoptive transfer of anti-inflammatory macrophages,Medical and Biological Recovery,keep,,False,False
+AI applications in stroke recovery and rehabilitation,Rehabilitation Technology,1,40.0,Emerging evidence,AI applications in stroke recovery and rehabilitation,Rehabilitation Technology,keep,,False,False
+ALBA device,Rehabilitation Technology,1,54.8,Moderate clinical evidence,ALBA device,Rehabilitation Technology,keep,,False,False
+alternate day fasting,Lifestyle and Daily Health,1,38.9,Mechanistic/preclinical only,alternate day fasting,Lifestyle and Daily Health,keep,,False,False
+ambulatory training regarding pivoting motion,Family and Home Support,1,57.05,Emerging evidence,ambulatory training regarding pivoting motion,Family and Home Support,keep,,False,False
+Ampasse,Medical and Biological Recovery,1,56.05,Moderate clinical evidence,Ampasse,Medical and Biological Recovery,keep,,False,False
+Amphetamine,Medical and Biological Recovery,5,39.06,Emerging evidence,Amphetamine / Dexamphetamine Therapy,Medical and Biological Recovery,merge,Same stimulant medication family.,False,True
+amphetamines and other therapeutics,Medical and Biological Recovery,1,32.0,Emerging evidence,Amphetamine / Dexamphetamine Therapy,Medical and Biological Recovery,merge,Broad amphetamine-based therapy label.,False,True
+Animal Assisted Therapy,Lifestyle and Daily Health,4,48.7,Emerging evidence,Animal Assisted Therapy,Lifestyle and Daily Health,keep,,False,False
+anti-platelet therapy and anti-coagulation,Medical and Biological Recovery,1,47.2,Emerging evidence,Antiplatelet / Anticoagulation Therapy,Medical and Biological Recovery,rename,Normalize terminology.,False,True
+antidepressant use,Medical and Biological Recovery,1,45.75,Emerging evidence,antidepressant use,Medical and Biological Recovery,keep,,False,False
+antiseizure medications (ASMs),Medical and Biological Recovery,1,45.75,Emerging evidence,antiseizure medications (ASMs),Medical and Biological Recovery,keep,,False,False
+ASIC1a inhibition,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,ASIC1a inhibition,Medical and Biological Recovery,keep,,False,False
+Assessment / Outcome Measurement,Testing and Prediction,73,41.83,Conflicting evidence,Assessment / Outcome Measurement,Testing and Prediction,keep,,False,False
+assistive technologies for continence management,Rehabilitation Technology,1,39.95,Emerging evidence,assistive technologies for continence management,Rehabilitation Technology,keep,,False,False
+augmented feedback,Testing and Prediction,1,52.2,Moderate clinical evidence,augmented feedback,Testing and Prediction,keep,,False,False
+automated interactive prompting technology,Rehabilitation Technology,1,51.55,Moderate clinical evidence,automated interactive prompting technology,Rehabilitation Technology,keep,,False,False
+awareness climbing board game,Cognition and Communication,1,58.8,Moderate clinical evidence,awareness climbing board game,Cognition and Communication,keep,,False,False
+Ayurvedic Rehabilitation therapy (ART),Medical and Biological Recovery,1,49.35,Moderate clinical evidence,Ayurvedic Rehabilitation,Medical and Biological Recovery,merge,Naming variant.,False,True
+Ayurvedic Rehabilitative Treatment,Medical and Biological Recovery,2,55.1,Moderate clinical evidence,Ayurvedic Rehabilitation,Medical and Biological Recovery,merge,Naming variant.,False,True
+bedside oral examination (BOE),Testing and Prediction,1,40.05,Emerging evidence,bedside oral examination (BOE),Testing and Prediction,keep,,False,False
+Bergapten,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,Bergapten,Medical and Biological Recovery,keep,,False,False
+bilateral movement training/practice,Recovery Science,1,41.45,Emerging evidence,bilateral movement training/practice,Recovery Science,keep,,False,False
+Bimanual Training,Physical Rehabilitation,2,48.8,Emerging evidence,Bimanual Training,Physical Rehabilitation,keep,,False,False
+biological vicarious biofeedback,Recovery Science,1,34.35,Emerging evidence,biological vicarious biofeedback,Recovery Science,keep,,False,False
+Birmingham Cognitive Screen (BCoS),Cognition and Communication,1,57.4,Moderate clinical evidence,Assessment / Outcome Measurement,Testing and Prediction,merge_and_move,Assessment instrument.,True,True
+Bobath-NDT (Neuro-Developmental Treatment - Bobath),Physical Rehabilitation,1,38.05,Emerging evidence,Bobath / NDT,Physical Rehabilitation,rename,Normalize synonymous Bobath and NDT terminology.,False,True
+Bon Saint Come's device,Cognition and Communication,1,58.8,Moderate clinical evidence,Bon Saint Come's device,Cognition and Communication,keep,,False,False
+Botulinum neurotoxin intramuscular chemodenervation,Brain and Nerve Stimulation,1,36.5,Emerging evidence,Botulinum Toxin Therapy,Medical and Biological Recovery,merge_and_move,Pharmacologic chemodenervation rather than brain/nerve stimulation.,True,True
+Botulinum Toxin,Medical and Biological Recovery,6,47.53,Moderate clinical evidence,Botulinum Toxin Therapy,Medical and Biological Recovery,merge,Canonical botulinum-toxin therapy label.,False,True
+Brain Injury Cognitive Screen (BICS),Cognition and Communication,1,48.25,Emerging evidence,Assessment / Outcome Measurement,Testing and Prediction,merge_and_move,Assessment instrument.,True,True
+"brain injury education combined with supportive counseling, symptom-based graded treatment",Cognition and Communication,1,37.05,Emerging evidence,"brain injury education combined with supportive counseling, symptom-based graded treatment",Cognition and Communication,keep,,False,False
+Brain-Computer Interface Rehabilitation,Rehabilitation Technology,20,50.32,Moderate clinical evidence,Brain-Computer Interface Rehabilitation,Rehabilitation Technology,keep,Canonical BCI rehabilitation label.,False,False
+brain-machine interfaces,Rehabilitation Technology,1,36.5,Emerging evidence,Brain-Computer Interface Rehabilitation,Rehabilitation Technology,merge,Synonymous BCI terminology.,False,True
+Bridges,Cognition and Communication,1,43.05,Emerging evidence,Bridges,Cognition and Communication,keep,,False,False
+broadband modulation currents,Brain and Nerve Stimulation,1,55.85,Moderate clinical evidence,broadband modulation currents,Brain and Nerve Stimulation,keep,,False,False
+BTB09089,Medical and Biological Recovery,1,45.2,Mechanistic/preclinical only,BTB09089,Medical and Biological Recovery,keep,,False,False
+Calibration of motor and cognitive items from the FIM instrument,Cognition and Communication,1,47.25,Emerging evidence,Assessment / Outcome Measurement,Testing and Prediction,merge_and_move,"Measurement calibration, not an intervention.",True,True
+calorie restriction,Lifestyle and Daily Health,1,38.9,Mechanistic/preclinical only,calorie restriction,Lifestyle and Daily Health,keep,,False,False
+Caregiver / Family Training,Family and Home Support,10,49.23,Conflicting evidence,Caregiver / Family Training,Family and Home Support,keep,Canonical caregiver/family support label.,False,False
+Caspase-1 inhibitor CZL80,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,Caspase-1 inhibitor CZL80,Medical and Biological Recovery,keep,,False,False
+CDN1163,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,CDN1163,Medical and Biological Recovery,keep,,False,False
+cell-based therapy,Medical and Biological Recovery,1,37.25,Emerging evidence,Cell / Stem Cell Therapy,Medical and Biological Recovery,merge,Broad cell-therapy label.,False,True
+cellex,Medical and Biological Recovery,3,50.92,Moderate clinical evidence,cellex,Medical and Biological Recovery,keep,,False,False
+cerebral organoids transplantation,Medical and Biological Recovery,1,48.0,Mechanistic/preclinical only,Cell / Stem Cell Therapy,Medical and Biological Recovery,merge,Transplantation-based regenerative therapy.,False,True
+Cerebrolysin,Medical and Biological Recovery,14,46.6,Emerging evidence,Cerebrolysin,Medical and Biological Recovery,keep,,False,False
+chemogenetic modulation,Brain and Nerve Stimulation,1,35.55,Emerging evidence,chemogenetic modulation,Brain and Nerve Stimulation,keep,,False,False
+Child and Adolescent Scale of Participation (CASP),Lifestyle and Daily Health,1,49.4,Emerging evidence,Assessment / Outcome Measurement,Testing and Prediction,merge_and_move,Assessment instrument.,True,True
+chiropractic integration,Brain and Nerve Stimulation,1,30.05,Emerging evidence,chiropractic integration,Brain and Nerve Stimulation,keep,,False,False
+chondroitinase ABC treatment and motor training,Medical and Biological Recovery,1,39.6,Mechanistic/preclinical only,chondroitinase ABC treatment and motor training,Medical and Biological Recovery,keep,,False,False
+chronic tobacco smoke or e-cigarette vape exposure,Medical and Biological Recovery,1,32.0,Mechanistic/preclinical only,chronic tobacco smoke or e-cigarette vape exposure,Medical and Biological Recovery,keep,,False,False
+Chuanzhitongluo,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,Chuanzhitongluo,Medical and Biological Recovery,keep,,False,False
+CIRCUIT motor skill learning task,Physical Rehabilitation,1,65.55,Moderate clinical evidence,CIRCUIT motor skill learning task,Physical Rehabilitation,keep,,False,False
+circulating CD34(+) human umbilical cord blood cells,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,Cell / Stem Cell Therapy,Medical and Biological Recovery,merge,Cell-therapy subtype.,False,True
+citalopram 20 mg/day,Medical and Biological Recovery,1,49.75,Emerging evidence,citalopram 20 mg/day,Medical and Biological Recovery,keep,,False,False
+Citicoline,Medical and Biological Recovery,3,47.22,Moderate clinical evidence,Citicoline,Medical and Biological Recovery,keep,,False,False
+ClinFIT Generic-30,Lifestyle and Daily Health,1,54.65,Emerging evidence,Assessment / Outcome Measurement,Testing and Prediction,merge_and_move,Assessment instrument.,True,True
+clinical scales/scores,Brain and Nerve Stimulation,1,49.55,Emerging evidence,Assessment / Outcome Measurement,Testing and Prediction,merge_and_move,"Measurement category, not an intervention.",True,True
+clopidogrel,Medical and Biological Recovery,1,56.05,Moderate clinical evidence,clopidogrel,Medical and Biological Recovery,keep,,False,False
+closed-loop rehabilitation strategy,Rehabilitation Technology,1,40.0,Emerging evidence,closed-loop rehabilitation strategy,Rehabilitation Technology,keep,,False,False
+Co-careldopa,Medical and Biological Recovery,1,51.95,Moderate clinical evidence,Levodopa / Carbidopa Therapy,Medical and Biological Recovery,merge,Alternative name for levodopa/carbidopa.,False,True
+Cogmed WM Training,Cognition and Communication,1,42.2,Emerging evidence,Working Memory Training,Cognition and Communication,rename,Named working-memory training program.,False,True
+CogniMotion System (ReAbility Online),Rehabilitation Technology,1,46.25,Emerging evidence,CogniMotion System (ReAbility Online),Rehabilitation Technology,keep,,False,False
+Cognistat,Brain and Nerve Stimulation,1,30.3,Emerging evidence,Assessment / Outcome Measurement,Testing and Prediction,merge_and_move,"Assessment instrument, not an intervention.",True,True
+Cognition in Daily Life scale,Cognition and Communication,1,52.5,Emerging evidence,Assessment / Outcome Measurement,Testing and Prediction,merge_and_move,Assessment instrument.,True,True
+Cognitive Rehabilitation,Cognition and Communication,58,47.21,Conflicting evidence,Cognitive Rehabilitation,Cognition and Communication,keep,Canonical cognitive rehabilitation label.,False,False
+cold light therapy,Cognition and Communication,1,56.1,Moderate clinical evidence,cold light therapy,Cognition and Communication,keep,,False,False
+combination of proprioceptive stimulation and rehabilitative training,Medical and Biological Recovery,1,41.6,Mechanistic/preclinical only,combination of proprioceptive stimulation and rehabilitative training,Medical and Biological Recovery,keep,,False,False
+combination treatment with progesterone and rehabilitation training,Recovery Science,1,33.05,Mechanistic/preclinical only,combination treatment with progesterone and rehabilitation training,Recovery Science,keep,,False,False
+combined program of physical and occupational therapies,Cognition and Communication,1,58.8,Moderate clinical evidence,combined program of physical and occupational therapies,Cognition and Communication,keep,,False,False
+combined specific antibiotic and beta blockade,Medical and Biological Recovery,1,37.25,Emerging evidence,combined specific antibiotic and beta blockade,Medical and Biological Recovery,keep,,False,False
+commercially available VR game,Rehabilitation Technology,1,50.55,Moderate clinical evidence,Virtual Reality Rehabilitation,Rehabilitation Technology,merge,Generic VR rehabilitation implementation.,False,True
+community-based neuro-rehabilitation service,Cognition and Communication,1,35.75,Emerging evidence,community-based neuro-rehabilitation service,Cognition and Communication,keep,,False,False
+complex rehabilitation therapy,General Rehabilitation,1,39.1,Emerging evidence,Comprehensive Rehabilitation,General Rehabilitation,merge,Broad comprehensive/complex rehabilitation concept.,False,True
+comprehensive day treatment program,Cognition and Communication,1,48.25,Emerging evidence,comprehensive day treatment program,Cognition and Communication,keep,,False,False
+comprehensive neurological rehabilitation,Cognition and Communication,1,52.5,Emerging evidence,Comprehensive Rehabilitation,General Rehabilitation,merge_and_move,Synonymous with comprehensive rehabilitation care.,True,True
+comprehensive pulmonary rehabilitation (CPR) program,Lifestyle and Daily Health,1,60.95,Moderate clinical evidence,comprehensive pulmonary rehabilitation (CPR) program,Lifestyle and Daily Health,keep,,False,False
+comprehensive rehabilitation care,General Rehabilitation,1,52.1,Emerging evidence,Comprehensive Rehabilitation,General Rehabilitation,merge,Canonical wording for comprehensive rehabilitation.,False,True
+Constraint-Induced Movement Therapy,Physical Rehabilitation,32,44.53,Conflicting evidence,Constraint-Induced Movement Therapy,Physical Rehabilitation,keep,,False,False
+continuous positive airway pressure,Cognition and Communication,1,56.8,Moderate clinical evidence,continuous positive airway pressure,Cognition and Communication,keep,,False,False
+contralateral C7 transfer surgery,Medical and Biological Recovery,1,41.95,Emerging evidence,contralateral C7 transfer surgery,Medical and Biological Recovery,keep,,False,False
+contrast compression therapy,Medical and Biological Recovery,1,56.05,Moderate clinical evidence,contrast compression therapy,Medical and Biological Recovery,keep,,False,False
+CONtrol DeSIGN (CONSIGN) decision support tool,Cognition and Communication,2,34.75,Emerging evidence,CONtrol DeSIGN (CONSIGN) decision support tool,Cognition and Communication,keep,,False,False
+convalescent rehabilitation,Cognition and Communication,1,52.5,Emerging evidence,Post-Acute Rehabilitation,General Rehabilitation,merge_and_move,Convalescent care is a post-acute rehabilitation setting.,True,True
+conventional optometric vision therapy,Family and Home Support,1,56.05,Emerging evidence,Vision Therapy,Cognition and Communication,merge_and_move,Vision rehabilitation belongs with cognition/perception rather than family support.,True,True
+conversational agents,Rehabilitation Technology,1,30.3,Insufficient evidence,conversational agents,Rehabilitation Technology,keep,,False,False
+Core Stability Training,Physical Rehabilitation,1,51.15,Emerging evidence,Core Stability Training,Physical Rehabilitation,keep,,False,False
+cortical priming,Brain and Nerve Stimulation,1,39.05,Emerging evidence,cortical priming,Brain and Nerve Stimulation,keep,,False,False
+cortical stimulation,Brain and Nerve Stimulation,1,33.8,Emerging evidence,Cortical Stimulation,Brain and Nerve Stimulation,keep,Canonical cortical stimulation label.,False,True
+cortical stimulation combined with motor training,Brain and Nerve Stimulation,1,30.55,Mechanistic/preclinical only,Cortical Stimulation + Motor Training,Brain and Nerve Stimulation,rename,Retain combined-modality information.,False,True
+cortico-cortical paired associative stimulation (ccPAS),Brain and Nerve Stimulation,1,53.15,Moderate clinical evidence,cortico-cortical paired associative stimulation (ccPAS),Brain and Nerve Stimulation,keep,,False,False
+CPAG-1,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,CPAG-1,Medical and Biological Recovery,keep,,False,False
+Cranioplasty / Cranial Reconstruction,Medical and Biological Recovery,3,41.18,Emerging evidence,Cranioplasty / Cranial Reconstruction,Medical and Biological Recovery,keep,Canonical surgical reconstruction category.,False,False
+critical pathway implementation,Testing and Prediction,1,49.3,Emerging evidence,critical pathway implementation,Testing and Prediction,keep,,False,False
+cross-education training,Brain and Nerve Stimulation,1,39.05,Emerging evidence,cross-education training,Brain and Nerve Stimulation,keep,,False,False
+culturally secure intervention for Aboriginal people with newly acquired brain injury,Family and Home Support,1,60.35,Moderate clinical evidence,culturally secure intervention for Aboriginal people with newly acquired brain injury,Family and Home Support,keep,,False,False
+current treatments for patients with persistent dysphagia and emerging neuromodulatory treatments,Recovery Science,1,36.3,Emerging evidence,current treatments for patients with persistent dysphagia and emerging neuromodulatory treatments,Recovery Science,keep,,False,False
+customized devices for monitoring and interacting with virtual environments,Rehabilitation Technology,1,41.35,Emerging evidence,customized devices for monitoring and interacting with virtual environments,Rehabilitation Technology,keep,,False,False
+Cytoflavin,Medical and Biological Recovery,3,51.35,Moderate clinical evidence,Cytoflavin,Medical and Biological Recovery,keep,,False,False
+D-dimer test,Testing and Prediction,1,49.3,Emerging evidence,D-dimer test,Testing and Prediction,keep,,False,False
+decompressive craniectomy,Cognition and Communication,1,40.0,Emerging evidence,decompressive craniectomy,Cognition and Communication,keep,,False,False
+deep brain stimulation of the cerebellum,Brain and Nerve Stimulation,1,49.45,Emerging evidence,Cerebellar Deep Brain Stimulation,Brain and Nerve Stimulation,merge,Same cerebellar DBS concept.,False,True
+deep cerebellar stimulation,Brain and Nerve Stimulation,1,47.0,Mechanistic/preclinical only,Cerebellar Deep Brain Stimulation,Brain and Nerve Stimulation,merge,Same cerebellar DBS concept.,False,True
+Depression / Mood / Motivation,Lifestyle and Daily Health,42,45.77,Conflicting evidence,Depression / Mood / Motivation,Lifestyle and Daily Health,keep,,False,False
+dexamphetamine,Medical and Biological Recovery,1,38.45,Emerging evidence,Amphetamine / Dexamphetamine Therapy,Medical and Biological Recovery,merge,Same stimulant medication family.,False,True
+Diagnostic / Biomarker,Testing and Prediction,15,42.59,Conflicting evidence,Diagnostic / Biomarker,Testing and Prediction,keep,,False,False
+Docosahexaenoic acid (DHA),Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,Docosahexaenoic acid (DHA),Medical and Biological Recovery,keep,,False,False
+domiciliary treatment,Cognition and Communication,1,52.5,Emerging evidence,Home-Based Rehabilitation,Family and Home Support,move_and_rename,Domiciliary treatment is home-based care.,True,True
+dopaminergic medication,Medical and Biological Recovery,1,36.0,Emerging evidence,Dopaminergic Therapy,Medical and Biological Recovery,merge,Normalize singular wording.,False,True
+dopaminergic medications,Medical and Biological Recovery,1,57.35,Moderate clinical evidence,Dopaminergic Therapy,Medical and Biological Recovery,merge,Normalize plural wording.,False,True
+dramatherapy,Other,1,33.85,Emerging evidence,Creative Arts Therapy,Lifestyle and Daily Health,merge_and_move,Creative-arts therapy subtype.,True,True
+dual adenosine A1 and A3 receptor agonists,Medical and Biological Recovery,1,41.95,Emerging evidence,dual adenosine A1 and A3 receptor agonists,Medical and Biological Recovery,keep,,False,False
+dual-task training strategies,Cognition and Communication,1,37.15,Emerging evidence,dual-task training strategies,Cognition and Communication,keep,,False,False
+dynamic body-weight support,Cognition and Communication,1,47.25,Emerging evidence,dynamic body-weight support,Cognition and Communication,keep,,False,False
+ear wiggling,Cognition and Communication,1,37.15,Mechanistic/preclinical only,ear wiggling,Cognition and Communication,keep,,False,False
+early and intense lower extremity training using a recumbent cycle ergometer system,Physical Rehabilitation,1,47.75,Emerging evidence,Cycling / Ergometer Training,Physical Rehabilitation,merge,Specific protocol within cycling/ergometer training.,False,True
+early comprehensive rehabilitation,General Rehabilitation,1,50.1,Emerging evidence,Early Rehabilitation,General Rehabilitation,merge,Specific wording of early rehabilitation.,False,True
+early head-up mobilisation,Physical Rehabilitation,1,54.95,Moderate clinical evidence,Early Mobilization,Physical Rehabilitation,merge,Spelling and protocol variant of early mobilization.,False,True
+early mobilization,Physical Rehabilitation,1,45.95,Emerging evidence,Early Mobilization,Physical Rehabilitation,keep,Canonical early mobilization label.,False,True
+early neuro-rehabilitation guidelines,Cognition and Communication,1,37.75,Emerging evidence,early neuro-rehabilitation guidelines,Cognition and Communication,keep,,False,False
+Early Physical Rehabilitation,Physical Rehabilitation,3,53.62,Moderate clinical evidence,Early Rehabilitation,General Rehabilitation,merge_and_move,Same core concept; physical qualifier is too broad to justify a separate subgroup.,True,True
+early rehabilitation,Cognition and Communication,1,60.2,Moderate clinical evidence,Early Rehabilitation,General Rehabilitation,rename,Normalize capitalization.,True,True
+Early Rehabilitation and Nursing Intervention (ERNI),General Rehabilitation,2,59.1,Moderate clinical evidence,Early Rehabilitation and Nursing Intervention (ERNI),General Rehabilitation,keep,,False,False
+Early Rehabilitation Index (ERI),Testing and Prediction,1,49.3,Emerging evidence,Assessment / Outcome Measurement,Testing and Prediction,merge,Assessment index.,False,True
+early rehabilitation of up to 2 sessions per day for 5 d/wk,Testing and Prediction,1,49.3,Emerging evidence,Early Rehabilitation,General Rehabilitation,merge_and_move,Dose/schedule detail should not create a separate subgroup.,True,True
+early rehabilitation within 48 hours of stroke,Testing and Prediction,1,55.6,Moderate clinical evidence,Early Rehabilitation,General Rehabilitation,merge_and_move,Timing detail should not create a separate subgroup.,True,True
+early rehabilitative strategies,General Rehabilitation,1,41.6,Emerging evidence,Early Rehabilitation,General Rehabilitation,merge,Generic early rehabilitation wording.,False,True
+early surgical treatment of tracheal stenosis,Medical and Biological Recovery,1,44.5,Emerging evidence,early surgical treatment of tracheal stenosis,Medical and Biological Recovery,keep,,False,False
+eBaViR virtual rehabilitation system,Rehabilitation Technology,1,51.55,Moderate clinical evidence,eBaViR virtual rehabilitation system,Rehabilitation Technology,keep,,False,False
+ecologically valid strategy training,Cognition and Communication,1,57.8,Moderate clinical evidence,ecologically valid strategy training,Cognition and Communication,keep,,False,False
+"ecologically-oriented, strategy-based intervention for memory impairment",Cognition and Communication,1,58.8,Moderate clinical evidence,"ecologically-oriented, strategy-based intervention for memory impairment",Cognition and Communication,keep,,False,False
+Edonerpic Maleate,Medical and Biological Recovery,2,34.88,Emerging evidence,Edonerpic Maleate,Medical and Biological Recovery,keep,,False,False
+EEG-based neurofeedback,Cognition and Communication,1,38.05,Emerging evidence,Neurofeedback,Cognition and Communication,merge,Named neurofeedback modality.,False,True
+EEG-driven Lower Limb Rehabilitation Training System (LLRTS),Rehabilitation Technology,1,34.5,Emerging evidence,EEG-driven Lower Limb Rehabilitation Training System (LLRTS),Rehabilitation Technology,keep,,False,False
+eHealth technology-based rehabilitation,Rehabilitation Technology,1,55.4,Moderate clinical evidence,Digital / eHealth Rehabilitation,Rehabilitation Technology,merge,Canonical digital/eHealth rehabilitation label.,False,True
+electrical neuromodulation,Brain and Nerve Stimulation,1,33.8,Emerging evidence,Electrical Stimulation,Brain and Nerve Stimulation,merge,Broad electrical-stimulation wording.,False,True
+Electrical Stimulation,Brain and Nerve Stimulation,13,51.09,Moderate clinical evidence,Electrical Stimulation,Brain and Nerve Stimulation,keep,Canonical electrical-stimulation label.,False,False
+Electroacupuncture,Brain and Nerve Stimulation,27,42.88,Emerging evidence,Electroacupuncture,Brain and Nerve Stimulation,keep,,False,False
+ELF-EMF therapy,Brain and Nerve Stimulation,1,33.8,Mechanistic/preclinical only,ELF-EMF therapy,Brain and Nerve Stimulation,keep,,False,False
+Employment Feasibility Checklist (EFC),Family and Home Support,1,44.1,Emerging evidence,Assessment / Outcome Measurement,Testing and Prediction,merge_and_move,"Assessment/checklist, not an intervention.",True,True
+endothelial progenitor cell transplantation,Medical and Biological Recovery,1,39.6,Mechanistic/preclinical only,Cell / Stem Cell Therapy,Medical and Biological Recovery,merge,Cell transplantation subtype.,False,True
+engaging with the natural environment,Recovery Science,1,53.7,Moderate clinical evidence,Nature-Based Rehabilitation,Lifestyle and Daily Health,merge_and_move,Same nature-based rehabilitation concept.,True,True
+Enhanced Recovery After Surgery (ERAS)-based care bundle,Medical and Biological Recovery,1,53.35,Moderate clinical evidence,Enhanced Recovery After Surgery (ERAS)-based care bundle,Medical and Biological Recovery,keep,,False,False
+enriched rehabilitation,Lifestyle and Daily Health,1,39.25,Mechanistic/preclinical only,Environmental Enrichment,Lifestyle and Daily Health,merge,Same enrichment-based rehabilitation concept.,False,True
+Environmental Enrichment,Lifestyle and Daily Health,13,43.0,Conflicting evidence,Environmental Enrichment,Lifestyle and Daily Health,keep,Canonical environmental-enrichment label.,False,False
+EPC-EXs and EPC-EXsmiR126,Medical and Biological Recovery,1,39.6,Mechanistic/preclinical only,EPC-EXs and EPC-EXsmiR126,Medical and Biological Recovery,keep,,False,False
+EphA4 inhibition and ROCK inhibitors (Y-27632 and fasudil),Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,EphA4 inhibition and ROCK inhibitors (Y-27632 and fasudil),Medical and Biological Recovery,keep,,False,False
+epidural cortical stimulation,Brain and Nerve Stimulation,1,56.45,Moderate clinical evidence,Cortical Stimulation,Brain and Nerve Stimulation,merge,Epidural subtype of cortical stimulation.,False,True
+ergometer training,Physical Rehabilitation,1,61.75,Moderate clinical evidence,Cycling / Ergometer Training,Physical Rehabilitation,rename,Normalize to a clear modality label.,False,True
+ERIGO treatment,Rehabilitation Technology,1,52.5,Emerging evidence,Erigo Robotic Rehabilitation,Rehabilitation Technology,merge,Canonical Erigo device-based rehabilitation label.,False,True
+errorless learning with self-generation,Cognition and Communication,1,53.55,Moderate clinical evidence,errorless learning with self-generation,Cognition and Communication,keep,,False,False
+etanercept,Medical and Biological Recovery,1,37.25,Emerging evidence,etanercept,Medical and Biological Recovery,keep,,False,False
+evidence-based early mobilization (EBEM),Physical Rehabilitation,1,52.75,Emerging evidence,Early Mobilization,Physical Rehabilitation,merge,Named early-mobilization protocol.,False,True
+evidence-based mobility intervention,Cognition and Communication,1,52.5,Emerging evidence,evidence-based mobility intervention,Cognition and Communication,keep,,False,False
+evidence-based rehabilitation pathway,Lifestyle and Daily Health,1,54.65,Emerging evidence,evidence-based rehabilitation pathway,Lifestyle and Daily Health,keep,,False,False
+excitatory stimulation of unlesioned hemisphere combined with phonological treatment,Brain and Nerve Stimulation,1,37.55,Emerging evidence,Brain Stimulation + Aphasia Therapy,Cognition and Communication,move_and_rename,Combined brain-stimulation and language-treatment intervention; not generic stimulation alone.,True,True
+Exercise / Physical Conditioning,Physical Rehabilitation,77,49.91,Conflicting evidence,Exercise / Physical Conditioning,Physical Rehabilitation,keep,,False,False
+exergames,Rehabilitation Technology,1,34.0,Emerging evidence,Rehabilitation Gaming / Exergaming,Rehabilitation Technology,merge,Canonical exergaming category.,False,True
+exosomes,Medical and Biological Recovery,1,37.25,Emerging evidence,exosomes,Medical and Biological Recovery,keep,,False,False
+expressive electronic journal writing,Cognition and Communication,1,31.25,Emerging evidence,expressive electronic journal writing,Cognition and Communication,keep,,False,False
+extracorporeal shock wave therapy (ESWT),Recovery Science,1,55.1,Moderate clinical evidence,extracorporeal shock wave therapy (ESWT),Recovery Science,keep,,False,False
+extract of Euterpe oleracea Mart.,Lifestyle and Daily Health,1,38.9,Mechanistic/preclinical only,extract of Euterpe oleracea Mart.,Lifestyle and Daily Health,keep,,False,False
+extrinsic feedback,Physical Rehabilitation,1,63.75,Moderate clinical evidence,extrinsic feedback,Physical Rehabilitation,keep,,False,False
+Facial-Oral Tract Therapy (F.O.T.T.) or Fibreoptic Endoscopic Evaluation of Swallowing (FEES),Cognition and Communication,1,49.55,Moderate clinical evidence,Facial-Oral Tract Therapy (F.O.T.T.) or Fibreoptic Endoscopic Evaluation of Swallowing (FEES),Cognition and Communication,keep,,False,False
+family-centered new-media continuous nursing intervention,Family and Home Support,1,68.25,Emerging evidence,Family / Caregiver Support,Family and Home Support,rename,Family-centered support delivered through media/nursing.,False,True
+family-systems intervention,Family and Home Support,1,59.35,Moderate clinical evidence,Caregiver / Family Training,Family and Home Support,merge,Family-based intervention.,False,True
+fascicular neurotomy,Medical and Biological Recovery,1,29.3,Emerging evidence,fascicular neurotomy,Medical and Biological Recovery,keep,,False,False
+fasudil dichloroacetate (FDCA),Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,fasudil dichloroacetate (FDCA),Medical and Biological Recovery,keep,,False,False
+focal vibration therapy,Cognition and Communication,1,40.95,Emerging evidence,focal vibration therapy,Cognition and Communication,keep,,False,False
+forelimb training,Recovery Science,1,23.8,Mechanistic/preclinical only,Preclinical Upper-Limb Motor Training,Physical Rehabilitation,merge_and_move,Animal-model forelimb motor-training label should remain separate from human upper-limb rehabilitation.,True,True
+frailty management,Lifestyle and Daily Health,1,59.55,Moderate clinical evidence,frailty management,Lifestyle and Daily Health,keep,,False,False
+framework for considering interventions around personal and intimate relationships,Family and Home Support,1,38.3,Emerging evidence,framework for considering interventions around personal and intimate relationships,Family and Home Support,keep,,False,False
+Functional Electrical Stimulation,Brain and Nerve Stimulation,44,39.86,Conflicting evidence,Functional Electrical Stimulation,Brain and Nerve Stimulation,keep,Distinct functional electrical stimulation modality.,False,False
+functional proprioceptive stimulation,Testing and Prediction,1,60.0,Moderate clinical evidence,functional proprioceptive stimulation,Testing and Prediction,keep,,False,False
+functional tests implementation,Cognition and Communication,1,46.2,Emerging evidence,Assessment / Outcome Measurement,Testing and Prediction,merge_and_move,Testing/measurement process.,True,True
+Gait / Balance Rehabilitation,Physical Rehabilitation,33,49.49,Conflicting evidence,Gait / Balance Rehabilitation,Physical Rehabilitation,keep,,False,False
+game-based rehabilitation,Cognition and Communication,1,58.2,Moderate clinical evidence,Rehabilitation Gaming / Exergaming,Rehabilitation Technology,move_and_rename,Game-based rehabilitation is a technology modality.,True,True
+gamified devices,Brain and Nerve Stimulation,1,54.45,Moderate clinical evidence,Rehabilitation Gaming / Exergaming,Rehabilitation Technology,merge_and_move,Gamified rehabilitation technology.,True,True
+General Neuroplasticity / Mechanisms,Recovery Science,25,34.11,Emerging evidence,General Neuroplasticity / Mechanisms,Recovery Science,keep,,False,False
+General Neurorehabilitation,General Rehabilitation,105,46.63,Conflicting evidence,General Neurorehabilitation,General Rehabilitation,keep,,False,False
+General Physical Rehabilitation,Physical Rehabilitation,4,45.56,Emerging evidence,General Physical Rehabilitation,Physical Rehabilitation,keep,,False,False
+generic version of the Multiple Errand Test (MET-G),Brain and Nerve Stimulation,1,44.3,Emerging evidence,Assessment / Outcome Measurement,Testing and Prediction,merge_and_move,Assessment instrument variant.,True,True
+GestureTek VR,Rehabilitation Technology,1,43.25,Emerging evidence,GestureTek VR,Rehabilitation Technology,keep,,False,False
+goal setting for spasticity intervention,Physical Rehabilitation,1,52.05,Emerging evidence,goal setting for spasticity intervention,Physical Rehabilitation,keep,,False,False
+gradually increased training intensity,Physical Rehabilitation,1,41.1,Mechanistic/preclinical only,gradually increased training intensity,Physical Rehabilitation,keep,,False,False
+GRIP model,Family and Home Support,1,38.55,Emerging evidence,GRIP model,Family and Home Support,keep,,False,False
+group psycho-education programme,Cognition and Communication,1,47.25,Emerging evidence,group psycho-education programme,Cognition and Communication,keep,,False,False
+growth factor and stem cell therapy,Medical and Biological Recovery,1,41.25,Emerging evidence,Cell / Stem Cell Therapy,Medical and Biological Recovery,merge,Broad regenerative cell-therapy category.,False,True
+guided and personalized 3D visualization education session via VR,Rehabilitation Technology,1,39.3,Emerging evidence,Virtual Reality Rehabilitation,Rehabilitation Technology,merge,VR-based rehabilitation/education intervention.,False,True
+Health Empowerment Intervention for Stroke Self-management (HEISS),Cognition and Communication,1,62.6,Moderate clinical evidence,Health Empowerment Intervention for Stroke Self-management (HEISS),Cognition and Communication,keep,,False,False
+Hebbian-type stimulation,Brain and Nerve Stimulation,1,60.65,Moderate clinical evidence,Hebbian-type stimulation,Brain and Nerve Stimulation,keep,,False,False
+high-dose vitamin C,Lifestyle and Daily Health,1,38.9,Mechanistic/preclinical only,high-dose vitamin C,Lifestyle and Daily Health,keep,,False,False
+high-level mobility programme,Physical Rehabilitation,1,48.8,Emerging evidence,high-level mobility programme,Physical Rehabilitation,keep,,False,False
+hippotherapy,Physical Rehabilitation,1,52.4,Moderate clinical evidence,hippotherapy,Physical Rehabilitation,keep,,False,False
+Holistic Habit Retraining Model,Cognition and Communication,1,35.75,Emerging evidence,Holistic Habit Retraining Model,Cognition and Communication,keep,,False,False
+Home / Community / Telerehabilitation,Family and Home Support,38,51.46,Conflicting evidence,Home / Community / Telerehabilitation,Family and Home Support,keep_pending_split,Retain combined home/community/telerehabilitation label for now; paper-level split review deferred.,False,False
+hormone replacement therapy,Medical and Biological Recovery,1,34.0,Emerging evidence,hormone replacement therapy,Medical and Biological Recovery,keep,,False,False
+human induced pluripotent stem cells,Medical and Biological Recovery,1,39.6,Mechanistic/preclinical only,Cell / Stem Cell Therapy,Medical and Biological Recovery,merge,Stem-cell subtype.,False,True
+human umbilical cord blood mononuclear cells (hUCBMNCs),Medical and Biological Recovery,1,39.6,Mechanistic/preclinical only,Cell / Stem Cell Therapy,Medical and Biological Recovery,merge,Cell-therapy subtype.,False,True
+human-machine synchronization control for active rehabilitation using an inertia sensor,Rehabilitation Technology,1,36.5,Emerging evidence,human-machine synchronization control for active rehabilitation using an inertia sensor,Rehabilitation Technology,keep,,False,False
+Hybrid Assistive Limb (HAL),Rehabilitation Technology,1,47.5,Emerging evidence,Hybrid Assistive Limb (HAL),Rehabilitation Technology,keep,Canonical HAL device family.,False,False
+Hybrid Assistive Limb single-joint type (HAL-SJ),Rehabilitation Technology,1,55.4,Moderate clinical evidence,Hybrid Assistive Limb (HAL),Rehabilitation Technology,merge,Device subtype within HAL family.,False,True
+hyperbaric oxygen therapy,Medical and Biological Recovery,1,41.35,Emerging evidence,hyperbaric oxygen therapy,Medical and Biological Recovery,keep,,False,False
+hypnotic suggestion,Cognition and Communication,1,53.55,Moderate clinical evidence,hypnotic suggestion,Cognition and Communication,keep,,False,False
+hypoxic postconditioning,Lifestyle and Daily Health,1,38.9,Mechanistic/preclinical only,hypoxic postconditioning,Lifestyle and Daily Health,keep,,False,False
+immersive audiovisual training,Rehabilitation Technology,1,62.4,Moderate clinical evidence,immersive audiovisual training,Rehabilitation Technology,keep,,False,False
+in-patient rehabilitation,Physical Rehabilitation,1,51.9,Emerging evidence,Inpatient Rehabilitation,General Rehabilitation,merge_and_move,Spelling variant of inpatient rehabilitation.,True,True
+Individual Placement and Support (IPS),Family and Home Support,1,44.1,Emerging evidence,Vocational Rehabilitation,Family and Home Support,merge,Supported-employment intervention.,False,True
+individually adapted rehabilitation,Cognition and Communication,1,35.0,Emerging evidence,individually adapted rehabilitation,Cognition and Communication,keep,,False,False
+Inflammation / Immune / Biological Repair,Medical and Biological Recovery,33,40.24,Conflicting evidence,Inflammation / Immune / Biological Repair,Medical and Biological Recovery,keep,,False,False
+inhibitory cortical stimulation (ICS) during motor rehabilitative training (RT),Brain and Nerve Stimulation,1,38.6,Mechanistic/preclinical only,inhibitory cortical stimulation (ICS) during motor rehabilitative training (RT),Brain and Nerve Stimulation,keep,,False,False
+inpatient neurological rehabilitation,Cognition and Communication,1,52.5,Emerging evidence,Inpatient Rehabilitation,General Rehabilitation,merge_and_move,Same setting-level concept.,True,True
+Inpatient Rehabilitation,General Rehabilitation,12,49.86,Conflicting evidence,Inpatient Rehabilitation,General Rehabilitation,keep,Canonical inpatient rehabilitation label.,False,False
+integrated inpatient stroke-cardiac rehabilitation approach,Brain and Nerve Stimulation,1,35.55,Emerging evidence,integrated inpatient stroke-cardiac rehabilitation approach,Brain and Nerve Stimulation,keep,,False,False
+intense rehabilitative treatment,Cognition and Communication,1,42.1,Emerging evidence,Intensive Rehabilitation,General Rehabilitation,merge_and_move,Synonymous broad intensive rehabilitation wording.,True,True
+intensified nonverbal facilitation of swallowing,Cognition and Communication,1,40.95,Emerging evidence,intensified nonverbal facilitation of swallowing,Cognition and Communication,keep,,False,False
+intensive eight-session intervention utilizing simulated activities,Recovery Science,1,37.2,Emerging evidence,intensive eight-session intervention utilizing simulated activities,Recovery Science,keep,,False,False
+intensive inpatient multidisciplinary rehabilitation,General Rehabilitation,2,45.92,Emerging evidence,Intensive Inpatient Rehabilitation,General Rehabilitation,rename,Retain meaningful intensity and setting information.,False,True
+Intensive Rehabilitation,General Rehabilitation,6,51.89,Moderate clinical evidence,Intensive Rehabilitation,General Rehabilitation,keep,Canonical broad intensive rehabilitation label.,False,False
+inter-departmental stroke meetings,Family and Home Support,1,56.05,Emerging evidence,inter-departmental stroke meetings,Family and Home Support,keep,,False,False
+inter-provider care coordination,Family and Home Support,1,52.05,Emerging evidence,inter-provider care coordination,Family and Home Support,keep,,False,False
+interdisciplinary rehabilitation consisting of restorative and compensatory strategies,Testing and Prediction,1,44.05,Emerging evidence,interdisciplinary rehabilitation consisting of restorative and compensatory strategies,Testing and Prediction,keep,,False,False
+intermittent rehabilitative training,Testing and Prediction,1,33.55,Mechanistic/preclinical only,intermittent rehabilitative training,Testing and Prediction,keep,,False,False
+intermittent sequential pneumatic compression,Brain and Nerve Stimulation,1,49.55,Emerging evidence,intermittent sequential pneumatic compression,Brain and Nerve Stimulation,keep,,False,False
+Internet + wearable device training,Family and Home Support,1,71.75,Moderate clinical evidence,Telerehabilitation,Rehabilitation Technology,merge_and_move,Remote technology-enabled rehabilitation.,True,True
+Internet+Continuing Nursing (ICN) Program,Family and Home Support,1,63.35,Moderate clinical evidence,Digital / eHealth Rehabilitation,Rehabilitation Technology,merge_and_move,Internet-delivered care program.,True,True
+internet-delivered self-management program,Physical Rehabilitation,1,49.8,Emerging evidence,internet-delivered self-management program,Physical Rehabilitation,keep,,False,False
+intracerebral stereotactic implantation of modified bone marrow-derived mesenchymal stromal (SB623) cells,Testing and Prediction,1,45.45,Emerging evidence,intracerebral stereotactic implantation of modified bone marrow-derived mesenchymal stromal (SB623) cells,Testing and Prediction,keep,,False,False
+intraspinal injections of chondroitinase ABC,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,intraspinal injections of chondroitinase ABC,Medical and Biological Recovery,keep,,False,False
+Intrathecal Baclofen,Medical and Biological Recovery,3,38.45,Emerging evidence,Intrathecal Baclofen,Medical and Biological Recovery,keep,,False,False
+invasive cortical stimulation,Brain and Nerve Stimulation,1,39.05,Emerging evidence,Cortical Stimulation,Brain and Nerve Stimulation,merge,Invasive subtype of cortical stimulation.,False,True
+invasive neuromodulation,Brain and Nerve Stimulation,1,37.05,Emerging evidence,Neuromodulation,Brain and Nerve Stimulation,merge,Broad invasive neuromodulation wording.,False,True
+Isoflurane and Netrin-1 combination therapy,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,Isoflurane and Netrin-1 combination therapy,Medical and Biological Recovery,keep,,False,False
+Japanese version of the Awareness Questionnaire,Testing and Prediction,1,49.3,Emerging evidence,Assessment / Outcome Measurement,Testing and Prediction,merge,Assessment instrument.,False,True
+kinesiotherapy combined with NDT- Bobath method and kinesiotherapy only,Testing and Prediction,1,55.6,Moderate clinical evidence,Bobath / NDT,Physical Rehabilitation,merge_and_move,Primary identifiable intervention is Bobath/NDT.,True,True
+kinesitherapy,Cognition and Communication,1,47.25,Emerging evidence,kinesitherapy,Cognition and Communication,keep,,False,False
+Leg Activity Measure (LegA),Testing and Prediction,1,28.05,Emerging evidence,Assessment / Outcome Measurement,Testing and Prediction,merge,Assessment instrument.,False,True
+Levodopa 100 mg/carbidopa 25 mg three times daily,Medical and Biological Recovery,1,56.85,Moderate clinical evidence,Levodopa / Carbidopa Therapy,Medical and Biological Recovery,merge,Dose-specific record of levodopa/carbidopa.,False,True
+levodopa administration,Medical and Biological Recovery,1,32.0,Emerging evidence,Levodopa / Carbidopa Therapy,Medical and Biological Recovery,merge,Same medication family.,False,True
+levodopa-based therapy,Medical and Biological Recovery,1,56.25,Moderate clinical evidence,Levodopa / Carbidopa Therapy,Medical and Biological Recovery,merge,Same medication family.,False,True
+levodopa/carbidopa,Medical and Biological Recovery,1,49.35,Moderate clinical evidence,Levodopa / Carbidopa Therapy,Medical and Biological Recovery,merge,Same medication family.,False,True
+limb remote ischemic post-conditioning (RIPC),Lifestyle and Daily Health,1,44.5,Mechanistic/preclinical only,limb remote ischemic post-conditioning (RIPC),Lifestyle and Daily Health,keep,,False,False
+Lokomat FreeD,Rehabilitation Technology,1,47.7,Emerging evidence,Lokomat FreeD,Rehabilitation Technology,keep,,False,False
+longer stay rehabilitation,Testing and Prediction,1,49.3,Emerging evidence,longer stay rehabilitation,Testing and Prediction,keep,,False,False
+lorazepam and zopiclone,Medical and Biological Recovery,1,52.05,Moderate clinical evidence,lorazepam and zopiclone,Medical and Biological Recovery,keep,,False,False
+LOTUS overexpression,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,LOTUS overexpression,Medical and Biological Recovery,keep,,False,False
+low-cost rehabilitation devices,Rehabilitation Technology,1,38.0,Emerging evidence,low-cost rehabilitation devices,Rehabilitation Technology,keep,,False,False
+low-dose ionizing radiation,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,low-dose ionizing radiation,Medical and Biological Recovery,keep,,False,False
+low-intensity focused ultrasound stimulation,Brain and Nerve Stimulation,1,41.4,Mechanistic/preclinical only,low-intensity focused ultrasound stimulation,Brain and Nerve Stimulation,keep,,False,False
+low-level laser therapy,Medical and Biological Recovery,1,37.25,Emerging evidence,low-level laser therapy,Medical and Biological Recovery,keep,,False,False
+lumbar type Hybrid Assistive Limb (HAL),Rehabilitation Technology,1,44.2,Emerging evidence,Hybrid Assistive Limb (HAL),Rehabilitation Technology,merge,Device subtype within HAL family.,False,True
+Lyoniresinol,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,Lyoniresinol,Medical and Biological Recovery,keep,,False,False
+mannosylated clodronate liposomes (MCLs),Medical and Biological Recovery,1,30.0,Mechanistic/preclinical only,mannosylated clodronate liposomes (MCLs),Medical and Biological Recovery,keep,,False,False
+manual wheelchair configuration,Testing and Prediction,1,50.35,Moderate clinical evidence,manual wheelchair configuration,Testing and Prediction,keep,,False,False
+Maraviroc,Medical and Biological Recovery,1,29.55,Insufficient evidence,Maraviroc,Medical and Biological Recovery,keep,,False,False
+marrow stromal cell transplantation,Medical and Biological Recovery,1,39.25,Emerging evidence,Cell / Stem Cell Therapy,Medical and Biological Recovery,merge,Stem/stromal cell transplantation subtype.,False,True
+marrow-derived cellular therapy,Medical and Biological Recovery,1,47.65,Emerging evidence,Cell / Stem Cell Therapy,Medical and Biological Recovery,merge,Cell-therapy subtype.,False,True
+maximal wrist extension training,Recovery Science,1,60.7,Moderate clinical evidence,Upper-Limb Rehabilitation,Physical Rehabilitation,merge_and_move,Specific upper-limb motor training.,True,True
+meaningful activities approach,Cognition and Communication,1,38.5,Emerging evidence,meaningful activities approach,Cognition and Communication,keep,,False,False
+medical rehabilitation,General Rehabilitation,2,54.9,Emerging evidence,medical rehabilitation,General Rehabilitation,keep,,False,False
+Medical Symptom Validity Test,Cognition and Communication,1,53.5,Emerging evidence,Assessment / Outcome Measurement,Testing and Prediction,merge_and_move,Assessment instrument.,True,True
+medications enhancing noradrenergic function,Medical and Biological Recovery,1,39.25,Emerging evidence,medications enhancing noradrenergic function,Medical and Biological Recovery,keep,,False,False
+mental imagery programme,Cognition and Communication,1,43.3,Emerging evidence,mental imagery programme,Cognition and Communication,keep,,False,False
+Mexidol,Medical and Biological Recovery,5,48.42,Moderate clinical evidence,Mexidol,Medical and Biological Recovery,keep,,False,False
+microRNA-124,Medical and Biological Recovery,1,37.25,Emerging evidence,microRNA-124,Medical and Biological Recovery,keep,,False,False
+Mildronate,Medical and Biological Recovery,1,60.15,Moderate clinical evidence,Mildronate,Medical and Biological Recovery,keep,,False,False
+Mind-Body / Behavioral Rehabilitation,Lifestyle and Daily Health,22,47.09,Conflicting evidence,Mind-Body / Behavioral Rehabilitation,Lifestyle and Daily Health,keep,,False,False
+miR-210 inhibition,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,miR-210 inhibition,Medical and Biological Recovery,keep,,False,False
+Mirror Box Therapy,Testing and Prediction,1,35.3,Emerging evidence,Mirror Therapy,Physical Rehabilitation,merge_and_move,Mirror-box therapy is a naming variant of mirror therapy.,True,True
+Mirror Therapy,Physical Rehabilitation,12,53.34,Moderate clinical evidence,Mirror Therapy,Physical Rehabilitation,keep,Canonical mirror-therapy label.,False,False
+mirror visual feedback,Recovery Science,1,40.3,Emerging evidence,Mirror Therapy,Physical Rehabilitation,merge_and_move,Mirror visual feedback is the mechanism used in mirror therapy.,True,True
+MLC601 (NeuroAiDTM),Medical and Biological Recovery,1,56.05,Moderate clinical evidence,MLC601 (NeuroAiDTM),Medical and Biological Recovery,keep,,False,False
+MLC901 (NeuroAiDTMII),Medical and Biological Recovery,1,39.25,Emerging evidence,MLC901 (NeuroAiDTMII),Medical and Biological Recovery,keep,,False,False
+MMP-12 knockdown,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,MMP-12 knockdown,Medical and Biological Recovery,keep,,False,False
+mobile cognitive assistant (SAMI),Cognition and Communication,1,47.2,Emerging evidence,Digital Cognitive Rehabilitation,Rehabilitation Technology,move_and_rename,Technology-delivered cognitive support.,True,True
+mobile device use for cognition,Cognition and Communication,1,52.5,Emerging evidence,Digital Cognitive Rehabilitation,Rehabilitation Technology,move_and_rename,Technology-delivered cognitive support.,True,True
+mobile phone design features,Cognition and Communication,1,35.0,Emerging evidence,Digital Cognitive Rehabilitation,Rehabilitation Technology,move_and_rename,Mobile technology supporting cognition.,True,True
+modafinil,Medical and Biological Recovery,1,48.45,Emerging evidence,modafinil,Medical and Biological Recovery,keep,,False,False
+moderate-intensity continuous training (MICT),Physical Rehabilitation,1,60.35,Moderate clinical evidence,moderate-intensity continuous training (MICT),Physical Rehabilitation,keep,,False,False
+modified Coping Inventory for Stressful Situations,Cognition and Communication,1,47.25,Emerging evidence,modified Coping Inventory for Stressful Situations,Cognition and Communication,keep,,False,False
+modified script training intervention,Cognition and Communication,1,41.3,Emerging evidence,Speech / Language / Aphasia Rehabilitation,Cognition and Communication,merge,Script training is an aphasia rehabilitation technique.,False,True
+motor cortex stimulation,Brain and Nerve Stimulation,2,43.55,Conflicting evidence,Cortical Stimulation,Brain and Nerve Stimulation,merge,Motor-cortex subtype of cortical stimulation.,False,True
+Motor Imagery / Mental Practice,Physical Rehabilitation,13,51.7,Conflicting evidence,Motor Imagery / Mental Practice,Physical Rehabilitation,keep,,False,False
+motor rehabilitation,Physical Rehabilitation,3,51.52,Moderate clinical evidence,Motor Rehabilitation,Physical Rehabilitation,keep,Canonical broad motor rehabilitation label.,False,True
+motor rehabilitation strategies,Physical Rehabilitation,1,41.55,Emerging evidence,Motor Rehabilitation,Physical Rehabilitation,merge,Generic variant of motor rehabilitation.,False,True
+motor rehabilitative training,Recovery Science,1,38.65,Mechanistic/preclinical only,motor rehabilitative training,Recovery Science,keep,,False,False
+MR-001,Cognition and Communication,1,33.3,Insufficient evidence,MR-001,Cognition and Communication,keep,,False,False
+mTOR signaling pathways,Medical and Biological Recovery,1,45.65,Emerging evidence,mTOR signaling pathways,Medical and Biological Recovery,keep,,False,False
+multi-disciplinary rehabilitation,Cognition and Communication,1,54.95,Moderate clinical evidence,Multidisciplinary Rehabilitation,General Rehabilitation,merge_and_move,Hyphenation variant.,True,True
+multicomponent intervention including occupational therapy,Testing and Prediction,1,49.3,Emerging evidence,multicomponent intervention including occupational therapy,Testing and Prediction,keep,,False,False
+Multicontext approach,Cognition and Communication,1,36.05,Emerging evidence,Multicontext approach,Cognition and Communication,keep,,False,False
+multidisciplinary approach to pain therapy,Medical and Biological Recovery,1,37.25,Emerging evidence,multidisciplinary approach to pain therapy,Medical and Biological Recovery,keep,,False,False
+multidisciplinary collaborative intervention,Brain and Nerve Stimulation,1,50.55,Emerging evidence,Multidisciplinary Rehabilitation,General Rehabilitation,merge_and_move,Broad multidisciplinary rehabilitation delivery model.,True,True
+Multidisciplinary Rehabilitation,General Rehabilitation,3,40.57,Emerging evidence,Multidisciplinary Rehabilitation,General Rehabilitation,keep,Canonical multidisciplinary rehabilitation label.,False,False
+multidisciplinary team coordination,Family and Home Support,1,42.05,Emerging evidence,multidisciplinary team coordination,Family and Home Support,keep,,False,False
+Multiple / broad rehabilitation approaches,General Rehabilitation,13,46.01,Conflicting evidence,General Neurorehabilitation,General Rehabilitation,merge,Broad catch-all rehabilitation concept.,False,True
+Multiple Errands Test,Brain and Nerve Stimulation,1,44.3,Emerging evidence,Assessment / Outcome Measurement,Testing and Prediction,merge_and_move,"Assessment instrument, not an intervention.",True,True
+Music / Art / Enriched Activity Therapy,Lifestyle and Daily Health,20,53.32,Moderate clinical evidence,Creative Arts Therapy,Lifestyle and Daily Health,rename,Canonical umbrella for music/art/performance therapies.,False,True
+myMoves Program,Physical Rehabilitation,1,42.1,Emerging evidence,myMoves Program,Physical Rehabilitation,keep,,False,False
+myoelectric orthosis,Family and Home Support,1,60.95,Moderate clinical evidence,myoelectric orthosis,Family and Home Support,keep,,False,False
+nature-based rehabilitation,Lifestyle and Daily Health,1,37.15,Emerging evidence,Nature-Based Rehabilitation,Lifestyle and Daily Health,keep,Canonical nature-based intervention.,False,True
+NDT-Bobath method,Testing and Prediction,1,55.6,Moderate clinical evidence,Bobath / NDT,Physical Rehabilitation,merge_and_move,Same named rehabilitation method.,True,True
+Neglect / Perceptual Rehabilitation,Cognition and Communication,16,44.88,Conflicting evidence,Neglect / Perceptual Rehabilitation,Cognition and Communication,keep,Canonical perceptual rehabilitation label.,False,False
+neurofeedback therapies,Cognition and Communication,1,52.15,Moderate clinical evidence,Neurofeedback,Cognition and Communication,merge,Generic neurofeedback label.,False,True
+Neuromidin (ipidacrinum),Medical and Biological Recovery,1,49.75,Emerging evidence,Neuromidin (ipidacrinum),Medical and Biological Recovery,keep,,False,False
+neuromodulation techniques,Brain and Nerve Stimulation,2,35.42,Emerging evidence,Neuromodulation,Brain and Nerve Stimulation,merge,Generic neuromodulation wording.,False,True
+Neuromuscular Electrical Stimulation,Brain and Nerve Stimulation,6,45.88,Emerging evidence,Neuromuscular Electrical Stimulation,Brain and Nerve Stimulation,keep,Distinct neuromuscular electrical stimulation modality.,False,False
+neuroplastic approach combined with group training program,Recovery Science,1,29.55,Emerging evidence,neuroplastic approach combined with group training program,Recovery Science,keep,,False,False
+neuropsychotherapy,Brain and Nerve Stimulation,1,33.8,Emerging evidence,neuropsychotherapy,Brain and Nerve Stimulation,keep,,False,False
+neurorestoration protocol,Recovery Science,1,57.9,Moderate clinical evidence,neurorestoration protocol,Recovery Science,keep,,False,False
+neurorestorative therapies,Brain and Nerve Stimulation,1,37.05,Emerging evidence,neurorestorative therapies,Brain and Nerve Stimulation,keep,,False,False
+neurorestorative treatments,Medical and Biological Recovery,1,37.25,Emerging evidence,neurorestorative treatments,Medical and Biological Recovery,keep,,False,False
+neurosensory stimulation and assistive technologies,Testing and Prediction,1,38.25,Emerging evidence,neurosensory stimulation and assistive technologies,Testing and Prediction,keep,,False,False
+neurotechnologies,Rehabilitation Technology,1,38.0,Emerging evidence,Neurotechnology-Based Rehabilitation,Rehabilitation Technology,merge,Plural variant.,False,True
+neurotechnology,Rehabilitation Technology,1,42.8,Emerging evidence,Neurotechnology-Based Rehabilitation,Rehabilitation Technology,merge,Singular variant.,False,True
+new decannulation procedure,Cognition and Communication,1,48.65,Emerging evidence,new decannulation procedure,Cognition and Communication,keep,,False,False
+new method of assessing intellectual functions using event-related brain potentials,Cognition and Communication,1,31.25,Emerging evidence,Assessment / Outcome Measurement,Testing and Prediction,merge_and_move,"Assessment method, not an intervention.",True,True
+nialamide,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,nialamide,Medical and Biological Recovery,keep,,False,False
+nightly stretch,Physical Rehabilitation,1,56.35,Moderate clinical evidence,nightly stretch,Physical Rehabilitation,keep,,False,False
+non-specific rehabilitation treatment,Cognition and Communication,1,52.5,Emerging evidence,General Neurorehabilitation,General Rehabilitation,merge_and_move,Explicitly non-specific rehabilitation.,True,True
+Noninvasive Brain Stimulation,Brain and Nerve Stimulation,105,46.72,Conflicting evidence,Noninvasive Brain Stimulation,Brain and Nerve Stimulation,keep,Canonical broad label.,False,False
+novel binocular vision treatment,Cognition and Communication,1,58.8,Moderate clinical evidence,Vision Therapy,Cognition and Communication,merge,Specific form of vision therapy.,False,True
+novel technology-based interventions,Rehabilitation Technology,1,55.4,Moderate clinical evidence,Neurotechnology-Based Rehabilitation,Rehabilitation Technology,merge,Broad technology-based rehabilitation label.,False,True
+NOX2 inhibitor apocynin,Medical and Biological Recovery,1,42.4,Mechanistic/preclinical only,NOX2 inhibitor apocynin,Medical and Biological Recovery,keep,,False,False
+Nutrition / Metabolic Support,Lifestyle and Daily Health,11,44.55,Conflicting evidence,Nutrition / Metabolic Support,Lifestyle and Daily Health,keep,,False,False
+occupational therapy,Cognition and Communication,2,48.27,Moderate clinical evidence,occupational therapy,Cognition and Communication,keep,,False,False
+On-Road Driving Remediation,Testing and Prediction,2,49.1,Moderate clinical evidence,On-Road Driving Remediation,Testing and Prediction,keep,,False,False
+onabotulinumtoxinA BOTOX,Medical and Biological Recovery,1,49.75,Emerging evidence,Botulinum Toxin Therapy,Medical and Biological Recovery,merge,Brand/formulation of botulinum toxin.,False,True
+operant conditioning of corticomuscular coherence,Cognition and Communication,1,42.0,Emerging evidence,operant conditioning of corticomuscular coherence,Cognition and Communication,keep,,False,False
+optogenetic modulation of parvalbumin neurons,Brain and Nerve Stimulation,1,42.2,Mechanistic/preclinical only,Optogenetic Stimulation,Brain and Nerve Stimulation,merge,Mechanistic subtype of optogenetic stimulation.,False,True
+optogenetic stimulation,Brain and Nerve Stimulation,1,39.05,Emerging evidence,Optogenetic Stimulation,Brain and Nerve Stimulation,keep,Canonical optogenetic stimulation label.,False,True
+optogenetic stimulation combined with motor training,Rehabilitation Technology,1,58.8,Moderate clinical evidence,optogenetic stimulation combined with motor training,Rehabilitation Technology,keep,,False,False
+oral baclofen,Medical and Biological Recovery,1,50.75,Emerging evidence,oral baclofen,Medical and Biological Recovery,keep,,False,False
+oral essential amino acids,Lifestyle and Daily Health,1,60.95,Moderate clinical evidence,Essential Amino Acid Supplementation,Lifestyle and Daily Health,merge_and_move,Nutritional supplementation belongs in lifestyle/daily health.,False,True
+oral supplementation of essential amino acids,Lifestyle and Daily Health,1,60.95,Moderate clinical evidence,Essential Amino Acid Supplementation,Lifestyle and Daily Health,merge,Naming variant.,False,True
+organized stroke care,General Rehabilitation,1,39.6,Emerging evidence,organized stroke care,General Rehabilitation,keep,,False,False
+overexpression of glyoxalase I (GLO1),Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,overexpression of glyoxalase I (GLO1),Medical and Biological Recovery,keep,,False,False
+Paediatric Rehabilitation Ingredients Measure (PRISM),Brain and Nerve Stimulation,1,33.8,Emerging evidence,Assessment / Outcome Measurement,Testing and Prediction,merge_and_move,"Measurement instrument, not an intervention.",True,True
+paging system,Cognition and Communication,1,58.8,Moderate clinical evidence,paging system,Cognition and Communication,keep,,False,False
+participatory action research,Family and Home Support,1,41.3,Emerging evidence,participatory action research,Family and Home Support,keep,,False,False
+patient participation in multidisciplinary goal setting,Lifestyle and Daily Health,1,46.6,Emerging evidence,patient participation in multidisciplinary goal setting,Lifestyle and Daily Health,keep,,False,False
+PEEDS-RAPEL,Brain and Nerve Stimulation,1,31.8,Emerging evidence,PEEDS-RAPEL,Brain and Nerve Stimulation,keep,,False,False
+pellet reaching training,Physical Rehabilitation,1,33.05,Mechanistic/preclinical only,Preclinical Upper-Limb Motor Training,Physical Rehabilitation,merge,Animal-model skilled-reaching motor-training label should remain separate from human upper-limb rehabilitation.,False,True
+peloidotherapy,Cognition and Communication,1,55.2,Emerging evidence,peloidotherapy,Cognition and Communication,keep,,False,False
+performance art intervention,Lifestyle and Daily Health,1,38.15,Emerging evidence,Creative Arts Therapy,Lifestyle and Daily Health,merge,Creative-arts therapy subtype.,False,True
+perturbation training using mechatronic shoes,Physical Rehabilitation,1,60.35,Moderate clinical evidence,perturbation training using mechatronic shoes,Physical Rehabilitation,keep,,False,False
+Pharmacologic / Molecular Recovery,Medical and Biological Recovery,69,37.85,Conflicting evidence,Pharmacologic / Molecular Recovery,Medical and Biological Recovery,keep,,False,False
+phonological training,Cognition and Communication,1,36.05,Emerging evidence,Speech / Language / Aphasia Rehabilitation,Cognition and Communication,merge,Specific aphasia/language rehabilitation technique.,False,True
+physiatry-led stroke consult service,Family and Home Support,1,56.05,Emerging evidence,physiatry-led stroke consult service,Family and Home Support,keep,,False,False
+Physical Activity and Sport for Acquired Brain Injury (PASABI),Physical Rehabilitation,1,55.1,Moderate clinical evidence,Exercise / Physical Conditioning,Physical Rehabilitation,merge,Program is a physical-activity intervention.,False,True
+Physical Activity Centred Education Programme (PACE),Physical Rehabilitation,2,42.02,Emerging evidence,Exercise / Physical Conditioning,Physical Rehabilitation,merge,Program is centered on physical activity.,False,True
+physical activity interventions,Physical Rehabilitation,1,53.7,Moderate clinical evidence,Exercise / Physical Conditioning,Physical Rehabilitation,merge,Broad physical-activity intervention.,False,True
+physiotherapy,Physical Rehabilitation,1,37.55,Emerging evidence,Physiotherapy,Physical Rehabilitation,keep,Canonical physiotherapy label.,False,True
+physiotherapy based on problem-solving,Physical Rehabilitation,1,42.85,Emerging evidence,Physiotherapy,Physical Rehabilitation,merge,Specific delivery approach within physiotherapy.,False,True
+physiotherapy session,Physical Rehabilitation,1,54.05,Emerging evidence,Physiotherapy,Physical Rehabilitation,merge,Generic session-level variant.,False,True
+PI3Kδ inhibitor CAL-101,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,PI3Kδ inhibitor CAL-101,Medical and Biological Recovery,keep,,False,False
+post hospital brain injury specialty programs,Lifestyle and Daily Health,1,54.65,Emerging evidence,Post-Acute Rehabilitation,General Rehabilitation,merge_and_move,Post-hospital specialty rehabilitation is a post-acute setting concept.,True,True
+post-hospital neurological rehabilitation,Lifestyle and Daily Health,1,54.65,Emerging evidence,Post-Acute Rehabilitation,General Rehabilitation,merge_and_move,Same post-hospital/post-acute setting concept.,True,True
+postacute rehabilitation measures,General Rehabilitation,1,52.1,Emerging evidence,Post-Acute Rehabilitation,General Rehabilitation,merge,Canonical post-acute rehabilitation concept.,False,True
+Prefrontal Symptoms Inventory (PSI),Cognition and Communication,1,47.25,Emerging evidence,Assessment / Outcome Measurement,Testing and Prediction,merge_and_move,Assessment instrument.,True,True
+preventive triple gene therapy,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,preventive triple gene therapy,Medical and Biological Recovery,keep,,False,False
+problem-solving therapy,Cognition and Communication,1,46.2,Emerging evidence,problem-solving therapy,Cognition and Communication,keep,,False,False
+progesterone,Medical and Biological Recovery,1,39.25,Emerging evidence,progesterone,Medical and Biological Recovery,keep,,False,False
+protein synthesis inhibition,Lifestyle and Daily Health,1,34.9,Mechanistic/preclinical only,protein synthesis inhibition,Lifestyle and Daily Health,keep,,False,False
+radio frequency-controlled neuroprosthesis,Rehabilitation Technology,1,56.8,Moderate clinical evidence,radio frequency-controlled neuroprosthesis,Rehabilitation Technology,keep,,False,False
+Radix Aconiti Coreani and Rhizoma Typhonii,Medical and Biological Recovery,1,39.6,Mechanistic/preclinical only,Radix Aconiti Coreani and Rhizoma Typhonii,Medical and Biological Recovery,keep,,False,False
+recombinant human GH,Medical and Biological Recovery,1,39.95,Mechanistic/preclinical only,recombinant human GH,Medical and Biological Recovery,keep,,False,False
+recombinant tPA and tPA-S478A,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,Thrombolytic Therapy,Medical and Biological Recovery,merge,tPA-based thrombolytic therapy.,False,True
+referral-based transition to subsequent rehabilitation at home,Family and Home Support,1,55.05,Emerging evidence,Home-Based Rehabilitation,Family and Home Support,rename,Home-transition rehabilitation.,False,True
+regenerative rehabilitation,General Rehabilitation,1,41.6,Emerging evidence,regenerative rehabilitation,General Rehabilitation,keep,,False,False
+rehabilitation,Testing and Prediction,3,51.69,Conflicting evidence,General Neurorehabilitation,General Rehabilitation,merge_and_move,Generic label with no distinct modality.,True,True
+rehabilitation across the continuum,Cognition and Communication,1,36.75,Emerging evidence,General Neurorehabilitation,General Rehabilitation,merge_and_move,Broad care-continuum concept rather than a distinct modality.,True,True
+Rehabilitation Complexity Scale-Extended (RCS-E),Testing and Prediction,1,32.85,Emerging evidence,Assessment / Outcome Measurement,Testing and Prediction,merge,Assessment instrument.,False,True
+rehabilitation framework based on computational modeling,Recovery Science,1,33.05,Mechanistic/preclinical only,rehabilitation framework based on computational modeling,Recovery Science,keep,,False,False
+Rehabilitation Gaming System (RGS),Rehabilitation Technology,2,36.73,Emerging evidence,Rehabilitation Gaming / Exergaming,Rehabilitation Technology,merge,Named rehabilitation-gaming platform.,False,True
+rehabilitation intervention,Testing and Prediction,1,55.6,Moderate clinical evidence,General Neurorehabilitation,General Rehabilitation,merge_and_move,Generic label with no distinct modality.,True,True
+rehabilitation interventions,Cognition and Communication,1,43.25,Emerging evidence,General Neurorehabilitation,General Rehabilitation,merge_and_move,Generic rehabilitation wording with no distinct intervention.,True,True
+rehabilitation measures,General Rehabilitation,2,52.1,Emerging evidence,General Neurorehabilitation,General Rehabilitation,merge,Generic label with no distinct modality.,False,True
+rehabilitation neuropsychologist support,Cognition and Communication,1,48.25,Emerging evidence,rehabilitation neuropsychologist support,Cognition and Communication,keep,,False,False
+rehabilitation process,General Rehabilitation,3,50.35,Moderate clinical evidence,General Neurorehabilitation,General Rehabilitation,merge,Process description rather than a distinct intervention.,False,True
+rehabilitation strategies,Cognition and Communication,1,42.0,Emerging evidence,General Neurorehabilitation,General Rehabilitation,merge_and_move,Generic rehabilitation wording with no distinct intervention.,True,True
+rehabilitation techniques,General Rehabilitation,1,39.6,Emerging evidence,General Neurorehabilitation,General Rehabilitation,merge,Generic label with no distinct modality.,False,True
+rehabilitation techniques for homonymous hemianopia,General Rehabilitation,1,39.6,Emerging evidence,Visual Rehabilitation,Cognition and Communication,merge_and_move,Visual-field rehabilitation for hemianopia.,True,True
+rehabilitation therapy,Testing and Prediction,2,47.62,Emerging evidence,General Neurorehabilitation,General Rehabilitation,merge_and_move,Generic label with no distinct modality.,True,True
+rehabilitation therapy based on the Bobath concept,Recovery Science,1,48.8,Emerging evidence,Bobath / NDT,Physical Rehabilitation,merge_and_move,Same named rehabilitation method.,True,True
+rehabilitation training,Recovery Science,1,33.4,Mechanistic/preclinical only,General Neurorehabilitation,General Rehabilitation,merge_and_move,Generic label with no distinct modality.,True,True
+rehabilitation training intervention,Testing and Prediction,1,54.9,Emerging evidence,General Neurorehabilitation,General Rehabilitation,merge_and_move,Generic label with no distinct modality.,True,True
+rehabilitation treatment,Testing and Prediction,1,51.38,Moderate clinical evidence,General Neurorehabilitation,General Rehabilitation,merge_and_move,Generic label with no distinct modality.,True,True
+rehabilitative care in nursing homes,Family and Home Support,1,36.55,Emerging evidence,Residential / Nursing-Home Rehabilitation,Family and Home Support,rename,Setting-specific rehabilitation.,False,True
+rehabilitative management,Physical Rehabilitation,1,40.05,Emerging evidence,rehabilitative management,Physical Rehabilitation,keep,,False,False
+rehabilitative training,Brain and Nerve Stimulation,1,39.78,Emerging evidence,General Neurorehabilitation,General Rehabilitation,merge_and_move,Generic rehabilitation wording with no distinct intervention.,True,True
+RehaCom rehabilitation software,Cognition and Communication,1,68.2,Moderate clinical evidence,Digital Cognitive Rehabilitation,Rehabilitation Technology,move_and_rename,Software-based cognitive rehabilitation.,True,True
+REHAROB Therapeutic System,Rehabilitation Technology,1,51.55,Moderate clinical evidence,REHAROB Therapeutic System,Rehabilitation Technology,keep,,False,False
+reinforced feedback in virtual environment (RFVE),Rehabilitation Technology,1,58.8,Moderate clinical evidence,reinforced feedback in virtual environment (RFVE),Rehabilitation Technology,keep,,False,False
+Relatox injections,Medical and Biological Recovery,1,56.05,Moderate clinical evidence,Botulinum Toxin Therapy,Medical and Biological Recovery,merge,Botulinum-toxin formulation.,False,True
+remote physical activity monitoring,Lifestyle and Daily Health,1,60.95,Moderate clinical evidence,remote physical activity monitoring,Lifestyle and Daily Health,keep,,False,False
+repetitive peripheral magnetic stimulation (rpMS),Brain and Nerve Stimulation,1,62.45,Moderate clinical evidence,repetitive peripheral magnetic stimulation (rpMS),Brain and Nerve Stimulation,keep,,False,False
+repetitive sensory stimulation (RSS),Brain and Nerve Stimulation,1,61.05,Moderate clinical evidence,Repetitive Sensory Stimulation,Brain and Nerve Stimulation,rename,Normalize acronym and capitalization.,False,True
+repetitive training paradigm,Testing and Prediction,1,42.35,Mechanistic/preclinical only,repetitive training paradigm,Testing and Prediction,keep,,False,False
+repetitive transorbital alternating current stimulation (rtACS),Brain and Nerve Stimulation,1,63.85,Moderate clinical evidence,repetitive transorbital alternating current stimulation (rtACS),Brain and Nerve Stimulation,keep,,False,False
+resistin,Medical and Biological Recovery,1,39.6,Mechanistic/preclinical only,resistin,Medical and Biological Recovery,keep,,False,False
+respiratory training with hypercapnic hypoxia,General Rehabilitation,1,59.8,Moderate clinical evidence,respiratory training with hypercapnic hypoxia,General Rehabilitation,keep,,False,False
+ROBIGAME,Rehabilitation Technology,1,44.2,Emerging evidence,ROBIGAME,Rehabilitation Technology,keep,,False,False
+Robotics / Assistive Technology,Rehabilitation Technology,87,45.87,Conflicting evidence,Robotics / Assistive Technology,Rehabilitation Technology,keep,,False,False
+RTW-program,Cognition and Communication,1,52.5,Emerging evidence,Vocational Rehabilitation,Family and Home Support,merge_and_move,Return-to-work program is vocational rehabilitation.,True,True
+sanatorium treatment,Cognition and Communication,1,52.5,Emerging evidence,sanatorium treatment,Cognition and Communication,keep,,False,False
+selective tibial neurotomy,Medical and Biological Recovery,1,47.05,Emerging evidence,selective tibial neurotomy,Medical and Biological Recovery,keep,,False,False
+selenium nanodot,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,selenium nanodot,Medical and Biological Recovery,keep,,False,False
+self-directed endurance training with competition,Physical Rehabilitation,1,60.35,Moderate clinical evidence,self-directed endurance training with competition,Physical Rehabilitation,keep,,False,False
+self-management programs,Cognition and Communication,1,51.15,Moderate clinical evidence,self-management programs,Cognition and Communication,keep,,False,False
+semax,Medical and Biological Recovery,1,58.85,Moderate clinical evidence,semax,Medical and Biological Recovery,keep,,False,False
+sensor-based technological therapy devices,Rehabilitation Technology,1,56.8,Moderate clinical evidence,sensor-based technological therapy devices,Rehabilitation Technology,keep,,False,False
+sensory stimulation,Cognition and Communication,1,52.15,Moderate clinical evidence,Repetitive Sensory Stimulation,Brain and Nerve Stimulation,merge_and_move,Broad sensory-stimulation label; consolidate with the more specific canonical category.,True,True
+sensory-based approaches in post-stroke motor rehabilitation,Physical Rehabilitation,1,41.55,Emerging evidence,sensory-based approaches in post-stroke motor rehabilitation,Physical Rehabilitation,keep,,False,False
+Sentinel Events Questionnaire (SEQ),Family and Home Support,1,56.05,Emerging evidence,Assessment / Outcome Measurement,Testing and Prediction,merge_and_move,Assessment instrument.,True,True
+sertraline,Medical and Biological Recovery,1,44.5,Emerging evidence,sertraline,Medical and Biological Recovery,keep,,False,False
+Sirt1 overexpression,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,Sirt1 overexpression,Medical and Biological Recovery,keep,,False,False
+skilled reach training,Lifestyle and Daily Health,1,38.9,Mechanistic/preclinical only,skilled reach training,Lifestyle and Daily Health,keep,,False,False
+skilled reaching rehabilitation,Recovery Science,1,41.45,Mechanistic/preclinical only,Preclinical Upper-Limb Motor Training,Physical Rehabilitation,merge_and_move,Animal-model skilled-reaching motor-training label should remain separate from human upper-limb rehabilitation.,True,True
+Sleep / Circadian Recovery,Lifestyle and Daily Health,12,49.95,Conflicting evidence,Sleep / Circadian Recovery,Lifestyle and Daily Health,keep,,False,False
+Smart Steps AI,Rehabilitation Technology,1,36.95,Emerging evidence,Smart Steps AI,Rehabilitation Technology,keep,,False,False
+Socratic Guided Feedback therapy,Cognition and Communication,1,55.55,Moderate clinical evidence,Socratic Guided Feedback therapy,Cognition and Communication,keep,,False,False
+song-based intervention,Family and Home Support,1,44.5,Emerging evidence,Music Therapy,Lifestyle and Daily Health,move_and_rename,Specific music-therapy intervention.,True,True
+spatial retraining,Cognition and Communication,1,42.0,Emerging evidence,Neglect / Perceptual Rehabilitation,Cognition and Communication,merge,Spatial retraining commonly targets neglect/perceptual deficits.,False,True
+Speech / Language / Aphasia Rehabilitation,Cognition and Communication,45,50.01,Conflicting evidence,Speech / Language / Aphasia Rehabilitation,Cognition and Communication,keep,Canonical communication rehabilitation label.,False,False
+spinal cord stimulation,Brain and Nerve Stimulation,1,33.8,Emerging evidence,spinal cord stimulation,Brain and Nerve Stimulation,keep,,False,False
+staged community-based brain injury rehabilitation (SCBIR),Cognition and Communication,1,48.25,Emerging evidence,staged community-based brain injury rehabilitation (SCBIR),Cognition and Communication,keep,,False,False
+standard-of-care management strategies and emerging adjunctive therapies,Testing and Prediction,1,33.3,Emerging evidence,standard-of-care management strategies and emerging adjunctive therapies,Testing and Prediction,keep,,False,False
+statistical process control,Cognition and Communication,1,39.55,Emerging evidence,statistical process control,Cognition and Communication,keep,,False,False
+Stay Well and Healthy! Health Risk Appraisal tool (SWH-HRA),Lifestyle and Daily Health,1,49.4,Emerging evidence,Assessment / Outcome Measurement,Testing and Prediction,merge_and_move,"Risk-appraisal tool, not a rehabilitation intervention.",True,True
+stem cell administration,Medical and Biological Recovery,1,39.25,Emerging evidence,Cell / Stem Cell Therapy,Medical and Biological Recovery,merge,Broad stem-cell therapy label.,False,True
+stem cell transplantation,General Rehabilitation,1,39.42,Emerging evidence,stem cell transplantation,General Rehabilitation,keep,,False,False
+stimulus control training,Cognition and Communication,1,38.45,Emerging evidence,stimulus control training,Cognition and Communication,keep,,False,False
+strategies for managing driving issues,Family and Home Support,1,38.55,Emerging evidence,strategies for managing driving issues,Family and Home Support,keep,,False,False
+Substance P,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,Substance P,Medical and Biological Recovery,keep,,False,False
+sulforaphane,Medical and Biological Recovery,1,42.4,Mechanistic/preclinical only,sulforaphane,Medical and Biological Recovery,keep,,False,False
+supportive care,Family and Home Support,1,44.8,Emerging evidence,supportive care,Family and Home Support,keep,,False,False
+surf therapy,Cognition and Communication,1,35.0,Emerging evidence,surf therapy,Cognition and Communication,keep,,False,False
+surgical reconstruction,Medical and Biological Recovery,1,32.0,Emerging evidence,Cranioplasty / Cranial Reconstruction,Medical and Biological Recovery,merge,Broad cranial/surgical reconstruction wording.,False,True
+targeted vibratory stimuli delivered through a wearable device,Cognition and Communication,1,46.2,Emerging evidence,targeted vibratory stimuli delivered through a wearable device,Cognition and Communication,keep,,False,False
+targeting the C3aR,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,targeting the C3aR,Medical and Biological Recovery,keep,,False,False
+Task Analysis,Testing and Prediction,1,46.45,Emerging evidence,Assessment / Outcome Measurement,Testing and Prediction,merge,Assessment/analysis method rather than a treatment subgroup.,False,True
+Task Oriented Training and Evaluation at Home (TOTE Home),Physical Rehabilitation,1,49.05,Emerging evidence,Task Oriented Training and Evaluation at Home (TOTE Home),Physical Rehabilitation,keep,,False,False
+task-oriented training,Physical Rehabilitation,1,38.7,Emerging evidence,Task-Specific / Task-Oriented Training,Physical Rehabilitation,merge,Task-oriented and task-specific training are commonly overlapping motor-learning labels.,False,True
+task-specific motor therapy,Physical Rehabilitation,1,62.75,Moderate clinical evidence,Task-Specific / Task-Oriented Training,Physical Rehabilitation,merge,Same task-specific motor-training concept.,False,True
+task-specific training,Physical Rehabilitation,2,43.5,Emerging evidence,Task-Specific / Task-Oriented Training,Physical Rehabilitation,merge,Task-oriented and task-specific training are commonly overlapping motor-learning labels.,False,True
+task-specific training combined with DNA methyltransferase inhibitor,Physical Rehabilitation,1,68.35,Moderate clinical evidence,task-specific training combined with DNA methyltransferase inhibitor,Physical Rehabilitation,keep,,False,False
+technological approaches to recovery,General Rehabilitation,1,34.35,Emerging evidence,Neurotechnology-Based Rehabilitation,Rehabilitation Technology,merge_and_move,Broad technology-based rehabilitation label.,True,True
+technology-assisted rehabilitation,Medical and Biological Recovery,1,60.25,Moderate clinical evidence,Neurotechnology-Based Rehabilitation,Rehabilitation Technology,merge_and_move,Technology-assisted rehabilitation belongs in the technology group.,True,True
+telehealth for self-care management,Family and Home Support,1,45.5,Emerging evidence,Digital / eHealth Rehabilitation,Rehabilitation Technology,merge_and_move,Telehealth-delivered self-management.,True,True
+therapeutic songwriting programme,Cognition and Communication,1,36.05,Emerging evidence,Music Therapy,Lifestyle and Daily Health,move_and_rename,Specific music-therapy intervention.,True,True
+thrombolysis,Medical and Biological Recovery,1,47.75,Emerging evidence,Thrombolytic Therapy,Medical and Biological Recovery,merge,Canonical thrombolytic-treatment category.,False,True
+Tissue Plasminogen Activator,Medical and Biological Recovery,4,43.74,Emerging evidence,Thrombolytic Therapy,Medical and Biological Recovery,merge,tPA is a thrombolytic therapy.,False,True
+tracheostomy weaning,General Rehabilitation,1,35.65,Emerging evidence,tracheostomy weaning,General Rehabilitation,keep,,False,False
+traditional Chinese medicine rehabilitation therapy,Medical and Biological Recovery,1,49.75,Emerging evidence,traditional Chinese medicine rehabilitation therapy,Medical and Biological Recovery,keep,,False,False
+training of the impaired forelimb,Medical and Biological Recovery,1,31.55,Mechanistic/preclinical only,Preclinical Upper-Limb Motor Training,Physical Rehabilitation,merge_and_move,Animal-model impaired-forelimb motor-training label should remain separate from human upper-limb rehabilitation.,True,True
+transient middle cerebral artery occlusion,Medical and Biological Recovery,1,30.0,Mechanistic/preclinical only,transient middle cerebral artery occlusion,Medical and Biological Recovery,keep,,False,False
+translingual neurostimulation (TLNS),Brain and Nerve Stimulation,1,32.3,Emerging evidence,translingual neurostimulation (TLNS),Brain and Nerve Stimulation,keep,,False,False
+transosseous distraction cranio-osteosynthesis,Physical Rehabilitation,1,54.05,Emerging evidence,transosseous distraction cranio-osteosynthesis,Physical Rehabilitation,keep,,False,False
+transplantation of 3D MSC/HUVEC spheroids,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,transplantation of 3D MSC/HUVEC spheroids,Medical and Biological Recovery,keep,,False,False
+trauma-informed practice guidelines,Family and Home Support,1,38.3,Emerging evidence,trauma-informed practice guidelines,Family and Home Support,keep,,False,False
+Unspecified / not intervention-specific,Other,75,38.21,Insufficient evidence,Unspecified / not intervention-specific,Other,keep,,False,False
+upper extremity intervention training,Brain and Nerve Stimulation,1,62.85,Moderate clinical evidence,Upper-Limb Rehabilitation,Physical Rehabilitation,merge_and_move,Generic upper-extremity rehabilitation.,True,True
+Upper-Limb Rehabilitation,Physical Rehabilitation,45,48.82,Conflicting evidence,Upper-Limb Rehabilitation,Physical Rehabilitation,keep,,False,False
+USP14-specific inhibitor IU1,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,USP14-specific inhibitor IU1,Medical and Biological Recovery,keep,,False,False
+usual and standard IRF care,Cognition and Communication,1,48.5,Emerging evidence,Inpatient Rehabilitation,General Rehabilitation,merge_and_move,Standard inpatient rehabilitation facility care.,True,True
+Vagus Nerve Stimulation,Brain and Nerve Stimulation,20,45.23,Emerging evidence,Vagus Nerve Stimulation,Brain and Nerve Stimulation,keep,,False,False
+VaLiANT (valued living after neurological trauma),Cognition and Communication,1,42.8,Emerging evidence,VaLiANT (valued living after neurological trauma),Cognition and Communication,keep,,False,False
+Valued Living Questionnaire - Comprehension Support version (VLQ-CS),Cognition and Communication,1,53.5,Emerging evidence,Assessment / Outcome Measurement,Testing and Prediction,merge_and_move,Assessment instrument.,True,True
+various technologies for remote rehabilitation,Rehabilitation Technology,1,38.0,Emerging evidence,Digital / eHealth Rehabilitation,Rehabilitation Technology,merge,Broad remote digital rehabilitation.,False,True
+various visual rehabilitative strategies,Recovery Science,1,33.05,Emerging evidence,Visual Rehabilitation,Cognition and Communication,merge_and_move,Broad visual rehabilitation wording.,True,True
+Vascular Risk / Cardiometabolic Management,Medical and Biological Recovery,6,46.08,Conflicting evidence,Vascular Risk / Cardiometabolic Management,Medical and Biological Recovery,keep,,False,False
+VEGFD mimetics,Medical and Biological Recovery,1,28.75,Mechanistic/preclinical only,VEGFD mimetics,Medical and Biological Recovery,keep,,False,False
+ventricular shunt implantation,Medical and Biological Recovery,1,49.75,Emerging evidence,ventricular shunt implantation,Medical and Biological Recovery,keep,,False,False
+verticalization with Erigo®,Rehabilitation Technology,1,51.55,Moderate clinical evidence,Erigo Robotic Rehabilitation,Rehabilitation Technology,merge,Same Erigo device-based intervention.,False,True
+very early rehabilitation,Physical Rehabilitation,1,54.05,Emerging evidence,Early Rehabilitation,General Rehabilitation,merge_and_move,Same core concept; timing can remain in a separate phase/timing field.,True,True
+very early rehabilitation followed by early supported discharge service,Physical Rehabilitation,1,59.65,Emerging evidence,Early Mobilization / Supported Discharge,Physical Rehabilitation,rename,Retain the combined early-mobilization and discharge-service concept.,False,True
+vestibular rehabilitation,Testing and Prediction,1,50.35,Moderate clinical evidence,vestibular rehabilitation,Testing and Prediction,keep,,False,False
+vestibular virtual rehabilitation (V2R),Rehabilitation Technology,1,51.55,Moderate clinical evidence,vestibular virtual rehabilitation (V2R),Rehabilitation Technology,keep,,False,False
+Virtual anatomical interactivity (VAI),Rehabilitation Technology,1,56.1,Emerging evidence,Virtual anatomical interactivity (VAI),Rehabilitation Technology,keep,,False,False
+Virtual Reality / Digital Rehabilitation,Rehabilitation Technology,51,46.57,Conflicting evidence,Virtual Reality Rehabilitation,Rehabilitation Technology,merge,Canonical virtual-reality rehabilitation label.,False,True
+vision therapy,Family and Home Support,1,58.1,Moderate clinical evidence,Vision Therapy,Cognition and Communication,move,Vision rehabilitation belongs with cognition/perception rather than family support.,True,True
+visual feedback distortion,Rehabilitation Technology,1,46.2,Emerging evidence,visual feedback distortion,Rehabilitation Technology,keep,,False,False
+visual restoration therapy,Cognition and Communication,1,48.5,Emerging evidence,Visual Rehabilitation,Cognition and Communication,merge,Specific visual rehabilitation approach.,False,True
+"visual substitution therapy, eye movement-based therapy, visual restitution therapies",Rehabilitation Technology,1,38.0,Emerging evidence,Visual Rehabilitation,Cognition and Communication,merge_and_move,Collection of visual rehabilitation approaches.,True,True
+visual training,Cognition and Communication,1,42.0,Emerging evidence,Visual Rehabilitation,Cognition and Communication,merge,Broad visual rehabilitation wording.,False,True
+visuo-spatial tracking task,Physical Rehabilitation,1,52.45,Emerging evidence,visuo-spatial tracking task,Physical Rehabilitation,keep,,False,False
+Vocational Intervention Program (VIP),Family and Home Support,2,54.95,Moderate clinical evidence,Vocational Rehabilitation,Family and Home Support,merge,Named vocational rehabilitation program.,False,True
+Vocational Rehabilitation,Family and Home Support,17,44.43,Emerging evidence,Vocational Rehabilitation,Family and Home Support,keep,Canonical vocational rehabilitation label.,False,False
+VR-assisted rehabilitation,Rehabilitation Technology,1,56.8,Moderate clinical evidence,Virtual Reality Rehabilitation,Rehabilitation Technology,merge,Naming variant.,False,True
+wearable IMU sensor for monitoring movement quality,Recovery Science,1,44.5,Emerging evidence,wearable IMU sensor for monitoring movement quality,Recovery Science,keep,,False,False
+weight-loss intervention,Lifestyle and Daily Health,1,50.4,Emerging evidence,weight-loss intervention,Lifestyle and Daily Health,keep,,False,False
+whole-body vibration training,Physical Rehabilitation,1,61.15,Moderate clinical evidence,whole-body vibration training,Physical Rehabilitation,keep,,False,False
+WNK3 knockout,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,WNK3 knockout,Medical and Biological Recovery,keep,,False,False
+xenon-liposome treatment,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,xenon-liposome treatment,Medical and Biological Recovery,keep,,False,False
+ziprasidone,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,ziprasidone,Medical and Biological Recovery,keep,,False,False
+β-Alanine,Medical and Biological Recovery,1,34.0,Mechanistic/preclinical only,β-Alanine,Medical and Biological Recovery,keep,,False,False
