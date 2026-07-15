@@ -62,8 +62,6 @@ def load_data() -> pd.DataFrame:
             SELECT
                 p.pmid, p.title, p.abstract, p.abstract_conclusion_text,
                 p.journal, p.publication_year, p.pubmed_url,
-                COALESCE(es.status, 'pending') AS extraction_status,
-                es.attempts, es.last_error, es.extracted_at,
                 e.study_type, e.intervention_canonical, e.intervention_family, e.intervention_raw,
                 e.intervention_category, e.condition_category, e.stroke_type,
                 e.sample_size, e.stroke_phase, e.time_since_stroke,
@@ -76,9 +74,8 @@ def load_data() -> pd.DataFrame:
                 s.neuroplasticity_potential, s.clinical_evidence_strength,
                 s.safety_score, s.practicality_score, s.overall_score,
                 s.study_quality_tier, s.scoring_notes
-            FROM papers p
-            LEFT JOIN extraction_status es ON p.pmid = es.pmid
-            LEFT JOIN study_extractions e ON p.pmid = e.pmid
+            FROM study_extractions e
+            JOIN papers p ON p.pmid = e.pmid
             LEFT JOIN scores s ON e.pmid = s.pmid
                 AND e.intervention_canonical = s.intervention_canonical
             """,
@@ -145,12 +142,11 @@ def clean_table(df: pd.DataFrame) -> pd.DataFrame:
         "title": "unknown",
         "journal": "unknown",
         "year": "unknown",
-        "study type": "not extracted",
-        "recovery subgroup": "not extracted",
-        "paper-level label": "not extracted",
+        "study type": "unknown",
+        "recovery subgroup": "unknown",
+        "paper-level label": "unknown",
         "sample size": "not reported in abstract",
-        "effect direction": "not extracted",
-        "extraction_status": "pending",
+        "effect direction": "unknown",
         "PubMed URL": "",
     }
     for column, default in display_defaults.items():
@@ -173,13 +169,11 @@ with st.sidebar:
     study_types = study_type_filter_options(filtered["study_type"].dropna().unique())
     intervention_filter_col = "intervention_family" if "intervention_family" in filtered.columns else "intervention_canonical"
     interventions = sorted(filtered[intervention_filter_col].dropna().unique())
-    statuses = sorted(filtered["extraction_status"].dropna().unique())
     selected_study = st.multiselect("Study type", study_types)
     selected_intervention = st.multiselect("Recovery subgroup", interventions)
     selected_stroke = st.multiselect("Stroke type", STROKE_TYPE_FILTER_OPTIONS)
     selected_phase = st.multiselect("Phase", STROKE_PHASE_FILTER_OPTIONS)
     selected_effect = st.multiselect("Effect direction", EFFECT_DIRECTION_FILTER_OPTIONS)
-    selected_status = st.multiselect("Extraction status", statuses)
 
 if keyword:
     keyword_lower = keyword.lower()
@@ -210,8 +204,6 @@ if selected_effect:
             lambda value: effect_direction_matches_filter(value, selected_effect)
         )
     ]
-if selected_status:
-    filtered = filtered[filtered["extraction_status"].isin(selected_status)]
 
 st.caption(f"{len(filtered)} papers match the current filters.")
 table = filtered.copy()
@@ -268,8 +260,6 @@ detail_rows = filtered if detail_limit is None else filtered.head(detail_limit)
 for _, row in detail_rows.iterrows():
     with st.expander(f"{row['pmid']} - {row['title']}"):
         st.markdown(f"[Open in PubMed]({row['pubmed_url']})")
-        status = display_value(row.get("extraction_status"), "pending")
-        st.write(f"Extraction status: {status}")
         st.markdown("**Abstract**")
         st.write(row["abstract"] or "No abstract stored.")
         conclusion = display_value(
@@ -278,14 +268,6 @@ for _, row in detail_rows.iterrows():
         )
         st.markdown("**Conclusion from abstract**")
         st.write(conclusion)
-        if status != "extracted":
-            if status == "failed":
-                st.error(f"Extraction failed after {display_value(row.get('attempts'), 0)} attempts.")
-                if not is_missing(row.get("last_error")):
-                    st.code(str(row.get("last_error")))
-            else:
-                st.info("This paper has been collected but not extracted yet, so structured fields and scores are not available.")
-            continue
         st.markdown("**Extracted structured fields**")
         st.json(
             {

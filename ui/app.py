@@ -68,7 +68,7 @@ hero_text, hero_image = st.columns([0.95, 1.35], vertical_alignment="center")
 with hero_text:
     st.title("Stroke Recovery Atlas")
     st.write(
-        "Explore aggregated research evidence across stroke recovery, rehabilitation, and neuroplasticity."
+        "Discover and compare aggregated research evidence across stroke recovery, rehabilitation, and neuroplasticity."
     )
     if not DB_PATH.exists():
         st.info("No database found yet. Run `python main.py init-db` and then collect/extract/score data.")
@@ -86,7 +86,7 @@ with overview_col:
         """
         <div class="home-summary">
             <h3>Browse Recovery Areas</h3>
-            <p>Explore recovery groups and subgroups created from AI-assisted extraction of PubMed abstracts and titles across areas such as physical rehabilitation, cognition, communication, technology, nerve/brain stimulation, lifestyle, biology, family support, and recovery science.</p>
+            <p>Explore recovery groups and subgroups created from AI-assisted extraction of PubMed paper abstracts and titles across areas such as physical rehabilitation, cognition, communication, technology, nerve/brain stimulation, lifestyle, biology, family support, and recovery science.</p>
         </div>
         """,
         unsafe_allow_html=True,
@@ -109,7 +109,7 @@ st.markdown(
     """
     <div class="home-why">
         <h2>Why Stroke Recovery Atlas Exists</h2>
-        <p>Stroke recovery research spans rehabilitation medicine, neuroscience, technology, and clinical care. Yet the evidence remains scattered, making it difficult to understand the broader recovery landscape or compare recovery approaches.</p>
+        <p>Stroke recovery research spans rehabilitation medicine, neuroscience, technology, and clinical care. Yet the evidence remains scattered, making it difficult to discover broader recovery areas or compare recovery approaches.</p>
         <p>Stroke Recovery Atlas brings this literature into one structured, searchable platform so users can explore recovery areas, compare evidence signals, and trace findings back to PubMed-indexed sources.</p>
         <p>The goal is not to replace clinical judgment. Instead, Stroke Recovery Atlas helps caregivers, researchers, clinicians, students, and others interested in stroke recovery navigate the research landscape more efficiently and transparently.</p>
     </div>

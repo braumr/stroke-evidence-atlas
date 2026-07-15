@@ -162,11 +162,42 @@ def _model_validate_json(raw_json: str) -> ExtractionResult:
     return ExtractionResult.parse_raw(raw_json)
 
 
+def _model_validate_dict(data: dict[str, Any]) -> ExtractionResult:
+    if hasattr(ExtractionResult, "model_validate"):
+        return ExtractionResult.model_validate(data)  # type: ignore[attr-defined]
+    return ExtractionResult.parse_obj(data)
+
+
+def _coerce_extraction_payload(data: dict[str, Any]) -> dict[str, Any]:
+    """Coerce common LLM missing-label shapes before schema validation."""
+
+    coerced = dict(data)
+    allowed_study_types = set(StudyType.__args__)  # type: ignore[attr-defined]
+    study_type = normalize_missing_label(coerced.get("study_type"), "unknown")
+    coerced["study_type"] = study_type if study_type in allowed_study_types else "unknown"
+    coerced["sample_size"] = parse_int(coerced.get("sample_size"))
+
+    for field in ["outcome_measures", "outcomes", "limitations", "neuroplasticity_mechanisms"]:
+        value = coerced.get(field)
+        if isinstance(value, list):
+            continue
+        if value is None:
+            coerced[field] = []
+            continue
+        normalized = normalize_missing_label(value)
+        if isinstance(normalized, str) and normalized.strip():
+            coerced[field] = [normalized]
+        else:
+            coerced[field] = []
+
+    return coerced
+
+
 def validate_extraction(raw_json: str) -> tuple[ExtractionResult, str]:
     """Validate and normalize LLM JSON."""
 
-    parsed = _model_validate_json(raw_json)
     raw_dict = json.loads(raw_json)
+    parsed = _model_validate_dict(_coerce_extraction_payload(raw_dict))
     parsed.sample_size = parse_int(parsed.sample_size)
     _cleanup_extraction(parsed)
     return parsed, json.dumps(raw_dict, ensure_ascii=False)

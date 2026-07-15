@@ -141,6 +141,67 @@ def display_text(value: object, default: str = "unknown") -> str:
     return str(display_value(value, default))
 
 
+NONINFORMATIVE_SUMMARY_VALUES = {
+    "",
+    "unknown",
+    "not reported in abstract",
+    "not reported",
+    "not applicable",
+    "none",
+    "null",
+}
+
+
+def _clean_summary_text(value: object) -> str:
+    """Normalize whitespace for subgroup summary display."""
+
+    return " ".join(str(value).split())
+
+
+def _summary_items(value: object) -> list[str]:
+    """Return meaningful semicolon/list items for subgroup summaries."""
+
+    if value is None:
+        return []
+    if isinstance(value, float) and pd.isna(value):
+        return []
+    if isinstance(value, list):
+        raw_items = value
+    elif isinstance(value, str):
+        cleaned = _clean_summary_text(value)
+        if not cleaned:
+            return []
+        try:
+            parsed = json.loads(cleaned)
+            raw_items = parsed if isinstance(parsed, list) else [cleaned]
+        except json.JSONDecodeError:
+            raw_items = cleaned.split(";")
+    else:
+        raw_items = [value]
+
+    items: list[str] = []
+    for item in raw_items:
+        cleaned = _clean_summary_text(normalize_missing_label(item))
+        if cleaned.lower() in NONINFORMATIVE_SUMMARY_VALUES:
+            continue
+        items.append(cleaned)
+    return items
+
+
+def meaningful_summary_text(*values: object) -> str:
+    """Join meaningful, deduplicated values for subgroup summary display."""
+
+    items: list[str] = []
+    seen: set[str] = set()
+    for value in values:
+        for item in _summary_items(value):
+            if item in seen:
+                continue
+            seen.add(item)
+            items.append(item)
+    return "; ".join(items)
+
+
 def detail_default(row: pd.Series, field: str) -> str:
     """Return the display fallback for legacy missing values in detail fields."""
 
@@ -195,10 +256,18 @@ if summaries.empty:
 
 intervention_col = "intervention_family" if "intervention_family" in summaries.columns else "intervention_canonical"
 study_intervention_col = "intervention_family" if "intervention_family" in studies.columns else "intervention_canonical"
+intervention_options = sorted(summaries[intervention_col].dropna().unique())
+default_intervention = "Virtual Reality Rehabilitation"
+default_intervention_index = (
+    intervention_options.index(default_intervention)
+    if default_intervention in intervention_options
+    else 0
+)
 
 intervention = st.selectbox(
     "Recovery subgroup",
-    sorted(summaries[intervention_col].dropna().unique()),
+    intervention_options,
+    index=default_intervention_index,
 )
 summary = summaries[summaries[intervention_col] == intervention].iloc[0]
 supporting = studies[studies[study_intervention_col] == intervention].copy()
@@ -239,22 +308,21 @@ score_df = pd.DataFrame(
 st.plotly_chart(px.bar(score_df, x="component", y="score", range_y=[0, 100]), width="stretch")
 
 detail_cols = st.columns(2)
-detail_cols[0].markdown("**Recovery subgroup summary**")
-detail_cols[0].write(f"Recovery group: {display_value(summary['intervention_category'])}")
-if "intervention_canonical" in supporting:
-    canonical_names = sorted(
-        {
-            str(value)
-            for value in supporting["intervention_canonical"].dropna().unique()
-            if str(value).strip() and str(value).lower() != "unknown"
-        }
-    )
-    detail_cols[0].write(f"Paper-level extracted labels: {'; '.join(canonical_names) or 'unknown'}")
-detail_cols[0].write(f"Common outcome measures: {display_value(summary['common_outcome_measures'])}")
-detail_cols[0].write(f"Reported protocols: {display_value(summary['treatment_protocols'])}")
-detail_cols[1].markdown("**Uncertainty and safety**")
-detail_cols[1].write(f"Key limitations: {display_value(summary['key_limitations'])}")
-detail_cols[1].write(f"Safety summary: {display_value(summary['safety_summary'])}")
+detail_cols[0].markdown("**Recovery Summary**")
+detail_cols[0].write(f"**Recovery group:** {display_value(summary['intervention_category'])}")
+outcome_summary = meaningful_summary_text(summary["common_outcome_measures"])
+if not outcome_summary:
+    outcome_summary = "No specific outcome measures were reported in the available abstracts."
+detail_cols[0].write(f"**Common outcome measures:** {outcome_summary}")
+limitation_summary = meaningful_summary_text(summary["key_limitations"])
+if limitation_summary:
+    detail_cols[0].write(f"**Reported limitations:** {limitation_summary}")
+safety_summary = meaningful_summary_text(
+    *(supporting["safety_notes"].tolist() if "safety_notes" in supporting else []),
+    *(supporting["adverse_events"].tolist() if "adverse_events" in supporting else []),
+)
+if safety_summary:
+    detail_cols[0].write(f"**Safety information:** {safety_summary}")
 
 if supporting.empty:
     st.info("No supporting studies found for this recovery subgroup.")

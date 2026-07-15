@@ -83,7 +83,7 @@ st.write(
 st.markdown(
     """
     <div class="scope-note">
-    It is designed for evidence discovery and source review, not medical advice or formal clinical guideline recommendations.
+    It is designed for recovery discovery and source review, not medical advice or formal clinical guideline recommendations.
     </div>
     """,
     unsafe_allow_html=True,
@@ -95,8 +95,8 @@ with source_col:
         """
         <div class="methodology-card">
             <h3>Data Source</h3>
-            <p>The atlas uses PubMed records collected with a stroke recovery and neurorehabilitation search strategy.</p>
-            <p>The current extraction layer uses each paper's title and PubMed abstract.</p>
+            <p>Stroke Recovery Atlas uses PubMed records collected through a stroke recovery and neurorehabilitation search strategy.</p>
+            <p>The current extraction layer uses each paper’s title and PubMed abstract.</p>
         </div>
         """,
         unsafe_allow_html=True,
@@ -200,30 +200,16 @@ st.dataframe(
     },
 )
 
-rank_col, scope_col = st.columns(2)
-with rank_col:
-    st.markdown(
-        """
-        <div class="methodology-card">
-            <h3>Ranking Logic</h3>
-            <p>Recovery subgroups are ranked by average overall score across included papers after filters are applied.</p>
-            <p>The ranking combines neuroplasticity rationale, clinical evidence strength, safety, and practicality rather than paper count alone.</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-with scope_col:
-    st.markdown(
-        """
-        <div class="methodology-card">
-            <h3>Current Scope</h3>
-            <p>The current version is abstract-based and intended for evidence discovery, comparison, and source auditing.</p>
-            <p>Future versions may incorporate legally accessible full-text sections, expert-refined taxonomy, and updated score weights or thresholds.</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+st.markdown(
+    """
+    <div class="methodology-card">
+        <h3>Ranking Logic</h3>
+        <p>Recovery subgroups are ranked by average overall score across included papers after filters are applied.</p>
+        <p>The ranking combines neuroplasticity rationale, clinical evidence strength, safety, and practicality rather than paper count alone.</p>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
 st.subheader("Evidence Tiers")
 tiers = pd.DataFrame(

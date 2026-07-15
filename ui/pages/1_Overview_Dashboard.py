@@ -99,8 +99,7 @@ if papers.empty and summaries.empty:
     st.info("No data yet. Run the pipeline commands from the README to populate the atlas.")
     st.stop()
 
-total_papers = len(papers)
-papers_extracted = int(extractions["pmid"].nunique()) if not extractions.empty else 0
+total_papers = int(extractions["pmid"].nunique()) if not extractions.empty else 0
 intervention_col = "intervention_family" if "intervention_family" in summaries.columns else "intervention_canonical"
 extraction_intervention_col = (
     "intervention_family" if "intervention_family" in extractions.columns else "intervention_canonical"
@@ -113,12 +112,11 @@ review_count = (
     else 0
 )
 
-kpi_cols = st.columns(5)
-render_kpi(kpi_cols[0], "Total papers collected", total_papers)
-render_kpi(kpi_cols[1], "Papers extracted", papers_extracted)
-render_kpi(kpi_cols[2], "Recovery subgroups identified", interventions)
-render_kpi(kpi_cols[3], "Randomized trials", rct_count)
-render_kpi(kpi_cols[4], "Systematic review/meta-analysis count", review_count)
+kpi_cols = st.columns(4)
+render_kpi(kpi_cols[0], "Total Papers", total_papers)
+render_kpi(kpi_cols[1], "Recovery subgroups identified", interventions)
+render_kpi(kpi_cols[2], "Randomized trials", rct_count)
+render_kpi(kpi_cols[3], "Systematic review/meta-analysis count", review_count)
 
 filtered_summaries = summaries.copy()
 filtered_extractions = extractions.copy()
