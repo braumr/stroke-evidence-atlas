@@ -1,1 +1,1 @@
-"""Stroke Evidence Atlas package."""
+"""Stroke Recovery Research Platform package."""

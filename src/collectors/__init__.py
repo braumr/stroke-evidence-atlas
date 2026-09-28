@@ -1,1 +1,1 @@
-"""Literature collectors for Stroke Evidence Atlas."""
+"""Literature collectors for Stroke Recovery Research Platform."""

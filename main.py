@@ -1,4 +1,4 @@
-"""Command-line entrypoint for Stroke Evidence Atlas."""
+"""Command-line entrypoint for Stroke Recovery Research Platform."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ except ModuleNotFoundError:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Stroke Evidence Atlas V1 pipeline")
+    parser = argparse.ArgumentParser(description="Stroke Recovery Research Platform pipeline")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     init_parser = subparsers.add_parser("init-db", help="Initialize the SQLite database")
@@ -34,10 +34,11 @@ def build_parser() -> argparse.ArgumentParser:
     extract_parser.add_argument("--model", type=str, default=DEFAULT_LLM_MODEL)
     extract_parser.add_argument("--dry-run", action="store_true")
 
-    subparsers.add_parser("score", help="Score extracted evidence and aggregate interventions")
+    subparsers.add_parser("classify", help="Classify extracted studies into Recovery Domains and Research Topics")
+    subparsers.add_parser("score", help="Score extracted evidence and aggregate research topics")
     subparsers.add_parser("export", help="Export CSV files")
 
-    all_parser = subparsers.add_parser("all", help="Run collection, extraction, scoring, and export")
+    all_parser = subparsers.add_parser("all", help="Run collection, extraction, classification, optional scoring, and export")
     all_parser.add_argument("--max-papers", type=int, default=MAX_PAPERS)
     all_parser.add_argument("--limit", type=int, default=None)
     all_parser.add_argument("--force", action="store_true")
@@ -45,6 +46,7 @@ def build_parser() -> argparse.ArgumentParser:
     all_parser.add_argument("--query-domain", type=str, default=None)
     all_parser.add_argument("--model", type=str, default=DEFAULT_LLM_MODEL)
     all_parser.add_argument("--dry-run", action="store_true")
+    all_parser.add_argument("--skip-score", action="store_true", help="Classify and aggregate without recalculating scores")
 
     return parser
 
@@ -73,6 +75,11 @@ def main(argv: list[str] | None = None) -> int:
 
             count = extract_pending(args.limit, args.force, args.model, args.dry_run)
             print(f"Extraction complete: {count} papers extracted")
+        elif args.command == "classify":
+            from src.classification import classify_extractions
+
+            count = classify_extractions()
+            print(f"Classification complete: {count} extracted studies classified")
         elif args.command == "score":
             from src.scoring import score_extractions
 
@@ -88,14 +95,22 @@ def main(argv: list[str] | None = None) -> int:
             from src.collectors.pubmed import collect_pubmed
             from src.exports import export_csvs
             from src.extractor import extract_pending
-            from src.scoring import score_extractions
 
             init_db()
             inserted = collect_pubmed(args.max_papers, args.query_domain, args.dry_run)
             extracted = extract_pending(args.limit, args.force, args.model, args.dry_run)
-            scored = score_extractions()
+            if args.skip_score:
+                from src.classification import classify_extractions
+
+                classified = classify_extractions()
+                scored = "skipped"
+            else:
+                from src.scoring import score_extractions
+
+                scored = score_extractions()
+                classified = scored
             written = export_csvs()
-            print(f"All complete: inserted={inserted}, extracted={extracted}, scored={scored}")
+            print(f"All complete: inserted={inserted}, extracted={extracted}, classified={classified}, scored={scored}")
             for table, path in written.items():
                 print(f"{table}: {path}")
         finish_pipeline_run(run_id, "success")

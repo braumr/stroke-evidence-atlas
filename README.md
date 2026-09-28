@@ -34,6 +34,8 @@ LLM Abstract Extraction
         ↓
 Research Topic Normalization
         ↓
+Taxonomy Review Queue
+        ↓
 Evidence Scoring
         ↓
 Research Topic Aggregation
@@ -43,7 +45,7 @@ Streamlit Evidence Dashboard
 
 PubMed collection gathers paper metadata and abstracts, then stores them locally. The extraction layer sends title and abstract text to the LLM and validates structured JSON output before saving it.
 
-Normalization groups similar extracted labels into controlled research topics. Unmapped extracted labels are placed in a `Needs Taxonomy Review` bucket and written to `taxonomy_review_queue` instead of automatically becoming new official topics. Scoring and aggregation then summarize evidence strength, neuroplasticity relevance, safety, practicality, and supporting papers for dashboard review.
+Normalization groups similar extracted labels into controlled research topics. Unmapped extracted labels are placed in a `Needs Taxonomy Review` bucket and written to `taxonomy_review_queue` instead of automatically becoming new official topics. Scoring is optional; the project can classify extracted studies into Recovery Domains and Research Topics without recalculating numeric evidence scores.
 
 ## Architecture Overview
 
@@ -156,7 +158,7 @@ pip install -r requirements.txt
 export OPENAI_API_KEY="your_key_here"
 python main.py collect --max-papers 2000
 python main.py extract
-python main.py score
+python main.py classify
 streamlit run ui/app.py
 ```
 
@@ -171,6 +173,18 @@ CSV exports can be generated with:
 
 ```bash
 python main.py export
+```
+
+Scoring can be run when numeric evidence signals are needed:
+
+```bash
+python main.py score
+```
+
+For larger extraction batches where classification matters more than scoring:
+
+```bash
+python main.py all --max-papers 5000 --limit 5000 --skip-score
 ```
 
 ## Limitations

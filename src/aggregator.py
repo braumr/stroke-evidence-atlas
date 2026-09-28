@@ -33,6 +33,13 @@ def _top_join(values: list[str], limit: int = 8) -> str:
     return "; ".join(item for item, _ in counts.most_common(limit))
 
 
+def _optional_mean(values: list[float | None]) -> float | None:
+    scored_values = [value for value in values if value is not None]
+    if not scored_values:
+        return None
+    return round(mean(scored_values), 2)
+
+
 def _evidence_tier(rows: list[dict[str, Any]]) -> str:
     study_types = [row["study_type"] for row in rows]
     effects = {row.get("effect_direction") for row in rows}
@@ -41,7 +48,7 @@ def _evidence_tier(rows: list[dict[str, Any]]) -> str:
     rct_count = study_types.count("randomized_controlled_trial")
     review_count = study_types.count("systematic_review") + study_types.count("meta_analysis")
     animal_count = study_types.count("animal_study") + study_types.count("mechanistic_study")
-    avg_clinical = mean(row["clinical_evidence_strength"] for row in rows)
+    avg_clinical = _optional_mean([row.get("clinical_evidence_strength") for row in rows])
 
     if family == "Unspecified / not intervention-specific":
         return "Insufficient evidence"
@@ -49,6 +56,12 @@ def _evidence_tier(rows: list[dict[str, Any]]) -> str:
         return "Conflicting evidence"
     if human_count == 0 and animal_count > 0:
         return "Mechanistic/preclinical only"
+    if avg_clinical is None:
+        if review_count >= 1 or rct_count >= 2:
+            return "Human clinical evidence present"
+        if human_count > 0:
+            return "Emerging evidence"
+        return "Insufficient evidence"
     if avg_clinical >= 72 and human_count >= 3 and (review_count >= 1 or rct_count >= 2):
         return "Strong clinical evidence"
     if avg_clinical >= 50 and (review_count >= 1 or rct_count >= 1 or human_count >= 3):
@@ -59,7 +72,7 @@ def _evidence_tier(rows: list[dict[str, Any]]) -> str:
 
 
 def aggregate_interventions() -> int:
-    """Rebuild intervention-level summaries from extractions and scores."""
+    """Rebuild research-topic summaries from classifications and optional scores."""
 
     init_db()
     with get_connection() as conn:
@@ -76,7 +89,7 @@ def aggregate_interventions() -> int:
                     s.practicality_score,
                     s.overall_score
                 FROM study_extractions e
-                JOIN scores s ON e.pmid = s.pmid
+                LEFT JOIN scores s ON e.pmid = s.pmid
                     AND e.intervention_canonical = s.intervention_canonical
                 WHERE e.intervention_canonical IS NOT NULL
                 """
@@ -139,11 +152,11 @@ def aggregate_interventions() -> int:
                     study_types.count("systematic_review"),
                     study_types.count("meta_analysis"),
                     study_types.count("animal_study"),
-                    round(mean(row["neuroplasticity_potential"] for row in group), 2),
-                    round(mean(row["clinical_evidence_strength"] for row in group), 2),
-                    round(mean(row["safety_score"] for row in group), 2),
-                    round(mean(row["practicality_score"] for row in group), 2),
-                    round(mean(row["overall_score"] for row in group), 2),
+                    _optional_mean([row.get("neuroplasticity_potential") for row in group]),
+                    _optional_mean([row.get("clinical_evidence_strength") for row in group]),
+                    _optional_mean([row.get("safety_score") for row in group]),
+                    _optional_mean([row.get("practicality_score") for row in group]),
+                    _optional_mean([row.get("overall_score") for row in group]),
                     _evidence_tier(group),
                     _top_join(outcome_measures),
                     _top_join(protocols),
