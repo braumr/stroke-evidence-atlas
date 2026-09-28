@@ -143,8 +143,8 @@ def clean_table(df: pd.DataFrame) -> pd.DataFrame:
         "journal": "unknown",
         "year": "unknown",
         "study type": "unknown",
-        "recovery subgroup": "unknown",
-        "paper-level label": "unknown",
+        "Research Topic": "unknown",
+        "Extracted Label": "unknown",
         "sample size": "not reported in abstract",
         "effect direction": "unknown",
         "PubMed URL": "",
@@ -170,7 +170,7 @@ with st.sidebar:
     intervention_filter_col = "intervention_family" if "intervention_family" in filtered.columns else "intervention_canonical"
     interventions = sorted(filtered[intervention_filter_col].dropna().unique())
     selected_study = st.multiselect("Study type", study_types)
-    selected_intervention = st.multiselect("Recovery subgroup", interventions)
+    selected_intervention = st.multiselect("Research Topic", interventions)
     selected_stroke = st.multiselect("Stroke type", STROKE_TYPE_FILTER_OPTIONS)
     selected_phase = st.multiselect("Phase", STROKE_PHASE_FILTER_OPTIONS)
     selected_effect = st.multiselect("Effect direction", EFFECT_DIRECTION_FILTER_OPTIONS)
@@ -213,8 +213,8 @@ table = table.rename(
         "pmid": "PMID",
         "publication_year": "year",
         "study_type": "study type",
-        "intervention_family": "recovery subgroup",
-        "intervention_canonical": "paper-level label",
+        "intervention_family": "Research Topic",
+        "intervention_canonical": "Extracted Label",
         "sample_size": "sample size",
         "effect_direction": "effect direction",
     }
@@ -234,7 +234,7 @@ st.dataframe(
             "journal",
             "year",
             "study type",
-            "recovery subgroup",
+            "Research Topic",
             "effect direction",
             "PubMed URL",
         ]
@@ -272,10 +272,10 @@ for _, row in detail_rows.iterrows():
         st.json(
             {
                 "study_type": normalize_study_type_label(row.get("study_type")),
-                "extracted_label": display_value(row.get("intervention_raw")),
-                "recovery_subgroup": display_value(row.get("intervention_family")),
-                "paper_level_label": display_value(row.get("intervention_canonical")),
-                "recovery_group": display_value(row.get("intervention_category")),
+                "raw_extracted_intervention": display_value(row.get("intervention_raw")),
+                "research_topic": display_value(row.get("intervention_family")),
+                "extracted_label": display_value(row.get("intervention_canonical")),
+                "recovery_domain": display_value(row.get("intervention_category")),
                 "condition_category": display_value(row.get("condition_category")),
                 "stroke_type": normalize_stroke_type_label(row.get("stroke_type")),
                 "sample_size": display_value(row.get("sample_size"), "not reported in abstract"),

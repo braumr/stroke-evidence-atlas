@@ -1,4 +1,4 @@
-"""About and methodology page for the Stroke Recovery Atlas."""
+"""Methodology page for the Stroke Recovery Research Platform."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 
-st.set_page_config(page_title="About & Methodology", layout="wide")
+st.set_page_config(page_title="Methodology", layout="wide")
 st.markdown(
     """
     <style>
@@ -74,10 +74,10 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.title("About & Methodology")
+st.title("Methodology")
 st.write(
-    "Stroke Recovery Atlas is an abstract-level research navigation tool. It organizes "
-    "PubMed-indexed stroke recovery literature into recovery areas, structured paper details, "
+    "Stroke Recovery Research Platform is an abstract-level research navigation tool. It organizes "
+    "PubMed-indexed stroke recovery literature into recovery domains, research topics, structured paper details, "
     "and evidence signals that can be explored and audited."
 )
 st.markdown(
@@ -95,7 +95,7 @@ with source_col:
         """
         <div class="methodology-card">
             <h3>Data Source</h3>
-            <p>Stroke Recovery Atlas uses PubMed records collected through a stroke recovery and neurorehabilitation search strategy.</p>
+            <p>Stroke Recovery Research Platform uses PubMed records collected through a stroke recovery and neurorehabilitation search strategy.</p>
             <p>The current extraction layer uses each paper’s title and PubMed abstract.</p>
         </div>
         """,
@@ -107,7 +107,7 @@ with extraction_col:
         """
         <div class="methodology-card">
             <h3>AI-Assisted Extraction</h3>
-            <p>Abstracts are converted into structured fields such as study type, recovery area, stroke type, stroke phase, outcomes, safety notes, mechanisms, and supporting sentences.</p>
+            <p>Abstracts are converted into structured fields such as study type, recovery domain, research topic, stroke type, stroke phase, outcomes, safety notes, mechanisms, and supporting sentences.</p>
             <p>Missing fields are labeled as not reported in abstract, not applicable, or unknown.</p>
         </div>
         """,
@@ -118,7 +118,7 @@ st.markdown(
     """
     <div class="methodology-card">
         <h3>Recovery Taxonomy</h3>
-        <p>Paper-level extracted labels are normalized into recovery subgroups, then grouped into broader recovery groups. Local taxonomy rules correct known synonym, spelling, and classification issues.</p>
+        <p>Paper-level extracted labels are normalized into research topics, then assigned to broader recovery domains. Local taxonomy rules correct known synonym, spelling, and classification issues.</p>
         <div class="chip-wrap">
             <span class="method-chip">Physical Rehabilitation</span>
             <span class="method-chip">Cognition and Communication</span>
@@ -180,12 +180,12 @@ weights = pd.DataFrame(
         {
             "Component": "Safety",
             "Weight": "15%",
-            "Basis": "Reported tolerability, adverse events, and category-level safety considerations.",
+            "Basis": "Reported tolerability, adverse events, and recovery-domain-level safety considerations.",
         },
         {
             "Component": "Practicality",
             "Weight": "10%",
-            "Basis": "Feasibility based on recovery group, setting, equipment needs, and delivery context.",
+            "Basis": "Feasibility based on recovery domain, setting, equipment needs, and delivery context.",
         },
     ]
 )
@@ -204,7 +204,7 @@ st.markdown(
     """
     <div class="methodology-card">
         <h3>Ranking Logic</h3>
-        <p>Recovery subgroups are ranked by average overall score across included papers after filters are applied.</p>
+        <p>Recovery groups are ranked by average overall score across included papers after filters are applied.</p>
         <p>The ranking combines neuroplasticity rationale, clinical evidence strength, safety, and practicality rather than paper count alone.</p>
     </div>
     """,
@@ -236,7 +236,7 @@ tiers = pd.DataFrame(
         },
         {
             "Tier": "Insufficient evidence",
-            "Definition": "Evidence is too sparse, nonspecific, or weakly tied to a recovery subgroup.",
+            "Definition": "Evidence is too sparse, nonspecific, or weakly tied to a research topic.",
         },
     ]
 )

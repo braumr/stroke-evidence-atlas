@@ -1,4 +1,4 @@
-"""Overview dashboard page."""
+"""Recovery explorer page."""
 
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ stroke_phase_matches_filter = filter_labels.stroke_phase_matches_filter
 stroke_type_matches_filter = filter_labels.stroke_type_matches_filter
 
 
-st.set_page_config(page_title="Overview Dashboard", layout="wide")
+st.set_page_config(page_title="Recovery Explorer", layout="wide")
 st.markdown(
     """
     <style>
@@ -61,7 +61,7 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-st.title("Overview Dashboard")
+st.title("Recovery Explorer")
 
 
 def render_kpi(column: object, label: str, value: int) -> None:
@@ -96,7 +96,7 @@ extractions = data["extractions"]
 summaries = data["summaries"]
 
 if papers.empty and summaries.empty:
-    st.info("No data yet. Run the pipeline commands from the README to populate the atlas.")
+    st.info("No data yet. Run the pipeline commands from the README to populate the platform.")
     st.stop()
 
 total_papers = int(extractions["pmid"].nunique()) if not extractions.empty else 0
@@ -114,7 +114,7 @@ review_count = (
 
 kpi_cols = st.columns(4)
 render_kpi(kpi_cols[0], "Total Papers", total_papers)
-render_kpi(kpi_cols[1], "Recovery subgroups identified", interventions)
+render_kpi(kpi_cols[1], "Research Topics identified", interventions)
 render_kpi(kpi_cols[2], "Randomized trials", rct_count)
 render_kpi(kpi_cols[3], "Systematic review/meta-analysis count", review_count)
 
@@ -129,7 +129,7 @@ with st.sidebar:
             summaries["intervention_category"].dropna().unique(),
             key=lambda value: (category_order.get(str(value), len(category_order)), str(value)),
         )
-        selected_categories = st.multiselect("Recovery group", categories)
+        selected_categories = st.multiselect("Recovery Domain", categories)
         tiers = sorted(summaries["evidence_tier"].dropna().unique())
         selected_tiers = st.multiselect("Evidence tier", tiers)
         if selected_categories:
@@ -170,8 +170,8 @@ if filtered_summaries.empty:
 ranked = filtered_summaries.sort_values("avg_overall_score", ascending=False)
 display = ranked.rename(
     columns={
-        intervention_col: "recovery subgroup",
-        "intervention_category": "recovery group",
+        intervention_col: "Research Topic",
+        "intervention_category": "Recovery Domain",
         "avg_overall_score": "average overall score",
         "avg_neuroplasticity_potential": "neuroplasticity potential",
         "avg_clinical_evidence_strength": "clinical evidence strength",
@@ -179,12 +179,12 @@ display = ranked.rename(
         "avg_practicality_score": "practicality",
     }
 )
-st.subheader("Ranked Recovery Subgroups")
+st.subheader("Ranked Research Topics")
 st.dataframe(
     display[
         [
-            "recovery subgroup",
-            "recovery group",
+            "Research Topic",
+            "Recovery Domain",
             "evidence_tier",
             "paper_count",
             "average overall score",
@@ -206,40 +206,40 @@ chart_cols[0].plotly_chart(
         x="avg_overall_score",
         y=intervention_col,
         orientation="h",
-        title="Top Recovery Subgroups",
-        labels={"avg_overall_score": "Average overall score", intervention_col: "Recovery subgroup"},
+        title="Top Research Topics",
+        labels={"avg_overall_score": "Average overall score", intervention_col: "Research Topic"},
     ),
     width="stretch",
 )
 group_counts = (
     ranked.groupby("intervention_category")
     .size()
-    .reset_index(name="subgroup_count")
-    .sort_values("subgroup_count")
+    .reset_index(name="research_topic_count")
+    .sort_values("research_topic_count")
 )
 chart_cols[1].plotly_chart(
     px.bar(
         group_counts,
-        x="subgroup_count",
+        x="research_topic_count",
         y="intervention_category",
         orientation="h",
-        title="Recovery Subgroups by Group",
-        labels={"subgroup_count": "Subgroup count", "intervention_category": "Recovery group"},
+        title="Research Topics by Recovery Domain",
+        labels={"research_topic_count": "Research Topic count", "intervention_category": "Recovery Domain"},
     ),
     width="stretch",
 )
 evidence_tier_counts = (
     ranked.groupby("evidence_tier")
     .size()
-    .reset_index(name="subgroup_count")
+    .reset_index(name="research_topic_count")
 )
 chart_cols[2].plotly_chart(
     px.bar(
         evidence_tier_counts,
         x="evidence_tier",
-        y="subgroup_count",
-        title="Recovery Subgroups by Evidence Tier",
-        labels={"evidence_tier": "Evidence tier", "subgroup_count": "Subgroup count"},
+        y="research_topic_count",
+        title="Research Topics by Evidence Tier",
+        labels={"evidence_tier": "Evidence tier", "research_topic_count": "Research Topic count"},
     ),
     width="stretch",
 )

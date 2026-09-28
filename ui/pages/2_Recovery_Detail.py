@@ -1,4 +1,4 @@
-"""Recovery explorer page."""
+"""Recovery detail page."""
 
 from __future__ import annotations
 
@@ -38,7 +38,7 @@ REVIEW_OR_BACKGROUND_TYPES = {
 }
 
 
-st.set_page_config(page_title="Recovery Explorer", layout="wide")
+st.set_page_config(page_title="Recovery Detail", layout="wide")
 st.markdown(
     """
     <style>
@@ -71,7 +71,7 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-st.title("Recovery Explorer")
+st.title("Recovery Detail")
 
 
 def render_kpi(column: object, label: str, value: object) -> None:
@@ -153,13 +153,13 @@ NONINFORMATIVE_SUMMARY_VALUES = {
 
 
 def _clean_summary_text(value: object) -> str:
-    """Normalize whitespace for subgroup summary display."""
+    """Normalize whitespace for research topic summary display."""
 
     return " ".join(str(value).split())
 
 
 def _summary_items(value: object) -> list[str]:
-    """Return meaningful semicolon/list items for subgroup summaries."""
+    """Return meaningful semicolon/list items for research topic summaries."""
 
     if value is None:
         return []
@@ -189,7 +189,7 @@ def _summary_items(value: object) -> list[str]:
 
 
 def meaningful_summary_text(*values: object) -> str:
-    """Join meaningful, deduplicated values for subgroup summary display."""
+    """Join meaningful, deduplicated values for research topic summary display."""
 
     items: list[str] = []
     seen: set[str] = set()
@@ -265,7 +265,7 @@ default_intervention_index = (
 )
 
 intervention = st.selectbox(
-    "Recovery subgroup",
+    "Research Topic",
     intervention_options,
     index=default_intervention_index,
 )
@@ -309,7 +309,7 @@ st.plotly_chart(px.bar(score_df, x="component", y="score", range_y=[0, 100]), wi
 
 detail_cols = st.columns(2)
 detail_cols[0].markdown("**Recovery Summary**")
-detail_cols[0].write(f"**Recovery group:** {display_value(summary['intervention_category'])}")
+detail_cols[0].write(f"**Recovery Domain:** {display_value(summary['intervention_category'])}")
 outcome_summary = meaningful_summary_text(summary["common_outcome_measures"])
 if not outcome_summary:
     outcome_summary = "No specific outcome measures were reported in the available abstracts."
@@ -325,7 +325,7 @@ if safety_summary:
     detail_cols[0].write(f"**Safety information:** {safety_summary}")
 
 if supporting.empty:
-    st.info("No supporting studies found for this recovery subgroup.")
+    st.info("No supporting studies found for this research topic.")
     st.stop()
 
 supporting["outcome_measures"] = supporting["outcome_measures"].map(parse_list)

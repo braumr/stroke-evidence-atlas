@@ -1,9 +1,10 @@
-"""Intervention name normalization."""
+"""Recovery taxonomy and extracted-label normalization."""
 
 from __future__ import annotations
 
 import re
 import csv
+import os
 from pathlib import Path
 
 from .utils import clean_text
@@ -135,6 +136,9 @@ NON_SPECIFIC_VALUES = {
     "not_applicable",
     "none",
 }
+
+REVIEW_TOPIC = "Needs Taxonomy Review"
+UNSPECIFIED_TOPIC = "Unspecified / not intervention-specific"
 
 SUBGROUP_ALIASES = {
     "citicoline": "Citicoline",
@@ -273,6 +277,27 @@ SUBGROUP_ALIASES = {
     "active rehabilitation treatment": "General Neurorehabilitation",
     "physical rehabilitation": "General Physical Rehabilitation",
     "physical rehabilitation interventions": "General Physical Rehabilitation",
+    "rehabilitation": "General Neurorehabilitation",
+    "rehabilitation therapy": "General Neurorehabilitation",
+    "rehabilitation treatment": "General Neurorehabilitation",
+    "rehabilitation process": "General Neurorehabilitation",
+    "rehabilitation measures": "General Neurorehabilitation",
+    "rehabilitative training": "General Neurorehabilitation",
+    "medical rehabilitation": "General Neurorehabilitation",
+    "in patient rehabilitation": "Inpatient Rehabilitation",
+    "in-patient rehabilitation": "Inpatient Rehabilitation",
+    "intensive inpatient multidisciplinary rehabilitation": "Intensive Rehabilitation",
+    "early mobilization": "Early Physical Rehabilitation",
+    "motor rehabilitation": "General Physical Rehabilitation",
+    "occupational therapy": "Occupational Therapy",
+    "task specific training": "Task-Specific Training",
+    "task-specific training": "Task-Specific Training",
+    "neuromodulation techniques": "Noninvasive Brain Stimulation",
+    "motor cortex stimulation": "Noninvasive Brain Stimulation",
+    "stem cell transplantation": "Stem Cell Therapy",
+    "cellex": "Cellex",
+    "control design consign decision support tool": "Decision Support Tools",
+    "control design decision support tool": "Decision Support Tools",
 }
 
 SUBGROUP_RECOVERY_GROUPS = {
@@ -334,7 +359,13 @@ SUBGROUP_RECOVERY_GROUPS = {
     "Bimanual Training": "Physical Rehabilitation",
     "Multidisciplinary Rehabilitation": "General Rehabilitation",
     "General Physical Rehabilitation": "Physical Rehabilitation",
-    "Unspecified / not intervention-specific": "Other",
+    "Occupational Therapy": "Physical Rehabilitation",
+    "Task-Specific Training": "Physical Rehabilitation",
+    "Stem Cell Therapy": "Medical and Biological Recovery",
+    "Cellex": "Medical and Biological Recovery",
+    "Decision Support Tools": "Testing and Prediction",
+    REVIEW_TOPIC: "Other",
+    UNSPECIFIED_TOPIC: "Other",
 }
 
 RECOVERY_GROUPS = (
@@ -606,6 +637,12 @@ def _normalize_key(value: str) -> str:
     return re.sub(r"\s+", " ", cleaned).strip()
 
 
+def taxonomy_key(value: str) -> str:
+    """Return the stable normalized key used for taxonomy lookup and review queues."""
+
+    return _normalize_key(value)
+
+
 def _clean_readable(value: str) -> str:
     cleaned = clean_text(value)
     cleaned = cleaned.replace("‐", "-").replace("‑", "-").replace("–", "-").replace("—", "-")
@@ -640,6 +677,89 @@ TAXONOMY_SUBGROUP_MAP, TAXONOMY_SUBGROUP_GROUPS = _load_taxonomy_mapping()
 def _taxonomy_subgroup(value: str) -> str:
     readable = _clean_readable(value)
     return TAXONOMY_SUBGROUP_MAP.get(_normalize_key(readable), readable)
+
+
+def _allow_open_research_topics() -> bool:
+    """Return whether previously unseen extracted labels may become research topics."""
+
+    value = os.getenv("STROKE_ATLAS_ALLOW_OPEN_TOPICS", "")
+    return value.lower() in {"1", "true", "yes", "on"}
+
+
+def is_approved_research_topic(value: str | None) -> bool:
+    """Return whether a research topic belongs to the controlled taxonomy."""
+
+    topic = _taxonomy_subgroup(_clean_readable(value or ""))
+    if not topic:
+        return False
+    if topic in {REVIEW_TOPIC, UNSPECIFIED_TOPIC}:
+        return True
+    return _group_for_subgroup(topic) is not None
+
+
+def recovery_domain_records() -> list[dict[str, object]]:
+    """Return controlled Recovery Domain records for database seeding."""
+
+    return [
+        {
+            "domain_name": domain,
+            "display_order": index,
+            "status": "active",
+        }
+        for index, domain in enumerate(RECOVERY_GROUPS, start=1)
+    ]
+
+
+def research_topic_records() -> list[dict[str, str]]:
+    """Return controlled Research Topic records for database seeding."""
+
+    topics: dict[str, tuple[str, str]] = {}
+    for topic, domain in SUBGROUP_RECOVERY_GROUPS.items():
+        topics[_taxonomy_subgroup(topic)] = (domain, "code")
+    for key, topic in TAXONOMY_SUBGROUP_MAP.items():
+        domain = TAXONOMY_SUBGROUP_GROUPS.get(_normalize_key(topic))
+        if domain:
+            topics[_taxonomy_subgroup(topic)] = (domain, "taxonomy_mapping")
+
+    return [
+        {
+            "topic_name": topic,
+            "recovery_domain": domain,
+            "status": "active",
+            "source": source,
+        }
+        for topic, (domain, source) in sorted(topics.items(), key=lambda item: (item[1][0], item[0]))
+    ]
+
+
+def taxonomy_alias_records() -> list[dict[str, str]]:
+    """Return alias-to-topic records for database seeding and review."""
+
+    records: dict[str, dict[str, str]] = {}
+    for alias, topic in SUBGROUP_ALIASES.items():
+        canonical_topic = _taxonomy_subgroup(topic)
+        domain = _group_for_subgroup(canonical_topic) or "Other"
+        records[_normalize_key(alias)] = {
+            "alias_key": _normalize_key(alias),
+            "alias_label": alias,
+            "topic_name": canonical_topic,
+            "recovery_domain": domain,
+            "source": "alias",
+        }
+    for alias, canonical in SYNONYM_MAP.items():
+        topic = intervention_family(canonical, canonical)
+        domain = recovery_group(canonical_intervention=canonical, intervention_family_value=topic)
+        records.setdefault(
+            _normalize_key(alias),
+            {
+                "alias_key": _normalize_key(alias),
+                "alias_label": alias,
+                "topic_name": topic,
+                "recovery_domain": domain,
+                "source": "synonym",
+            },
+        )
+    return sorted(records.values(), key=lambda row: row["alias_key"])
 
 
 def _is_specific_label(value: str) -> bool:
@@ -721,7 +841,7 @@ def recovery_group(
     intervention_category: str | None = None,
     evidence_text: str | None = None,
 ) -> str:
-    """Return the broad user-facing Recovery Group for a paper or subgroup."""
+    """Return the broad user-facing Recovery Domain for a paper or research topic."""
 
     raw = _clean_readable(raw_intervention or "")
     canonical = _clean_readable(canonical_intervention or "")
@@ -777,7 +897,7 @@ def intervention_family(
     intervention_category: str | None = None,
     evidence_text: str | None = None,
 ) -> str:
-    """Return a user-facing intervention family for aggregation and browsing."""
+    """Return a user-facing Research Topic for aggregation and browsing."""
 
     raw = _clean_readable(raw_intervention or "")
     canonical = _clean_readable(canonical_intervention or "")
@@ -789,14 +909,14 @@ def intervention_family(
         and not _is_specific_label(category)
         and not evidence
     ):
-        return "Unspecified / not intervention-specific"
+        return UNSPECIFIED_TOPIC
 
     label_parts = [part for part in [canonical, raw] if _is_specific_label(part)]
     label_text = " ".join(label_parts)
     combined = _normalize_key(" ".join(part for part in [label_text, category, evidence] if part))
 
     if not combined or combined in NON_SPECIFIC_VALUES:
-        return "Unspecified / not intervention-specific"
+        return UNSPECIFIED_TOPIC
 
     if label_text:
         for part in label_parts:
@@ -815,7 +935,9 @@ def intervention_family(
         comma_count = raw.count(",") + raw.count(";")
         if comma_count >= 2 and not any(term in combined for term in ["brain computer", "bci", "virtual reality"]):
             return _taxonomy_subgroup("Multiple / broad rehabilitation approaches")
-        return _taxonomy_subgroup(canonical or raw)
+        if _allow_open_research_topics():
+            return _taxonomy_subgroup(canonical or raw)
+        return REVIEW_TOPIC
 
     category_map = {
         "motor_rehab": "Motor Rehabilitation",
@@ -839,4 +961,4 @@ def intervention_family(
     if family:
         return _taxonomy_subgroup(family)
 
-    return "Unspecified / not intervention-specific"
+    return UNSPECIFIED_TOPIC

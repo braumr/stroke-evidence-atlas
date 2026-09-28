@@ -7,6 +7,7 @@ import re
 from pathlib import Path
 
 from .config import DB_PATH, ensure_directories
+from .normalization import recovery_domain_records, research_topic_records, taxonomy_alias_records
 from .utils import utc_now
 
 
@@ -135,6 +136,51 @@ def init_db(reset: bool = False) -> None:
                 updated_at TEXT
             );
 
+            CREATE TABLE IF NOT EXISTS recovery_domains (
+                domain_name TEXT PRIMARY KEY,
+                display_order INTEGER,
+                description TEXT,
+                status TEXT DEFAULT 'active',
+                created_at TEXT,
+                updated_at TEXT
+            );
+
+            CREATE TABLE IF NOT EXISTS research_topics (
+                topic_name TEXT PRIMARY KEY,
+                recovery_domain TEXT,
+                status TEXT DEFAULT 'active',
+                source TEXT,
+                notes TEXT,
+                created_at TEXT,
+                updated_at TEXT,
+                FOREIGN KEY (recovery_domain) REFERENCES recovery_domains(domain_name)
+            );
+
+            CREATE TABLE IF NOT EXISTS taxonomy_aliases (
+                alias_key TEXT PRIMARY KEY,
+                alias_label TEXT,
+                topic_name TEXT,
+                recovery_domain TEXT,
+                source TEXT,
+                created_at TEXT,
+                updated_at TEXT,
+                FOREIGN KEY (topic_name) REFERENCES research_topics(topic_name),
+                FOREIGN KEY (recovery_domain) REFERENCES recovery_domains(domain_name)
+            );
+
+            CREATE TABLE IF NOT EXISTS taxonomy_review_queue (
+                label_key TEXT PRIMARY KEY,
+                raw_label TEXT,
+                canonical_label TEXT,
+                suggested_topic TEXT,
+                suggested_domain TEXT,
+                occurrence_count INTEGER DEFAULT 0,
+                status TEXT DEFAULT 'needs_review',
+                first_seen_at TEXT,
+                last_seen_at TEXT,
+                notes TEXT
+            );
+
             CREATE TABLE IF NOT EXISTS query_log (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 query_domain TEXT,
@@ -157,6 +203,8 @@ def init_db(reset: bool = False) -> None:
             CREATE INDEX IF NOT EXISTS idx_extractions_pmid ON study_extractions(pmid);
             CREATE INDEX IF NOT EXISTS idx_extractions_intervention ON study_extractions(intervention_canonical);
             CREATE INDEX IF NOT EXISTS idx_scores_intervention ON scores(intervention_canonical);
+            CREATE INDEX IF NOT EXISTS idx_research_topics_domain ON research_topics(recovery_domain);
+            CREATE INDEX IF NOT EXISTS idx_taxonomy_review_status ON taxonomy_review_queue(status);
             """
         )
         _ensure_column(conn, "papers", "abstract_conclusion_text", "TEXT")
@@ -171,6 +219,75 @@ def init_db(reset: bool = False) -> None:
             CREATE INDEX IF NOT EXISTS idx_extractions_family ON study_extractions(intervention_family);
             CREATE INDEX IF NOT EXISTS idx_scores_family ON scores(intervention_family);
             """
+        )
+        _seed_taxonomy_tables(conn)
+
+
+def _seed_taxonomy_tables(conn: sqlite3.Connection) -> None:
+    """Seed controlled Recovery Domain and Research Topic lookup tables."""
+
+    now = utc_now()
+    for row in recovery_domain_records():
+        conn.execute(
+            """
+            INSERT INTO recovery_domains (
+                domain_name, display_order, status, created_at, updated_at
+            )
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(domain_name) DO UPDATE SET
+                display_order = excluded.display_order,
+                status = excluded.status,
+                updated_at = excluded.updated_at
+            """,
+            (row["domain_name"], row["display_order"], row["status"], now, now),
+        )
+
+    for row in research_topic_records():
+        conn.execute(
+            """
+            INSERT INTO research_topics (
+                topic_name, recovery_domain, status, source, created_at, updated_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+            ON CONFLICT(topic_name) DO UPDATE SET
+                recovery_domain = excluded.recovery_domain,
+                status = excluded.status,
+                source = excluded.source,
+                updated_at = excluded.updated_at
+            """,
+            (
+                row["topic_name"],
+                row["recovery_domain"],
+                row["status"],
+                row["source"],
+                now,
+                now,
+            ),
+        )
+
+    for row in taxonomy_alias_records():
+        conn.execute(
+            """
+            INSERT INTO taxonomy_aliases (
+                alias_key, alias_label, topic_name, recovery_domain, source, created_at, updated_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(alias_key) DO UPDATE SET
+                alias_label = excluded.alias_label,
+                topic_name = excluded.topic_name,
+                recovery_domain = excluded.recovery_domain,
+                source = excluded.source,
+                updated_at = excluded.updated_at
+            """,
+            (
+                row["alias_key"],
+                row["alias_label"],
+                row["topic_name"],
+                row["recovery_domain"],
+                row["source"],
+                now,
+                now,
+            ),
         )
 
 

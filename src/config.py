@@ -1,4 +1,4 @@
-"""Configuration for the Stroke Evidence Atlas pipeline."""
+"""Configuration for the Stroke Recovery Research Platform pipeline."""
 
 from __future__ import annotations
 
@@ -7,10 +7,42 @@ from pathlib import Path
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-DATA_DIR = PROJECT_ROOT / "data"
-EXPORT_DIR = DATA_DIR / "exports"
-LOG_DIR = DATA_DIR / "logs"
-DB_PATH = DATA_DIR / "stroke_evidence.db"
+
+
+def _load_project_env() -> None:
+    """Load local .env values without requiring python-dotenv."""
+
+    try:
+        from dotenv import load_dotenv
+    except ModuleNotFoundError:
+        env_path = PROJECT_ROOT / ".env"
+        if not env_path.exists():
+            return
+        for line in env_path.read_text().splitlines():
+            stripped = line.strip()
+            if not stripped or stripped.startswith("#") or "=" not in stripped:
+                continue
+            key, value = stripped.split("=", 1)
+            os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+        return
+
+    load_dotenv(PROJECT_ROOT / ".env")
+
+
+_load_project_env()
+
+
+def _path_from_env(name: str, default: Path) -> Path:
+    """Resolve a filesystem path from an environment variable or default."""
+
+    value = os.getenv(name)
+    return Path(value).expanduser() if value else default
+
+
+DATA_DIR = _path_from_env("STROKE_ATLAS_DATA_DIR", PROJECT_ROOT / "data")
+EXPORT_DIR = _path_from_env("STROKE_ATLAS_EXPORT_DIR", DATA_DIR / "exports")
+LOG_DIR = _path_from_env("STROKE_ATLAS_LOG_DIR", DATA_DIR / "logs")
+DB_PATH = _path_from_env("STROKE_ATLAS_DB_PATH", DATA_DIR / "stroke_evidence.db")
 
 MAX_PAPERS = 2000
 DEFAULT_LLM_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
@@ -41,6 +73,7 @@ SCORING_WEIGHTS = {
 def ensure_directories() -> None:
     """Create local data directories used by the project."""
 
-    DATA_DIR.mkdir(exist_ok=True)
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     EXPORT_DIR.mkdir(parents=True, exist_ok=True)
     LOG_DIR.mkdir(parents=True, exist_ok=True)

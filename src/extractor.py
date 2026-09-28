@@ -113,7 +113,7 @@ EXTRACTION_PROMPT = """Extract JSON matching this schema exactly:
 {
   "study_type": "meta_analysis | systematic_review | randomized_controlled_trial | cohort_study | case_control_study | case_series | case_report | animal_study | mechanistic_study | feasibility_study | pilot_study | narrative_review | protocol | diagnostic_biomarker | epidemiology | qualitative | mixed_methods | unknown",
   "intervention": "specific intervention name or unknown",
-  "intervention_category": "best broad Recovery Group: Physical Rehabilitation | Cognition and Communication | Rehabilitation Technology | Brain and Nerve Stimulation | Lifestyle and Daily Health | Medical and Biological Recovery | Family and Home Support | Testing and Prediction | Recovery Science | General Rehabilitation | Other",
+  "intervention_category": "best broad Recovery Domain: Physical Rehabilitation | Cognition and Communication | Rehabilitation Technology | Brain and Nerve Stimulation | Lifestyle and Daily Health | Medical and Biological Recovery | Family and Home Support | Testing and Prediction | Recovery Science | General Rehabilitation | Other",
   "condition_category": "ischemic_stroke | hemorrhagic_stroke | intracerebral_hemorrhage | subarachnoid_hemorrhage | traumatic_brain_injury | acquired_brain_injury | mixed_stroke | mixed_neurological | healthy_controls | not_applicable | unknown",
   "stroke_type": "ischemic | hemorrhagic | intracerebral_hemorrhage | subarachnoid_hemorrhage | mixed | not_stroke | unknown",
   "participant_characteristics": "age, severity, impairment type, inclusion details if available, or not reported in abstract",

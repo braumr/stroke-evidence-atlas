@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-import pandas as pd
+import csv
 
 from .config import EXPORT_DIR, ensure_directories
 from .db import get_connection, init_db
@@ -14,11 +14,15 @@ EXPORTS = {
     "study_extractions": "extractions.csv",
     "intervention_summaries": "interventions.csv",
     "scores": "scores.csv",
+    "recovery_domains": "recovery_domains.csv",
+    "research_topics": "research_topics.csv",
+    "taxonomy_aliases": "taxonomy_aliases.csv",
+    "taxonomy_review_queue": "taxonomy_review_queue.csv",
 }
 
 
 def _format_export_sample_size(value: object) -> object:
-    if pd.isna(value):
+    if value is None:
         return "not reported in abstract"
     if isinstance(value, float) and value.is_integer():
         return int(value)
@@ -33,14 +37,22 @@ def export_csvs() -> dict[str, str]:
     written: dict[str, str] = {}
     with get_connection() as conn:
         for table, filename in EXPORTS.items():
-            df = pd.read_sql_query(f"SELECT * FROM {table}", conn)
-            for column in df.select_dtypes(include=["object"]).columns:
-                df[column] = df[column].map(
-                    lambda value: "not reported in abstract" if pd.isna(value) else normalize_missing_label(value)
-                )
-            if table == "study_extractions" and "sample_size" in df.columns:
-                df["sample_size"] = df["sample_size"].map(_format_export_sample_size)
             path = EXPORT_DIR / filename
-            df.to_csv(path, index=False)
+            cursor = conn.execute(f"SELECT * FROM {table}")
+            column_names = [description[0] for description in cursor.description]
+            with path.open("w", newline="", encoding="utf-8") as file_obj:
+                writer = csv.DictWriter(file_obj, fieldnames=column_names)
+                writer.writeheader()
+                for row in cursor:
+                    formatted = {}
+                    for column in column_names:
+                        value = row[column]
+                        if table == "study_extractions" and column == "sample_size":
+                            formatted[column] = _format_export_sample_size(value)
+                        elif isinstance(value, str) or value is None:
+                            formatted[column] = normalize_missing_label(value)
+                        else:
+                            formatted[column] = value
+                    writer.writerow(formatted)
             written[table] = str(path)
     return written
