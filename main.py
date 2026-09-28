@@ -33,6 +33,7 @@ def build_parser() -> argparse.ArgumentParser:
     extract_parser.add_argument("--force", action="store_true")
     extract_parser.add_argument("--model", type=str, default=DEFAULT_LLM_MODEL)
     extract_parser.add_argument("--dry-run", action="store_true")
+    extract_parser.add_argument("--workers", type=int, default=1, help="Number of parallel extraction workers")
 
     subparsers.add_parser("classify", help="Classify extracted studies into Recovery Domains and Research Topics")
     subparsers.add_parser("score", help="Score extracted evidence and aggregate research topics")
@@ -47,6 +48,7 @@ def build_parser() -> argparse.ArgumentParser:
     all_parser.add_argument("--model", type=str, default=DEFAULT_LLM_MODEL)
     all_parser.add_argument("--dry-run", action="store_true")
     all_parser.add_argument("--skip-score", action="store_true", help="Classify and aggregate without recalculating scores")
+    all_parser.add_argument("--workers", type=int, default=1, help="Number of parallel extraction workers")
 
     return parser
 
@@ -73,7 +75,7 @@ def main(argv: list[str] | None = None) -> int:
         elif args.command == "extract":
             from src.extractor import extract_pending
 
-            count = extract_pending(args.limit, args.force, args.model, args.dry_run)
+            count = extract_pending(args.limit, args.force, args.model, args.dry_run, args.workers)
             print(f"Extraction complete: {count} papers extracted")
         elif args.command == "classify":
             from src.classification import classify_extractions
@@ -98,7 +100,7 @@ def main(argv: list[str] | None = None) -> int:
 
             init_db()
             inserted = collect_pubmed(args.max_papers, args.query_domain, args.dry_run)
-            extracted = extract_pending(args.limit, args.force, args.model, args.dry_run)
+            extracted = extract_pending(args.limit, args.force, args.model, args.dry_run, args.workers)
             if args.skip_score:
                 from src.classification import classify_extractions
 

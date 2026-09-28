@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any, Literal
 
 from pydantic import BaseModel, Field, ValidationError
@@ -14,6 +16,7 @@ from .normalization import intervention_family, normalize_intervention, recovery
 from .utils import clean_text, normalize_missing_label, normalize_missing_list, parse_int, setup_logging, utc_now
 
 LOGGER = setup_logging(__name__)
+_THREAD_LOCAL = threading.local()
 
 
 StudyType = Literal[
@@ -384,6 +387,19 @@ def _mark_failed(pmid: str, error: str) -> None:
         )
 
 
+def _thread_client(model: str | None) -> LLMClient:
+    """Return one OpenAI client per worker thread."""
+
+    key = model or "__default__"
+    clients = getattr(_THREAD_LOCAL, "clients", None)
+    if clients is None:
+        clients = {}
+        _THREAD_LOCAL.clients = clients
+    if key not in clients:
+        clients[key] = LLMClient(model=model)
+    return clients[key]
+
+
 def get_papers_for_extraction(limit: int | None = None, force: bool = False) -> list[dict[str, Any]]:
     """Return papers that need extraction."""
 
@@ -408,6 +424,7 @@ def extract_pending(
     force: bool = False,
     model: str | None = None,
     dry_run: bool = False,
+    workers: int = 1,
 ) -> int:
     """Run extraction for pending papers and return successful extraction count."""
 
@@ -417,31 +434,56 @@ def extract_pending(
         print(f"{len(papers)} papers would be considered for extraction")
         return 0
 
-    client = LLMClient(model=model)
     extracted = 0
-    for paper in tqdm(papers, desc="Extracting abstracts"):
-        pmid = paper["pmid"]
-        abstract = clean_text(paper.get("abstract"))
-        if not abstract:
-            _mark_skipped(pmid)
-            continue
-        prompt = build_extraction_prompt(paper.get("title") or "unknown", abstract)
-        try:
-            raw = client.complete_json(SYSTEM_PROMPT, prompt)
+    workers = max(1, workers)
+    if workers == 1:
+        for paper in tqdm(papers, desc="Extracting abstracts"):
+            if _extract_one_paper(paper, model=model, force=force):
+                extracted += 1
+        return extracted
+
+    with ThreadPoolExecutor(max_workers=workers) as executor:
+        futures = {
+            executor.submit(_extract_one_paper, paper, model, force): paper["pmid"]
+            for paper in papers
+        }
+        for future in tqdm(as_completed(futures), total=len(futures), desc="Extracting abstracts"):
             try:
-                result, raw_json = validate_extraction(raw)
-            except (ValidationError, json.JSONDecodeError, ValueError) as validation_error:
-                repaired = client.complete_json(SYSTEM_PROMPT, _repair_prompt(raw, str(validation_error)))
-                result, raw_json = validate_extraction(repaired)
-            _save_extraction(
-                pmid,
-                result,
-                raw_json,
-                force=force,
-                evidence_text=f"{paper.get('title') or ''} {abstract}",
-            )
-            extracted += 1
-        except Exception as exc:
-            LOGGER.exception("Extraction failed for PMID %s", pmid)
-            _mark_failed(pmid, str(exc))
+                if future.result():
+                    extracted += 1
+            except Exception:
+                pmid = futures[future]
+                LOGGER.exception("Extraction worker failed unexpectedly for PMID %s", pmid)
+                _mark_failed(pmid, "unexpected extraction worker failure")
     return extracted
+
+
+def _extract_one_paper(paper: dict[str, Any], model: str | None = None, force: bool = False) -> bool:
+    """Extract and save one paper, returning whether extraction succeeded."""
+
+    pmid = paper["pmid"]
+    abstract = clean_text(paper.get("abstract"))
+    if not abstract:
+        _mark_skipped(pmid)
+        return False
+    prompt = build_extraction_prompt(paper.get("title") or "unknown", abstract)
+    try:
+        client = _thread_client(model)
+        raw = client.complete_json(SYSTEM_PROMPT, prompt)
+        try:
+            result, raw_json = validate_extraction(raw)
+        except (ValidationError, json.JSONDecodeError, ValueError) as validation_error:
+            repaired = client.complete_json(SYSTEM_PROMPT, _repair_prompt(raw, str(validation_error)))
+            result, raw_json = validate_extraction(repaired)
+        _save_extraction(
+            pmid,
+            result,
+            raw_json,
+            force=force,
+            evidence_text=f"{paper.get('title') or ''} {abstract}",
+        )
+        return True
+    except Exception as exc:
+        LOGGER.exception("Extraction failed for PMID %s", pmid)
+        _mark_failed(pmid, str(exc))
+        return False
