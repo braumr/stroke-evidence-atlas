@@ -83,6 +83,14 @@ def load_data() -> dict[str, pd.DataFrame]:
     init_db()
     with get_connection() as conn:
         return {
+            "counts": pd.read_sql_query(
+                """
+                SELECT
+                    (SELECT COUNT(*) FROM papers) AS total_papers,
+                    (SELECT COUNT(DISTINCT pmid) FROM study_extractions) AS extracted_papers
+                """,
+                conn,
+            ),
             "extractions": pd.read_sql_query(
                 """
                 SELECT
@@ -102,6 +110,7 @@ def load_data() -> dict[str, pd.DataFrame]:
 
 
 data = load_data()
+counts = data["counts"].iloc[0] if not data["counts"].empty else {}
 extractions = data["extractions"]
 summaries = data["summaries"]
 
@@ -109,7 +118,8 @@ if extractions.empty and summaries.empty:
     st.info("No data yet. Run the pipeline commands from the README to populate the platform.")
     st.stop()
 
-total_papers = int(extractions["pmid"].nunique()) if not extractions.empty else 0
+total_papers = int(counts.get("total_papers", 0))
+extracted_papers = int(counts.get("extracted_papers", 0))
 intervention_col = "intervention_family" if "intervention_family" in summaries.columns else "intervention_canonical"
 extraction_intervention_col = (
     "intervention_family" if "intervention_family" in extractions.columns else "intervention_canonical"
@@ -122,11 +132,12 @@ review_count = (
     else 0
 )
 
-kpi_cols = st.columns(4)
+kpi_cols = st.columns(5)
 render_kpi(kpi_cols[0], "Total Papers", total_papers)
-render_kpi(kpi_cols[1], "Research Topics identified", interventions)
-render_kpi(kpi_cols[2], "Randomized trials", rct_count)
-render_kpi(kpi_cols[3], "Systematic review/meta-analysis count", review_count)
+render_kpi(kpi_cols[1], "Papers Extracted", extracted_papers)
+render_kpi(kpi_cols[2], "Research Topics identified", interventions)
+render_kpi(kpi_cols[3], "Randomized trials", rct_count)
+render_kpi(kpi_cols[4], "Systematic review/meta-analysis count", review_count)
 
 filtered_summaries = summaries.copy()
 filtered_extractions = extractions.copy()
