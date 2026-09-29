@@ -97,7 +97,27 @@ def load_data() -> dict[str, pd.DataFrame]:
             "studies": pd.read_sql_query(
                 """
                 SELECT
-                    e.*, p.title, p.publication_year, p.pubmed_url,
+                    e.pmid,
+                    e.study_type,
+                    e.intervention_canonical,
+                    e.intervention_family,
+                    e.intervention_category,
+                    e.stroke_type,
+                    e.sample_size,
+                    e.stroke_phase,
+                    e.dosage_intensity,
+                    e.frequency,
+                    e.duration,
+                    e.outcome_measures,
+                    e.outcomes,
+                    e.effect_direction,
+                    e.limitations,
+                    e.adverse_events,
+                    e.safety_notes,
+                    e.applicability_notes,
+                    p.title,
+                    p.publication_year,
+                    p.pubmed_url,
                     s.neuroplasticity_potential, s.clinical_evidence_strength,
                     s.safety_score, s.practicality_score, s.overall_score, s.scoring_notes
                 FROM study_extractions e

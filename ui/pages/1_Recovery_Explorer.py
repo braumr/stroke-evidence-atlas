@@ -83,19 +83,29 @@ def load_data() -> dict[str, pd.DataFrame]:
     init_db()
     with get_connection() as conn:
         return {
-            "papers": pd.read_sql_query("SELECT * FROM papers", conn),
-            "extractions": pd.read_sql_query("SELECT * FROM study_extractions", conn),
-            "scores": pd.read_sql_query("SELECT * FROM scores", conn),
+            "extractions": pd.read_sql_query(
+                """
+                SELECT
+                    pmid,
+                    study_type,
+                    intervention_canonical,
+                    intervention_family,
+                    intervention_category,
+                    stroke_type,
+                    stroke_phase
+                FROM study_extractions
+                """,
+                conn,
+            ),
             "summaries": pd.read_sql_query("SELECT * FROM intervention_summaries", conn),
         }
 
 
 data = load_data()
-papers = data["papers"]
 extractions = data["extractions"]
 summaries = data["summaries"]
 
-if papers.empty and summaries.empty:
+if extractions.empty and summaries.empty:
     st.info("No data yet. Run the pipeline commands from the README to populate the platform.")
     st.stop()
 
