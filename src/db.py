@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import sqlite3
 import re
+import urllib.request
 from pathlib import Path
 
-from .config import DB_PATH, ensure_directories
+from .config import AUTO_DOWNLOAD_DB, DB_PATH, DEPLOYMENT_DB_MIN_BYTES, DEPLOYMENT_DB_URL, ensure_directories
 from .normalization import recovery_domain_records, research_topic_records, taxonomy_alias_records
 from .utils import utc_now
 
@@ -15,10 +16,31 @@ def get_connection(db_path: Path = DB_PATH) -> sqlite3.Connection:
     """Return a SQLite connection with row access by column name."""
 
     ensure_directories()
-    conn = sqlite3.connect(db_path)
+    _ensure_deployment_database(db_path)
+    conn = sqlite3.connect(db_path, timeout=60)
     conn.row_factory = sqlite3.Row
+    # Rollback journaling is safer for SQLite databases stored on ExFAT/USB drives.
+    conn.execute("PRAGMA journal_mode = DELETE")
+    conn.execute("PRAGMA busy_timeout = 60000")
     conn.execute("PRAGMA foreign_keys = ON")
     return conn
+
+
+def _ensure_deployment_database(db_path: Path) -> None:
+    """Download the hosted full database when the bundled DB is missing or stale."""
+
+    if not AUTO_DOWNLOAD_DB or not DEPLOYMENT_DB_URL:
+        return
+    if db_path.exists() and db_path.stat().st_size >= DEPLOYMENT_DB_MIN_BYTES:
+        return
+
+    db_path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = db_path.with_suffix(f"{db_path.suffix}.download")
+    urllib.request.urlretrieve(DEPLOYMENT_DB_URL, tmp_path)
+    if tmp_path.stat().st_size < DEPLOYMENT_DB_MIN_BYTES:
+        tmp_path.unlink(missing_ok=True)
+        raise RuntimeError("Downloaded deployment database is smaller than expected.")
+    tmp_path.replace(db_path)
 
 
 def init_db(reset: bool = False) -> None:

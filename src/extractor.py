@@ -11,12 +11,13 @@ from pydantic import BaseModel, Field, ValidationError
 from tqdm import tqdm
 
 from .db import get_connection, init_db
-from .llm_client import LLMClient
+from .llm_client import BudgetExceeded, FatalAPIError, LLMClient, configure_usage_budget
 from .normalization import intervention_family, normalize_intervention, recovery_group
 from .utils import clean_text, normalize_missing_label, normalize_missing_list, parse_int, setup_logging, utc_now
 
 LOGGER = setup_logging(__name__)
 _THREAD_LOCAL = threading.local()
+_STOP_EVENT = threading.Event()
 
 
 StudyType = Literal[
@@ -159,6 +160,87 @@ Classification guidance:
 """
 
 
+BATCH_EXTRACTION_PROMPT = """Extract structured evidence for each supplied paper.
+Return strict JSON only. Do not include Markdown.
+Return exactly this top-level shape:
+{
+  "papers": [
+    {
+      "pmid": "PMID from input",
+      "extraction": {
+        "study_type": "meta_analysis | systematic_review | randomized_controlled_trial | cohort_study | case_control_study | case_series | case_report | animal_study | mechanistic_study | feasibility_study | pilot_study | narrative_review | protocol | diagnostic_biomarker | epidemiology | qualitative | mixed_methods | unknown",
+        "intervention": "specific intervention name or unknown",
+        "intervention_category": "best broad Recovery Domain: Physical Rehabilitation | Cognition and Communication | Rehabilitation Technology | Brain and Nerve Stimulation | Lifestyle and Daily Health | Medical and Biological Recovery | Family and Home Support | Testing and Prediction | Recovery Science | General Rehabilitation | Other",
+        "condition_category": "ischemic_stroke | hemorrhagic_stroke | intracerebral_hemorrhage | subarachnoid_hemorrhage | traumatic_brain_injury | acquired_brain_injury | mixed_stroke | mixed_neurological | healthy_controls | not_applicable | unknown",
+        "stroke_type": "ischemic | hemorrhagic | intracerebral_hemorrhage | subarachnoid_hemorrhage | mixed | not_stroke | unknown",
+        "participant_characteristics": "age, severity, impairment type, inclusion details if available, or not reported in abstract",
+        "sample_size": null,
+        "time_since_stroke": "acute/subacute/chronic timing or exact timing if available",
+        "stroke_phase": "acute | subacute | chronic | mixed | unknown",
+        "dosage_intensity": "dose or intensity if stated, not reported in abstract, or not applicable",
+        "frequency": "frequency if stated, not reported in abstract, or not applicable",
+        "duration": "intervention duration if stated, not reported in abstract, or not applicable",
+        "comparator": "usual care | sham | active control | waitlist | none | not reported in abstract | not applicable | unknown",
+        "setting": "inpatient | outpatient | home | community | laboratory | mixed | unknown",
+        "outcome_measures": [],
+        "outcomes": [],
+        "results_summary": "concise summary of reported results",
+        "conclusion_text": "conclusion/conclusions text if explicitly present in the abstract; otherwise not reported in abstract",
+        "effect_direction": "positive | negative | mixed | no_effect | unclear",
+        "limitations": [],
+        "adverse_events": "reported adverse events or unknown",
+        "safety_notes": "safety concerns, contraindications, tolerability, or unknown",
+        "applicability_notes": "which patients/settings this evidence may apply to, based only on abstract",
+        "mechanistic_rationale": "rehabilitation/neuroplasticity rationale stated or implied by abstract; use unknown if not present",
+        "neuroplasticity_mechanisms": [],
+        "confidence_notes": "brief explanation of extraction confidence",
+        "provenance": {
+          "sample_size": {"value": null, "supporting_sentence": "exact sentence or unknown"},
+          "intervention": {"value": "string", "supporting_sentence": "exact sentence or unknown"},
+          "outcome_measures": {"value": [], "supporting_sentence": "exact sentence or unknown"},
+          "results": {"value": "string", "supporting_sentence": "exact sentence or unknown"},
+          "adverse_events": {"value": "string", "supporting_sentence": "exact sentence or unknown"},
+          "conclusion": {"value": "string", "supporting_sentence": "exact sentence or unknown"}
+        }
+      }
+    }
+  ]
+}
+
+Return one output item for every input PMID. Do not merge papers. Do not omit PMIDs.
+Use the same classification and missing-value rules as the single-paper extractor.
+"""
+
+BUDGET_BATCH_EXTRACTION_PROMPT = """Extract compact structured stroke recovery evidence for each supplied paper.
+Return strict JSON only. Return exactly:
+{"papers":[{"pmid":"input PMID","extraction":{...}}]}
+
+For each extraction object include these keys only:
+study_type, intervention, intervention_category, condition_category, stroke_type,
+participant_characteristics, sample_size, time_since_stroke, stroke_phase,
+dosage_intensity, frequency, duration, comparator, setting,
+outcome_measures, outcomes, results_summary, conclusion_text, effect_direction,
+limitations, adverse_events, safety_notes, applicability_notes,
+mechanistic_rationale, neuroplasticity_mechanisms, confidence_notes.
+
+Use short values. Prefer terse phrases over sentences.
+Do not include provenance. Do not include supporting sentences. Do not quote long text.
+Use null for unknown sample_size. Use [] for unknown lists.
+Use only these study_type values:
+meta_analysis, systematic_review, randomized_controlled_trial, cohort_study,
+case_control_study, case_series, case_report, animal_study, mechanistic_study,
+feasibility_study, pilot_study, narrative_review, protocol, diagnostic_biomarker,
+epidemiology, qualitative, mixed_methods, unknown.
+Use these intervention_category values:
+Physical Rehabilitation, Cognition and Communication, Rehabilitation Technology,
+Brain and Nerve Stimulation, Lifestyle and Daily Health,
+Medical and Biological Recovery, Family and Home Support, Testing and Prediction,
+Recovery Science, General Rehabilitation, Other.
+Use these missing-value labels only: not reported in abstract, not applicable, unknown.
+Return one output item for every input PMID. Do not merge papers. Do not omit PMIDs.
+"""
+
+
 def _model_validate_json(raw_json: str) -> ExtractionResult:
     if hasattr(ExtractionResult, "model_validate_json"):
         return ExtractionResult.model_validate_json(raw_json)  # type: ignore[attr-defined]
@@ -175,6 +257,10 @@ def _coerce_extraction_payload(data: dict[str, Any]) -> dict[str, Any]:
     """Coerce common LLM missing-label shapes before schema validation."""
 
     coerced = dict(data)
+    for field, value in list(coerced.items()):
+        if isinstance(value, dict) and "value" in value:
+            coerced[field] = value["value"]
+
     allowed_study_types = set(StudyType.__args__)  # type: ignore[attr-defined]
     study_type = normalize_missing_label(coerced.get("study_type"), "unknown")
     coerced["study_type"] = study_type if study_type in allowed_study_types else "unknown"
@@ -280,6 +366,25 @@ def build_extraction_prompt(title: str, abstract: str) -> str:
     """Build the user prompt without templating the JSON schema braces."""
 
     return f"{EXTRACTION_PROMPT}\n\nTitle: {title or 'unknown'}\nAbstract: {abstract}"
+
+
+def build_batch_extraction_prompt(papers: list[dict[str, Any]], profile: str = "full") -> str:
+    """Build a compact multi-paper extraction prompt."""
+
+    sections = []
+    for index, paper in enumerate(papers, start=1):
+        sections.append(
+            "\n".join(
+                [
+                    f"Paper {index}",
+                    f"PMID: {paper['pmid']}",
+                    f"Title: {paper.get('title') or 'unknown'}",
+                    f"Abstract: {clean_text(paper.get('abstract'))}",
+                ]
+            )
+        )
+    instructions = BUDGET_BATCH_EXTRACTION_PROMPT if profile == "budget" else BATCH_EXTRACTION_PROMPT
+    return f"{instructions}\n\nPapers:\n\n" + "\n\n---\n\n".join(sections)
 
 
 def _save_extraction(
@@ -400,10 +505,16 @@ def _thread_client(model: str | None) -> LLMClient:
     return clients[key]
 
 
+def _chunked(items: list[dict[str, Any]], size: int) -> list[list[dict[str, Any]]]:
+    """Split items into stable chunks."""
+
+    return [items[index : index + size] for index in range(0, len(items), size)]
+
+
 def get_papers_for_extraction(limit: int | None = None, force: bool = False) -> list[dict[str, Any]]:
     """Return papers that need extraction."""
 
-    where = "1 = 1" if force else "COALESCE(es.status, 'pending') != 'extracted'"
+    where = "1 = 1" if force else "COALESCE(es.status, 'pending') IN ('pending', 'failed')"
     sql = f"""
         SELECT p.pmid, p.title, p.abstract, COALESCE(es.status, 'pending') AS status
         FROM papers p
@@ -425,10 +536,15 @@ def extract_pending(
     model: str | None = None,
     dry_run: bool = False,
     workers: int = 1,
+    batch_size: int = 1,
+    profile: str = "full",
+    max_cost_usd: float | None = None,
 ) -> int:
     """Run extraction for pending papers and return successful extraction count."""
 
     init_db()
+    _STOP_EVENT.clear()
+    configure_usage_budget(max_cost_usd=max_cost_usd)
     papers = get_papers_for_extraction(limit=limit, force=force)
     if dry_run:
         print(f"{len(papers)} papers would be considered for extraction")
@@ -436,26 +552,205 @@ def extract_pending(
 
     extracted = 0
     workers = max(1, workers)
+    batch_size = max(1, batch_size)
+    if batch_size > 1:
+        batches = _chunked(papers, batch_size)
+        if workers == 1:
+            for batch in tqdm(batches, desc="Extracting abstract batches"):
+                if _STOP_EVENT.is_set():
+                    break
+                extracted += _extract_paper_batch(batch, model=model, force=force, profile=profile)
+            return extracted
+
+        with ThreadPoolExecutor(max_workers=workers) as executor:
+            batch_iter = iter(batches)
+            futures: dict[Any, list[str]] = {}
+
+            def submit_next() -> None:
+                if _STOP_EVENT.is_set():
+                    return
+                batch = next(batch_iter, None)
+                if batch is None:
+                    return
+                futures[executor.submit(_extract_paper_batch, batch, model, force, profile)] = [
+                    paper["pmid"] for paper in batch
+                ]
+
+            for _ in range(workers):
+                submit_next()
+
+            progress = tqdm(total=len(batches), desc="Extracting abstract batches")
+            try:
+                while futures:
+                    for future in as_completed(tuple(futures)):
+                        pmids = futures.pop(future)
+                        try:
+                            extracted += future.result()
+                        except (FatalAPIError, BudgetExceeded):
+                            _STOP_EVENT.set()
+                            raise
+                        except Exception:
+                            LOGGER.exception("Extraction batch worker failed unexpectedly for PMIDs %s", ", ".join(pmids))
+                            for pmid in pmids:
+                                _mark_failed(pmid, "unexpected extraction batch worker failure")
+                        finally:
+                            progress.update(1)
+                        submit_next()
+                        break
+                    if _STOP_EVENT.is_set():
+                        break
+            finally:
+                progress.close()
+                if _STOP_EVENT.is_set():
+                    for future in futures:
+                        future.cancel()
+        return extracted
+
     if workers == 1:
         for paper in tqdm(papers, desc="Extracting abstracts"):
+            if _STOP_EVENT.is_set():
+                break
             if _extract_one_paper(paper, model=model, force=force):
                 extracted += 1
         return extracted
 
     with ThreadPoolExecutor(max_workers=workers) as executor:
-        futures = {
-            executor.submit(_extract_one_paper, paper, model, force): paper["pmid"]
-            for paper in papers
-        }
-        for future in tqdm(as_completed(futures), total=len(futures), desc="Extracting abstracts"):
-            try:
-                if future.result():
-                    extracted += 1
-            except Exception:
-                pmid = futures[future]
-                LOGGER.exception("Extraction worker failed unexpectedly for PMID %s", pmid)
-                _mark_failed(pmid, "unexpected extraction worker failure")
+        paper_iter = iter(papers)
+        futures: dict[Any, str] = {}
+
+        def submit_next_paper() -> None:
+            if _STOP_EVENT.is_set():
+                return
+            paper = next(paper_iter, None)
+            if paper is None:
+                return
+            futures[executor.submit(_extract_one_paper, paper, model, force)] = paper["pmid"]
+
+        for _ in range(workers):
+            submit_next_paper()
+
+        progress = tqdm(total=len(papers), desc="Extracting abstracts")
+        try:
+            while futures:
+                for future in as_completed(tuple(futures)):
+                    pmid = futures.pop(future)
+                    try:
+                        if future.result():
+                            extracted += 1
+                    except (FatalAPIError, BudgetExceeded):
+                        _STOP_EVENT.set()
+                        raise
+                    except Exception:
+                        LOGGER.exception("Extraction worker failed unexpectedly for PMID %s", pmid)
+                        _mark_failed(pmid, "unexpected extraction worker failure")
+                    finally:
+                        progress.update(1)
+                    submit_next_paper()
+                    break
+                if _STOP_EVENT.is_set():
+                    break
+        finally:
+            progress.close()
+            if _STOP_EVENT.is_set():
+                for future in futures:
+                    future.cancel()
     return extracted
+
+
+def _validate_batch_response(raw_json: str) -> dict[str, tuple[ExtractionResult, str]]:
+    """Validate a batch response and return extraction payloads by PMID."""
+
+    raw_dict = json.loads(raw_json)
+    papers = raw_dict.get("papers")
+    if not isinstance(papers, list):
+        raise ValueError("Batch response must contain a papers array")
+
+    results: dict[str, tuple[ExtractionResult, str]] = {}
+    for item in papers:
+        if not isinstance(item, dict):
+            raise ValueError("Each batch paper item must be an object")
+        pmid = clean_text(item.get("pmid"))
+        extraction_payload = item.get("extraction")
+        if not pmid or not isinstance(extraction_payload, dict):
+            raise ValueError("Each batch paper item must include pmid and extraction object")
+        parsed = _model_validate_dict(_coerce_extraction_payload(extraction_payload))
+        parsed.sample_size = parse_int(parsed.sample_size)
+        _cleanup_extraction(parsed)
+        results[pmid] = (parsed, json.dumps(extraction_payload, ensure_ascii=False))
+    return results
+
+
+def _extract_paper_batch(
+    papers: list[dict[str, Any]],
+    model: str | None = None,
+    force: bool = False,
+    profile: str = "full",
+) -> int:
+    """Extract and save a batch of papers, returning the successful extraction count."""
+
+    extractable: list[dict[str, Any]] = []
+    for paper in papers:
+        if clean_text(paper.get("abstract")):
+            extractable.append(paper)
+        else:
+            _mark_skipped(paper["pmid"])
+
+    if not extractable:
+        return 0
+
+    prompt = build_batch_extraction_prompt(extractable, profile=profile)
+    try:
+        client = _thread_client(model)
+        raw = client.complete_json(SYSTEM_PROMPT, prompt)
+        try:
+            results_by_pmid = _validate_batch_response(raw)
+        except (ValidationError, json.JSONDecodeError, ValueError) as validation_error:
+            repaired = client.complete_json(SYSTEM_PROMPT, _repair_prompt(raw, str(validation_error)))
+            results_by_pmid = _validate_batch_response(repaired)
+
+        extracted = 0
+        missing_pmids: list[str] = []
+        for paper in extractable:
+            pmid = paper["pmid"]
+            result = results_by_pmid.get(pmid)
+            if result is None:
+                missing_pmids.append(pmid)
+                continue
+            extraction, raw_json = result
+            abstract = clean_text(paper.get("abstract"))
+            _save_extraction(
+                pmid,
+                extraction,
+                raw_json,
+                force=force,
+                evidence_text=f"{paper.get('title') or ''} {abstract}",
+            )
+            extracted += 1
+
+        for paper in extractable:
+            if paper["pmid"] in missing_pmids and _extract_one_paper(paper, model=model, force=force):
+                extracted += 1
+        return extracted
+    except (FatalAPIError, BudgetExceeded):
+        _STOP_EVENT.set()
+        raise
+    except Exception as exc:
+        LOGGER.exception(
+            "Batch extraction failed for PMIDs %s; falling back to single-paper extraction",
+            ", ".join(paper["pmid"] for paper in extractable),
+        )
+        if profile == "budget":
+            for paper in extractable:
+                _mark_failed(paper["pmid"], str(exc))
+            return 0
+        extracted = 0
+        for paper in extractable:
+            if _extract_one_paper(paper, model=model, force=force):
+                extracted += 1
+        if extracted == 0:
+            for paper in extractable:
+                _mark_failed(paper["pmid"], str(exc))
+        return extracted
 
 
 def _extract_one_paper(paper: dict[str, Any], model: str | None = None, force: bool = False) -> bool:
@@ -483,6 +778,9 @@ def _extract_one_paper(paper: dict[str, Any], model: str | None = None, force: b
             evidence_text=f"{paper.get('title') or ''} {abstract}",
         )
         return True
+    except (FatalAPIError, BudgetExceeded):
+        _STOP_EVENT.set()
+        raise
     except Exception as exc:
         LOGGER.exception("Extraction failed for PMID %s", pmid)
         _mark_failed(pmid, str(exc))

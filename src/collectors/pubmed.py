@@ -6,6 +6,7 @@ import json
 import os
 import time
 import xml.etree.ElementTree as ET
+from datetime import datetime
 from typing import Any
 
 import requests
@@ -282,4 +283,42 @@ def collect_pubmed(max_papers: int, query_domain: str | None = None, dry_run: bo
             if store_paper(paper):
                 inserted += 1
     LOGGER.info("Inserted %s new papers", inserted)
+    return inserted
+
+
+def _publication_year_query(query: str, year: int) -> str:
+    """Restrict a PubMed query to a single publication year."""
+
+    return f'({query}) AND ("{year}/01/01"[Date - Publication] : "{year}/12/31"[Date - Publication])'
+
+
+def collect_pubmed_core_by_year(
+    start_year: int = 1900,
+    end_year: int | None = None,
+    retmax_per_year: int = 9999,
+    dry_run: bool = False,
+) -> int:
+    """Collect the broad core query year by year to avoid PubMed's broad-query cap."""
+
+    init_db()
+    end_year = end_year or datetime.now().year
+    core_domain = get_query_domains("core")[0]
+    inserted = 0
+
+    for year in range(end_year, start_year - 1, -1):
+        year_domain = dict(core_domain)
+        year_domain["key"] = f"core_{year}"
+        year_domain["name"] = f"{core_domain['name']} ({year})"
+        year_domain["query"] = _publication_year_query(core_domain["query"], year)
+        pmids, count = search_pmids(year_domain["query"], retmax=retmax_per_year)
+        log_query(year_domain, count)
+        LOGGER.info("%s: %s total results, %s queued", year_domain["key"], count, len(pmids))
+        if dry_run:
+            continue
+        for batch in chunked(pmids, PUBMED_FETCH_BATCH_SIZE):
+            for paper in fetch_papers(list(batch), query_source=year_domain["key"]):
+                if store_paper(paper):
+                    inserted += 1
+
+    LOGGER.info("Inserted %s new year-split core papers", inserted)
     return inserted
