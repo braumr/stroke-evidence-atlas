@@ -45,9 +45,9 @@ LOG_DIR = _path_from_env("STROKE_ATLAS_LOG_DIR", DATA_DIR / "logs")
 DB_PATH = _path_from_env("STROKE_ATLAS_DB_PATH", DATA_DIR / "stroke_evidence.db")
 DEPLOYMENT_DB_URL = os.getenv(
     "STROKE_ATLAS_DB_URL",
-    "https://github.com/braumr/stroke-evidence-atlas/releases/download/full-cohort-2026-09-29/stroke_evidence.db",
+    "https://github.com/braumr/stroke-evidence-atlas/releases/download/app-cohort-2026-09-29/stroke_evidence_app.db.gz",
 )
-DEPLOYMENT_DB_MIN_BYTES = int(os.getenv("STROKE_ATLAS_DB_MIN_BYTES", "100000000"))
+DEPLOYMENT_DB_MIN_BYTES = int(os.getenv("STROKE_ATLAS_DB_MIN_BYTES", "25000000"))
 AUTO_DOWNLOAD_DB = os.getenv("STROKE_ATLAS_AUTO_DOWNLOAD_DB", "1").lower() not in {"0", "false", "no"}
 
 MAX_PAPERS = 2000

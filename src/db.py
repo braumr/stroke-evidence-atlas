@@ -4,8 +4,11 @@ from __future__ import annotations
 
 import sqlite3
 import re
-import urllib.request
+import gzip
+import shutil
 from pathlib import Path
+
+import requests
 
 from .config import AUTO_DOWNLOAD_DB, DB_PATH, DEPLOYMENT_DB_MIN_BYTES, DEPLOYMENT_DB_URL, ensure_directories
 from .normalization import recovery_domain_records, research_topic_records, taxonomy_alias_records
@@ -35,12 +38,24 @@ def _ensure_deployment_database(db_path: Path) -> None:
         return
 
     db_path.parent.mkdir(parents=True, exist_ok=True)
-    tmp_path = db_path.with_suffix(f"{db_path.suffix}.download")
-    urllib.request.urlretrieve(DEPLOYMENT_DB_URL, tmp_path)
-    if tmp_path.stat().st_size < DEPLOYMENT_DB_MIN_BYTES:
-        tmp_path.unlink(missing_ok=True)
+    download_path = db_path.with_suffix(f"{db_path.suffix}.download")
+    tmp_db_path = db_path.with_suffix(f"{db_path.suffix}.tmp")
+    with requests.get(DEPLOYMENT_DB_URL, stream=True, timeout=120) as response:
+        response.raise_for_status()
+        with download_path.open("wb") as target:
+            for chunk in response.iter_content(chunk_size=1024 * 1024):
+                if chunk:
+                    target.write(chunk)
+    if download_path.stat().st_size < DEPLOYMENT_DB_MIN_BYTES:
+        download_path.unlink(missing_ok=True)
         raise RuntimeError("Downloaded deployment database is smaller than expected.")
-    tmp_path.replace(db_path)
+    if DEPLOYMENT_DB_URL.endswith(".gz"):
+        with gzip.open(download_path, "rb") as source, tmp_db_path.open("wb") as target:
+            shutil.copyfileobj(source, target)
+        download_path.unlink(missing_ok=True)
+    else:
+        download_path.replace(tmp_db_path)
+    tmp_db_path.replace(db_path)
 
 
 def init_db(reset: bool = False) -> None:
